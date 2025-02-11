@@ -1,47 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FormContainer from '../../components/common/FormContainer';
 import axiosInstance from '../../axios';
 import { toast } from 'react-toastify';
 import Spinner from '../../components/common/Spinner';
+import { userDetailsAtom } from '../../storges/user';
+import { useAtom } from 'jotai';
 
 const ActivateAccount = () => {
-  const [status, setStatus] = useState(false);
+  const [status, setStatus] = useState('false');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  console.log('status', status);
-  const onSubmit = async (data) => {
+  const [supplier] = useAtom(userDetailsAtom);
+  const onSubmit = async () => {
     try {
       setIsSubmitting(true);
-      // delete data?.password;
       const formData = {
-        // supplierName: data.supplierName,
-        // gender: data.gender,
-        // addressLine1: data.addressLine1,
-        // addressLine2: data.addressLine2,
-        // city: data.city,
-        // zipcode: data.zipcode,
-        // phoneNumber: data.phoneNumber,
-        // email: data.email,
-        // country: data.country,
-        // supplierId: userDetails.id,
-        status: Boolean(status),
+        status: status === 'true',
+        supplierProfileId: supplier.id,
       };
       const res = await axiosInstance.post(
-        `/proxy/productsearchsupplier/api/supplier/profile/addSupplierInfo`,
+        `/proxy/productsearchsupplier/api/supplier/profile/updateSupplierStatus`,
         formData
       );
-      // const d = {
-      //   ...userDetails,
-      //   ...formData,
-      // };
 
-      // setUserDetails({
-      //   ...userDetails,
-      //   ...formData,
-      // });
-      localStorage.setItem('user', JSON.stringify(d));
       toast.success(res.data?.data?.message || 'Supplier profile updated');
       setIsSubmitting(false);
-      // onNext();
     } catch (e) {
       toast.error(
         e.response?.data?.error || 'failed: Supplier profile updated'
@@ -49,6 +31,11 @@ const ActivateAccount = () => {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    setStatus(`${supplier.active}`);
+  }, [supplier.active]);
+
   return (
     <FormContainer>
       <div style={{ maxWidth: '500px', marginTop: '4rem' }}>
@@ -60,8 +47,8 @@ const ActivateAccount = () => {
             className={`form-control`}
             onChange={(e) => setStatus(e.target.value)}
           >
-            <option value={false}>Inactive</option>
-            <option value={true}>Active</option>
+            <option value={'false'}>Inactive</option>
+            <option value={'true'}>Active</option>
           </select>
           {/* <div className='invalid-feedback'>{errors.status?.message}</div> */}
         </div>

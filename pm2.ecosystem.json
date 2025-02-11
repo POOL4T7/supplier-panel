@@ -1,0 +1,31 @@
+{
+  "apps": [
+    {
+      "name": "admin",
+      "cwd": "./admin",
+      "script": "npm",
+      "args": "run preview -- --port 5173",
+      "env_production": {
+        "NODE_ENV": "production"
+      }
+    },
+    {
+      "name": "supplier",
+      "cwd": "./supplier",
+      "script": "npm",
+      "args": "run preview -- --port 5174",
+      "env_production": {
+        "NODE_ENV": "production"
+      }
+    },
+    {
+      "name": "webapp",
+      "cwd": "./webapp",
+      "script": "npm",
+      "args": "run preview -- --port 5175",
+      "env_production": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}

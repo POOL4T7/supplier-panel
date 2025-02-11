@@ -8,7 +8,7 @@ import Spinner from '../../../components/common/Spinner';
 
 const Verify = () => {
   const [addressOTP, setAddressOTP] = useState('');
-  const [bussiness] = useAtom(bussinessProfile);
+  const [bussiness, setBussiness] = useAtom(bussinessProfile);
   const [loading, setLoading] = useState(false);
   const verifyAddress = async () => {
     try {
@@ -20,9 +20,11 @@ const Verify = () => {
           addressOTP: addressOTP,
         }
       );
-      console.log(res);
+      // console.log(res);
       toast.success(res.data.message);
       setLoading(false);
+      setAddressOTP('');
+      setBussiness({ ...bussiness, verifyAddress: true });
     } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message || 'something went wrong');
@@ -43,11 +45,16 @@ const Verify = () => {
               onChange={(e) => setAddressOTP(e.target.value)}
             />
           </div>
+          {bussiness.verifyAddress ? (
+            <p className='text-success'>Address is already verifed</p>
+          ) : (
+            <></>
+          )}
           <button
             type='button'
             className='btn btn-primary mt-3'
             onClick={verifyAddress}
-            disabled={loading}
+            disabled={loading || bussiness.verifyAddress}
           >
             {loading ? (
               <>

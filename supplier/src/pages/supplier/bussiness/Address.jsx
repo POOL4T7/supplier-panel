@@ -46,7 +46,13 @@ const Address = () => {
       toast.success(
         res.data?.data?.message || 'Supplier bussiness profile updated'
       );
-      setBussiness({ ...bussiness, ...data });
+      const res2 = await axiosInstance.get(
+        `/proxy/productsearchsupplier/api/supplier/file/supplierBusinessProfileDetails?supplierProfileId=${supplier?.id}`
+      );
+
+      if (res2.data.supplierBusinessDetails) {
+        setBussiness(res2.data.supplierBusinessDetails);
+      }
       // saveData(data); // Save step data before moving on
     } catch (e) {
       console.log(e);
@@ -85,6 +91,31 @@ const Address = () => {
     <FormContainer>
       <div style={{ maxWidth: '500px', width: '100%', marginTop: '2rem' }}>
         <h1>Business Address</h1>
+        <div className='row'>
+          <div className='col-4'>
+            <p>Physical address: </p>
+          </div>
+          <div className='col-8'>
+            <>
+              <button
+                disabled={!bussiness.verifyAddress}
+                className='btn btn-success'
+              >
+                Verified
+              </button>
+              <button
+                disabled={bussiness.verifyAddress}
+                className=' mx-2 btn btn-outline-danger'
+                // to='/supplier/bussiness/verify'
+                onClick={() => {
+                  navigate('/supplier/bussiness/verify');
+                }}
+              >
+                Verify
+              </button>
+            </>
+          </div>
+        </div>
         <form>
           <div className='mb-2'>
             <label className='form-label'>Premises Type</label>
