@@ -25,9 +25,9 @@ const Header = () => {
     >
       <div className='container-fluid'>
         {/* Logo */}
-        <>
+        <Link to={'/'}>
           <img src='/images/logo.webp' alt='logo' width='65' height='60' />
-        </>
+        </Link>
 
         {/* Navbar Toggler for Mobile */}
         <button
@@ -106,7 +106,7 @@ const Header = () => {
                     aria-haspopup='true'
                     aria-expanded='false'
                     style={{
-                      color: "green",
+                      color: 'green',
                     }}
                   >
                     {userDetails.supplierName}

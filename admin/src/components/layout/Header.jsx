@@ -1,22 +1,22 @@
 import { Link } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { userDetailsAtom } from '../../storges/user';
-import { useState } from 'react';
+// import { useState } from 'react';
 
 const Header = () => {
   const [userDetails] = useAtom(userDetailsAtom);
-  const [selectedCountry, setSelectedCountry] = useState(
-    localStorage.getItem('country') || 'Germany'
-  );
+  // const [selectedCountry, setSelectedCountry] = useState(
+  //   localStorage.getItem('country') || 'Germany'
+  // );
 
-  const countries = [
-    { name: 'Germany', code: 'de' },
-    { name: 'France', code: 'fr' },
-    { name: 'USA', code: 'us' },
-    { name: 'India', code: 'in' },
-    { name: 'UK', code: 'gb' },
-    { name: 'Canada', code: 'ca' },
-  ];
+  // const countries = [
+  //   { name: 'Germany', code: 'de' },
+  //   { name: 'France', code: 'fr' },
+  //   { name: 'USA', code: 'us' },
+  //   { name: 'India', code: 'in' },
+  //   { name: 'UK', code: 'gb' },
+  //   { name: 'Canada', code: 'ca' },
+  // ];
 
   return (
     <nav
@@ -25,9 +25,9 @@ const Header = () => {
     >
       <div className='container-fluid'>
         {/* Logo */}
-        <>
+        <Link to={'/'}>
           <img src='/images/logo.webp' alt='logo' width='65' height='60' />
-        </>
+        </Link>
 
         {/* Navbar Toggler for Mobile */}
         <button
@@ -50,7 +50,7 @@ const Header = () => {
 
           <div className='d-flex align-items-center'>
             {/* Country Dropdown */}
-            <div className='dropdown me-3'>
+            {/* <div className='dropdown me-3'>
               <button
                 className='btn btn-light dropdown-toggle d-flex align-items-center country-dropdown bg-primary border-primary'
                 type='button'
@@ -92,7 +92,7 @@ const Header = () => {
                   </li>
                 ))}
               </ul>
-            </div>
+            </div> */}
 
             {/* User Dropdown */}
             {userDetails?.id ? (
@@ -106,7 +106,7 @@ const Header = () => {
                     aria-haspopup='true'
                     aria-expanded='false'
                     style={{
-                      color: "green",
+                      color: 'green',
                     }}
                   >
                     {userDetails.supplierName}

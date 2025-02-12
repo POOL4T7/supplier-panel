@@ -10,9 +10,9 @@ const Header = () => {
   return (
     <>
       <nav className='sb-topnav navbar navbar-expand shadow-sm'>
-        <>
-          <img src='/images/logo.webp' alt='logo' width='45' height='45' />
-        </>
+        <Link to={'/admin/profile'}>
+          <img src='/images/logo.webp' alt='logo' width='65' height='60' />
+        </Link>
 
         <button
           className='btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0'
