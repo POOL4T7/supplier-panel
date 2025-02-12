@@ -4,7 +4,7 @@
       "name": "admin",
       "cwd": "./admin",
       "script": "npm",
-      "args": "run preview -- --port 5173",
+      "args": "run preview -- --port 5176",
       "env_production": {
         "NODE_ENV": "production"
       }
@@ -13,7 +13,7 @@
       "name": "supplier",
       "cwd": "./supplier",
       "script": "npm",
-      "args": "run preview -- --port 5174",
+      "args": "run preview -- --port 5177",
       "env_production": {
         "NODE_ENV": "production"
       }
@@ -22,7 +22,7 @@
       "name": "webapp",
       "cwd": "./webapp",
       "script": "npm",
-      "args": "run preview -- --port 5175",
+      "args": "run preview -- --port 5178",
       "env_production": {
         "NODE_ENV": "production"
       }
