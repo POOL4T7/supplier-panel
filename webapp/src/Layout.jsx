@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom';
 import { userDetailsAtom } from './storges/user.js';
 import { useAtom } from 'jotai';
 // import axiosInstance from './axios.js';
+// import axios from 'axios';
 
 const Layout = () => {
   const [, setUserDetails] = useAtom(userDetailsAtom);
@@ -62,6 +63,17 @@ const Layout = () => {
     //   }
     // }
 
+    // const loadPremises = async () => {
+    //   try {
+    //     const res = await axios.post(
+    //       '/proxy/productsearchsupplier/premisesListing'
+    //     );
+    //     console.log(res);
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
+    // };
+
     if (user) {
       console.log('user', user);
       // if (user.userType === 'Supplier') {
@@ -79,7 +91,7 @@ const Layout = () => {
         // navigate('/user');
       }
     }
-    // fetchRolesData();
+    // loadPremises();
   }, []);
 
   return (

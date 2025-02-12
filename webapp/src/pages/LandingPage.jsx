@@ -3,12 +3,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useState } from 'react';
-import Spinner from '../components/common/Spinner';
+import { useState, useEffect } from 'react';
+// import Spinner from '../components/common/Spinner';
 // import LocationIcon from '../components/common/LocationIcon';
 import { Autocomplete, TextField } from '@mui/material';
 // import CircularProgress from '@mui/material/CircularProgress';
-import PropTypes from 'prop-types';
+
 import { useNavigate } from 'react-router-dom';
 const formSchema = yup.object().shape({
   // country: yup.string().required("country is required"),
@@ -41,17 +41,32 @@ const formSchema2 = yup
   );
 
 const LandingPage = () => {
-  const [productList, setProductList] = useState([]);
   // const [serviceList, setServiceList] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [locationSuggestion, setLocationSuggestion] = useState([]);
   const [premisesSuggestion, setPremisesSuggestion] = useState([]);
   const [shopSuggestion, setShopSuggestion] = useState([]);
   const [searchTerm, setSearchTerm] = useState([]);
+  const [premisesList, setPremisesList] = useState([]);
 
   // const [country, setCountry] = useState("");
 
   let navigate = useNavigate();
+
+  useEffect(() => {
+    const loadPremises = async () => {
+      try {
+        const res = await axios.post(
+          '/proxy/productsearchsupplier/premisesListing'
+        );
+
+        setPremisesList(res.data);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    loadPremises();
+  }, []);
 
   const [formData, setFormData] = useState({
     address: '',
@@ -73,8 +88,6 @@ const LandingPage = () => {
 
   const onSubmitForm1 = async (data) => {
     try {
-      setProductList([]);
-      // setLoading(true);
       let loc = {};
       try {
         const x = JSON.parse(form1.watch('address'));
@@ -97,9 +110,8 @@ const LandingPage = () => {
       //   newData
       // );
 
-      // setProductList(res.data);
       navigate(`/search-result?q=${JSON.stringify(newData)}`);
-      setLoading(false);
+      // setLoading(false);
     } catch (e) {
       console.log(e);
       toast.error(e.response?.data?.message || 'Something went wrong');
@@ -108,8 +120,6 @@ const LandingPage = () => {
 
   const onSubmitForm2 = async (data) => {
     try {
-      setProductList([]);
-      setLoading(true);
       let loc = {};
       try {
         const x = JSON.parse(form2.watch('address'));
@@ -131,9 +141,9 @@ const LandingPage = () => {
       //   `/proxy/productsearchsupplier/search`,
       //   newData
       // );
-      // setProductList(res.data);
+
       navigate(`/search-result?q=${JSON.stringify(newData)}`);
-      setLoading(false);
+      // setLoading(false);
     } catch (e) {
       console.log(e);
       toast.error(e.response?.data?.message || 'Something went wrong');
@@ -284,7 +294,10 @@ const LandingPage = () => {
   return (
     <div className='search-main pt-5'>
       {/* search row start  */}
-      <div className='search-row' style={{ backgroundImage: "url('bg.jpg')" }}>
+      <div
+        className='search-row'
+        // style={{ backgroundImage: "url('bg.jpg')" }}
+      >
         <div className='search-sec'>
           {/* Country input start */}
           {/* <div className="country-box">
@@ -328,7 +341,6 @@ const LandingPage = () => {
                   aria-controls='location'
                   aria-selected='true'
                   onClick={() => {
-                    setProductList([]);
                     setFormData({ ...formData, address: null });
                     setSearchTerm([]);
                   }}
@@ -347,7 +359,6 @@ const LandingPage = () => {
                   aria-controls='premises'
                   aria-selected='false'
                   onClick={() => {
-                    setProductList([]);
                     setSearchTerm([]);
                   }}
                 >
@@ -885,202 +896,119 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
-      {/* search row end  */}
-      {/* Product List Section */}
-      <SupplierCard productList={productList} />
 
-      {/* <div className='container my-4'>
-        <div className='row g-4'>
-          {productList?.map((item) => (
+      <div style={premisesCircleStyles.container}>
+        <h2 style={premisesCircleStyles.title}>Popular Premises</h2>
+        <div style={premisesCircleStyles.grid}>
+          {premisesList.map((item) => (
             <div
-              className='col-lg-12 col-md-6'
-              key={item.supplierBusinessDetails.id}
+              key={item.premises}
+              onClick={() => {
+                navigate(`/search-result?q=${JSON.stringify(item)}`);
+              }}
+              style={premisesCircleStyles.circle}
+              onMouseEnter={(e) => {
+                Object.assign(e.currentTarget.style, {
+                  ...premisesCircleStyles.circle,
+                  ...premisesCircleStyles.circleHover,
+                });
+              }}
+              onMouseLeave={(e) => {
+                Object.assign(
+                  e.currentTarget.style,
+                  premisesCircleStyles.circle
+                );
+              }}
             >
-              <div className='card shadow-sm border-0 h-100'>
-                <div className='card-body'>
-                  
-                  <h4 className='card-title text-primary mb-2'>
-                    {item.supplierBusinessDetails.businessName}
-                  </h4>
-                  
-                  <p className='card-text text-muted mb-2'>
-                    {item.supplierBusinessDetails.businessCategory} -{' '}
-                    {item.supplierBusinessDetails.businessSubCategory}
-                  </p>
-                 
-                  <p className='card-text text-muted'>
-                    <LocationIcon />
-                    {item.supplierBusinessDetails.addressLine1},{' '}
-                    {item.supplierBusinessDetails.addressLine2},{' '}
-                    {item.supplierBusinessDetails.city},{' '}
-                    {item.supplierBusinessDetails.country}
-                  </p>
-                 
-                  <div className='mt-3'>
-                    <h6 className='text-secondary'>Products:</h6>
-                   
-                  </div>
-                  
-                  <div className='mt-3'>
-                    <a
-                      href={item.supplierBusinessDetails.website}
-                      target='_blank'
-                      rel='noopener noreferrer'
-                      className='btn btn-outline-primary btn-sm me-2'
-                    >
-                      Visit Website
-                    </a>
-                    <a
-                      href={`mailto:${item.supplierBusinessDetails.email}`}
-                      className='btn btn-outline-secondary btn-sm'
-                    >
-                      Contact Supplier
-                    </a>
-                  </div>
-                </div>
-              </div>
+              <span style={premisesCircleStyles.premisesName}>
+                {item.premises}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* <div className='d-flex justify-content-center '>
+        <div className='d-flex ' style={{ maxWidth: '1220px' }}>
+          {premisesList.map((item) => (
+            <div
+              key={item.premises}
+              className='px-2'
+              onClick={() => {
+                navigate(`/search-result?q=${JSON.stringify(item)}`);
+              }}
+              style={premisesCircleStyles.circle}
+              onMouseEnter={(e) => {
+                Object.assign(e.currentTarget.style, {
+                  ...premisesCircleStyles.circle,
+                  ...premisesCircleStyles.circleHover,
+                });
+              }}
+              onMouseLeave={(e) => {
+                Object.assign(
+                  e.currentTarget.style,
+                  premisesCircleStyles.circle
+                );
+              }}
+            >
+              <span style={premisesCircleStyles.premisesName}>
+                {item.premises}
+              </span>
             </div>
           ))}
         </div>
       </div> */}
-
-      {/* No Product Found */}
-      {productList?.length === 0 && (
-        <div className='d-flex justify-content-center'>
-          <h4>No Product found?</h4>
-        </div>
-      )}
-      {loading && (
-        <>
-          <div className='d-flex'>
-            <Spinner />
-          </div>
-        </>
-      )}
     </div>
   );
 };
 
 export default LandingPage;
 
-const SupplierCard = ({ productList }) => {
-  let navigate = useNavigate();
-  return (
-    <div className='container my-5 mb-5'>
-      <div className='row'>
-        {productList.map((item) => (
-          <div
-            key={item.id}
-            className='col-md-6 cursor-pointer'
-            onClick={() =>
-              navigate(
-                `/supplier-details?id=${item.supplierBusinessDetails.id}`
-              )
-            }
-            style={{
-              height: '100%',
-              maxHeight: '300px',
-              cursor: 'pointer',
-            }}
-          >
-            <div
-              className='card business-card p-2 d-flex flex-row align-items-start mb-5'
-              style={{
-                height: '100%',
-                overflow: 'hidden', // Hide overflow content
-                maxHeight: '300px',
-              }}
-            >
-              <div className='me-3'>
-                {item.supplierBusinessDetails.businessImagePath ? (
-                  <div
-                    className='d-flex align-items-center justify-content-center bg-light text-dark'
-                    style={{
-                      width: '300px',
-                      height: '300px',
-                      border: '1px solid #ddd',
-                      borderRadius: '5px',
-                    }}
-                  >
-                    <img
-                      src={item.supplierBusinessDetails.businessImagePath}
-                      alt='Business Image'
-                      width='300px'
-                      height='300px'
-                      style={{
-                        objectFit: 'cover', // Ensures the image fits well
-                        borderRadius: '5px',
-                        border: '1px solid #ddd',
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div
-                    className='d-flex align-items-center justify-content-center bg-light text-dark'
-                    style={{
-                      width: '250px',
-                      height: '250px',
-                      border: '1px solid #ddd',
-                      borderRadius: '5px',
-                    }}
-                  >
-                    No Image Found
-                  </div>
-                )}
-              </div>
-
-              <div className='content-wrapper'>
-                <h3 className='fw-bold'>
-                  {item.supplierBusinessDetails.businessName}
-                </h3>
-                <p
-                  style={{
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap', // Adjust for single-line truncation
-                  }}
-                >
-                  {item.supplierBusinessDetails.aboutUs}
-                </p>
-
-                <div className='mb-5'>
-                  {Object.keys(item.matchedSearchTermNames).map(
-                    (key) =>
-                      item?.matchedSearchTermNames[key]?.length > 0 && (
-                        <div key={key} className='mb-1 d-flex flex-wrap '>
-                          {/* <h4>{key.replace(/([A-Z])/g, ' $1')}</h4> */}
-
-                          {/* {item.matchedSearchTermNames[key]
-                        .slice(0, 4)
-                        .map((item, index) => (
-                          <span
-                            key={index}
-                            className='badge rounded-pill bg-dark px-3 py-2 text-white'
-                            style={{ cursor: 'pointer' }}
-                          >
-                            {item}
-                          </span>
-                        ))} */}
-                          <p>
-                            <strong>{key.replace(/([A-Z])/g, ' $1')}:-</strong>{' '}
-                            {item.matchedSearchTermNames[key].length > 0 &&
-                              item.matchedSearchTermNames[key]
-                                .slice(0, 4)
-                                .join(', ')}
-                          </p>
-                        </div>
-                      )
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-SupplierCard.propTypes = {
-  productList: PropTypes.array,
+const premisesCircleStyles = {
+  container: {
+    padding: '1rem',
+    maxWidth: '1200px', // Add max width for better control
+    margin: '0 auto', // Center the container
+    width: '100%',
+  },
+  title: {
+    textAlign: 'center',
+    marginBottom: '2rem',
+    color: '#333',
+    fontSize: '2rem',
+  },
+  grid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    gap: '2rem',
+    padding: '1rem',
+    justifyItems: 'center', // Center items horizontally
+    maxWidth: '1000px', // Control maximum width of the grid
+    margin: '0 auto', // Center the grid
+  },
+  circle: {
+    width: '200px',
+    height: '200px',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 6px 6px 6px rgba(0, 0, 0, 0.1)',
+    padding: '1rem',
+    textAlign: 'center',
+    border: '2px solid #e0e0e0',
+    // backgroundColor: '#ffffff', // Add background color
+  },
+  circleHover: {
+    transform: 'translateY(-5px)',
+    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
+    borderColor: '#355e3b',
+  },
+  premisesName: {
+    fontSize: '1.5rem',
+    fontWeight: 'bold',
+    color: '#354013',
+    wordBreak: 'break-word',
+  },
 };
