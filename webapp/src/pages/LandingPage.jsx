@@ -183,6 +183,7 @@ const LandingPage = () => {
       return;
     }
     let loc = {};
+    console.log(form2.watch('address'), "form2.watch('address')");
     try {
       try {
         const x = JSON.parse(form2.watch('address'));
@@ -290,7 +291,7 @@ const LandingPage = () => {
     500
   );
   const debouncedSearchTerm = debounceFetch(handleSearchTerm, 500);
-  console.log(form2.formState.errors);
+  console.log(form2.getValues());
   return (
     <div className='search-main pt-5'>
       {/* search row start  */}
@@ -424,11 +425,7 @@ const LandingPage = () => {
                           }}
                           size='small'
                           fullWidth
-                          value={
-                            locationSuggestion.find(
-                              (option) => option.value === field.value
-                            ) || null
-                          } // Map `field.value` back to the selected option
+                          value={field.value} // Map `field.value` back to the selected option
                           renderInput={(params) => (
                             <TextField
                               {...params}
@@ -579,11 +576,7 @@ const LandingPage = () => {
                           }}
                           size='small'
                           fullWidth
-                          value={
-                            locationSuggestion.find(
-                              (option) => option.value === field.value
-                            ) || null
-                          }
+                          value={field.value}
                           renderInput={(params) => (
                             <TextField
                               {...params}
@@ -904,7 +897,28 @@ const LandingPage = () => {
             <div
               key={item.premises}
               onClick={() => {
-                navigate(`/search-result?q=${JSON.stringify(item)}`);
+                // navigate(`/search-result?q=${JSON.stringify(item)}`);
+                switchToBusinessTab();
+
+                // Update location suggestions to show the selected location
+                if (item.address) {
+                  setLocationSuggestion([
+                    {
+                      label: Object.values(item.address)
+                        .filter((x) => x != null)
+                        .join(', '),
+                      value: JSON.stringify(item),
+                    },
+                  ]);
+                  form2.setValue('address', {
+                    value: JSON.stringify(item.address),
+                    label: Object.values(item.address)
+                      .filter((x) => x != null)
+                      .join(', '),
+                  });
+                }
+
+                form2.setValue('premises', item.premises);
               }}
               style={premisesCircleStyles.circle}
               onMouseEnter={(e) => {
@@ -960,7 +974,12 @@ const LandingPage = () => {
     </div>
   );
 };
-
+const switchToBusinessTab = () => {
+  const premisesTab = document.querySelector('#premises-tab');
+  if (premisesTab) {
+    premisesTab.click();
+  }
+};
 export default LandingPage;
 
 const premisesCircleStyles = {
