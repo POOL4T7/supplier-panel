@@ -13,5 +13,5 @@ export default defineConfig({
       },
     },
   },
-  base: '/app2/',
+  base: '/supplier',
 });

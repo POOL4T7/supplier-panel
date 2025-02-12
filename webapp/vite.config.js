@@ -13,5 +13,5 @@ export default defineConfig({
       },
     },
   },
-  base: '/app3/',
+  base: '/webapp',
 });
