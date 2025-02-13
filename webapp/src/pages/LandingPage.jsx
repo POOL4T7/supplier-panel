@@ -124,6 +124,7 @@ const LandingPage = () => {
   const onSubmitForm2 = async (data) => {
     try {
       let loc = {};
+      console.log("form2.watch('address')", form2.watch('address'));
       try {
         const x = JSON.parse(form2.watch('address'));
         loc = x;
@@ -580,7 +581,6 @@ const LandingPage = () => {
                     <Controller
                       name='address'
                       control={form2.control}
-                      // defaultValue=''
                       rules={{
                         required: 'Location is required',
                       }}
@@ -592,14 +592,19 @@ const LandingPage = () => {
                           getOptionLabel={(option) =>
                             typeof option === 'string' ? option : option.label
                           }
-                          onInputChange={(event, value) => {
-                            field.onChange(value || '');
-                            if (value.length > 2) {
-                              debouncedInputChange(value);
+                          isOptionEqualToValue={(option, value) =>
+                            option.value === value
+                          }
+                          onInputChange={(event, value, reason) => {
+                            if (reason === 'input') {
+                              form2.setValue('address', value || '');
+                              if (value.length > 2) {
+                                debouncedInputChange(value);
+                              }
                             }
                           }}
                           onChange={(event, value) => {
-                            field.onChange(value?.value || '');
+                            form2.setValue('address', value ? value.value : '');
                           }}
                           size='small'
                           fullWidth
@@ -619,35 +624,6 @@ const LandingPage = () => {
                                 form2.formState.errors.address?.message
                               }
                             />
-                          )}
-                          slotProps={{
-                            popper: {
-                              modifiers: [
-                                {
-                                  name: 'preventOverflow',
-                                  options: { boundary: 'window' },
-                                },
-                              ],
-                            },
-                            paper: {
-                              sx: {
-                                minWidth: '300px', // Ensures dropdown is wider
-                              },
-                            },
-                          }}
-                          renderOption={(props, option) => (
-                            <li
-                              {...props}
-                              style={{
-                                whiteSpace: 'nowrap', // Prevent text wrapping
-                                overflow: 'hidden', // Hide overflow
-                                textOverflow: 'ellipsis', // Add "..." if text is too long
-                                minWidth: '300px', // Make dropdown wider
-                                padding: '8px 12px', // Improve spacing
-                              }}
-                            >
-                              {option.label}
-                            </li>
                           )}
                         />
                       )}
@@ -932,15 +908,18 @@ const LandingPage = () => {
                 onClick={() => {
                   switchToBusinessTab();
                   if (item.address) {
-                    setLocationSuggestion([
-                      {
-                        label: Object.values(item.address)
-                          .filter((x) => x != null)
-                          .join(', '),
-                        value: JSON.stringify(item.address),
-                      },
-                    ]);
-                    form2.setValue('address', JSON.stringify(item.address));
+                    const formattedValue = JSON.stringify(item.address);
+                    const formattedLabel = Object.values(item.address)
+                      .filter((x) => x != null)
+                      .join(', ');
+
+                    const newOption = {
+                      label: formattedLabel,
+                      value: formattedValue,
+                    };
+
+                    form2.setValue('address', formattedValue); // Ensure form field updates
+                    setLocationSuggestion((prev) => [...prev, newOption]);
                   }
                   form2.setValue('premises', item.premises);
                 }}
