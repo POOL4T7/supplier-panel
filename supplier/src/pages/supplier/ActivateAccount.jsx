@@ -22,7 +22,9 @@ const ActivateAccount = () => {
         formData
       );
 
-      toast.success(res.data?.data?.message || 'Supplier profile updated');
+      toast.success(
+        res.data?.data?.message || 'Supplier Account status updated'
+      );
       setIsSubmitting(false);
     } catch (e) {
       toast.error(

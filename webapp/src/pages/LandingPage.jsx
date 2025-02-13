@@ -10,6 +10,7 @@ import { Autocomplete, TextField } from '@mui/material';
 // import CircularProgress from '@mui/material/CircularProgress';
 
 import { useNavigate } from 'react-router-dom';
+import Spinner from '../components/common/Spinner';
 const formSchema = yup.object().shape({
   // country: yup.string().required("country is required"),
   address: yup.string().required('location is required'),
@@ -42,7 +43,7 @@ const formSchema2 = yup
 
 const LandingPage = () => {
   // const [serviceList, setServiceList] = useState([]);
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [locationSuggestion, setLocationSuggestion] = useState([]);
   const [premisesSuggestion, setPremisesSuggestion] = useState([]);
   const [shopSuggestion, setShopSuggestion] = useState([]);
@@ -56,11 +57,13 @@ const LandingPage = () => {
   useEffect(() => {
     const loadPremises = async () => {
       try {
+        setLoading(true);
         const res = await axios.post(
           '/proxy/productsearchsupplier/premisesListing'
         );
 
         setPremisesList(res.data);
+        setLoading(false);
       } catch (e) {
         console.log(e);
       }
@@ -291,7 +294,27 @@ const LandingPage = () => {
     500
   );
   const debouncedSearchTerm = debounceFetch(handleSearchTerm, 500);
-  console.log(form2.getValues());
+
+  const buildImage = (base64String) => {
+    try {
+      // Check if the string is empty or undefined
+      if (!base64String) {
+        return null;
+      }
+
+      // If the string already starts with 'data:', return as is
+      if (base64String.startsWith('data:')) {
+        return base64String;
+      }
+
+      // Create a complete data URL by adding the prefix
+      const imageUrl = `data:image/jpeg;base64,${base64String}`;
+      return imageUrl;
+    } catch (error) {
+      console.error('Error creating image URL:', error);
+      return null;
+    }
+  };
   return (
     <div className='search-main pt-5'>
       {/* search row start  */}
@@ -425,7 +448,11 @@ const LandingPage = () => {
                           }}
                           size='small'
                           fullWidth
-                          value={field.value} // Map `field.value` back to the selected option
+                          value={
+                            locationSuggestion.find(
+                              (item) => item.value === field.value
+                            ) || null
+                          } // Map `field.value` back to the selected option
                           renderInput={(params) => (
                             <TextField
                               {...params}
@@ -553,7 +580,7 @@ const LandingPage = () => {
                     <Controller
                       name='address'
                       control={form2.control}
-                      defaultValue=''
+                      // defaultValue=''
                       rules={{
                         required: 'Location is required',
                       }}
@@ -576,7 +603,11 @@ const LandingPage = () => {
                           }}
                           size='small'
                           fullWidth
-                          value={field.value}
+                          value={
+                            locationSuggestion.find(
+                              (item) => item.value === field.value
+                            ) || null
+                          }
                           renderInput={(params) => (
                             <TextField
                               {...params}
@@ -892,88 +923,53 @@ const LandingPage = () => {
 
       <div style={premisesCircleStyles.container}>
         <h2 style={premisesCircleStyles.title}>Popular Premises</h2>
+        <div className='d-flex'>{loading && <Spinner />}</div>
         <div style={premisesCircleStyles.grid}>
-          {premisesList.map((item) => (
-            <div
-              key={item.premises}
-              onClick={() => {
-                // navigate(`/search-result?q=${JSON.stringify(item)}`);
-                switchToBusinessTab();
-
-                // Update location suggestions to show the selected location
-                if (item.address) {
-                  setLocationSuggestion([
-                    {
-                      label: Object.values(item.address)
-                        .filter((x) => x != null)
-                        .join(', '),
-                      value: JSON.stringify(item),
-                    },
-                  ]);
-                  form2.setValue('address', {
-                    value: JSON.stringify(item.address),
-                    label: Object.values(item.address)
-                      .filter((x) => x != null)
-                      .join(', '),
-                  });
-                }
-
-                form2.setValue('premises', item.premises);
-              }}
-              style={premisesCircleStyles.circle}
-              onMouseEnter={(e) => {
-                Object.assign(e.currentTarget.style, {
+          {premisesList.map((item) => {
+            return (
+              <div
+                key={item.premises}
+                onClick={() => {
+                  switchToBusinessTab();
+                  if (item.address) {
+                    setLocationSuggestion([
+                      {
+                        label: Object.values(item.address)
+                          .filter((x) => x != null)
+                          .join(', '),
+                        value: JSON.stringify(item.address),
+                      },
+                    ]);
+                    form2.setValue('address', JSON.stringify(item.address));
+                  }
+                  form2.setValue('premises', item.premises);
+                }}
+                style={{
                   ...premisesCircleStyles.circle,
-                  ...premisesCircleStyles.circleHover,
-                });
-              }}
-              onMouseLeave={(e) => {
-                Object.assign(
-                  e.currentTarget.style,
-                  premisesCircleStyles.circle
-                );
-              }}
-            >
-              <span style={premisesCircleStyles.premisesName}>
-                {item.premises}
-              </span>
-            </div>
-          ))}
+                  // ...(isHovered ? premisesCircleStyles.circleHover : {}),
+                }}
+                // onMouseEnter={() => setIsHovered(true)}
+                // onMouseLeave={() => setIsHovered(false)}
+              >
+                {item.image && (
+                  <img
+                    src={buildImage(item.image)}
+                    alt={item.premises}
+                    style={premisesCircleStyles.circleImage}
+                  />
+                )}
+                <div style={premisesCircleStyles.premisesName}>
+                  {item.premises}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
-      {/* <div className='d-flex justify-content-center '>
-        <div className='d-flex ' style={{ maxWidth: '1220px' }}>
-          {premisesList.map((item) => (
-            <div
-              key={item.premises}
-              className='px-2'
-              onClick={() => {
-                navigate(`/search-result?q=${JSON.stringify(item)}`);
-              }}
-              style={premisesCircleStyles.circle}
-              onMouseEnter={(e) => {
-                Object.assign(e.currentTarget.style, {
-                  ...premisesCircleStyles.circle,
-                  ...premisesCircleStyles.circleHover,
-                });
-              }}
-              onMouseLeave={(e) => {
-                Object.assign(
-                  e.currentTarget.style,
-                  premisesCircleStyles.circle
-                );
-              }}
-            >
-              <span style={premisesCircleStyles.premisesName}>
-                {item.premises}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div> */}
     </div>
   );
 };
+
 const switchToBusinessTab = () => {
   const premisesTab = document.querySelector('#premises-tab');
   if (premisesTab) {
@@ -984,50 +980,57 @@ export default LandingPage;
 
 const premisesCircleStyles = {
   container: {
-    padding: '1rem',
-    maxWidth: '1200px', // Add max width for better control
-    margin: '0 auto', // Center the container
+    maxWidth: '1200px',
+    margin: '0 auto',
     width: '100%',
   },
   title: {
     textAlign: 'center',
-    marginBottom: '2rem',
+    marginBottom: '3rem',
     color: '#333',
-    fontSize: '2rem',
+    fontSize: '2.5rem',
+    fontWeight: 'bold',
   },
   grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    display: 'flex',
+    flexWrap: 'wrap',
     gap: '2rem',
+    justifyContent: 'center',
     padding: '1rem',
-    justifyItems: 'center', // Center items horizontally
-    maxWidth: '1000px', // Control maximum width of the grid
-    margin: '0 auto', // Center the grid
   },
   circle: {
-    width: '200px',
-    height: '200px',
+    position: 'relative',
+    width: '220px',
+    height: '220px',
     borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    boxShadow: '0 6px 6px 6px rgba(0, 0, 0, 0.1)',
-    padding: '1rem',
-    textAlign: 'center',
+    backgroundColor: '#ffffff',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     border: '2px solid #e0e0e0',
-    // backgroundColor: '#ffffff', // Add background color
+    overflow: 'hidden',
+    transition: 'all 0.3s ease',
+    cursor: 'pointer',
   },
   circleHover: {
     transform: 'translateY(-5px)',
-    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
+    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
     borderColor: '#355e3b',
   },
+  circleImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+  },
   premisesName: {
-    fontSize: '1.5rem',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: '15px 10px',
+    backgroundColor: '#e0e2da',
+    color: 'rgb(59 66 35)',
+    fontSize: '1.1rem',
     fontWeight: 'bold',
-    color: '#354013',
-    wordBreak: 'break-word',
+    textAlign: 'center',
+    margin: 0,
   },
 };
