@@ -170,11 +170,17 @@ const SearchResult = () => {
                   <button
                     className='btn btn-success fw-bold'
                     onClick={() => {
-                      // copy the mobileNumber and call
+                      const phoneNumber = item?.mobileNumber; // Replace with your dynamic phone number
+                      if (phoneNumber) {
+                        window.location.href = `tel:${phoneNumber}`;
+                      } else {
+                        alert('No phone number available');
+                      }
                     }}
                   >
                     Contact
                   </button>
+
                   <a
                     href={`/supplier-details?id=${item.supplierBusinessDetails.businessId}`}
                     className='text-success fw-bold'
