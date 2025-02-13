@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { userDetailsAtom } from '../../storges/user';
 import { useState } from 'react';
+import { CircleUserRound } from 'lucide-react';
 
 const Header = () => {
   const [userDetails] = useAtom(userDetailsAtom);
@@ -52,12 +53,12 @@ const Header = () => {
             {/* Country Dropdown */}
             <div className='dropdown me-3'>
               <button
-                className='btn btn-light dropdown-toggle d-flex align-items-center country-dropdown bg-primary border-primary'
+                className='btn btn-light dropdown-toggle d-flex align-items-center country-dropdown border-primary'
                 type='button'
                 id='countryDropdown'
                 data-bs-toggle='dropdown'
                 aria-expanded='false'
-                // style={{}}
+                style={{ backgroundColor: '#90875c' }}
               >
                 <img
                   src={`https://flagcdn.com/w40/${
@@ -134,9 +135,26 @@ const Header = () => {
                 </li>
               </ul>
             ) : (
-              <Link to='/signin' className='nav-link text-white p-3'>
-                Login
-              </Link>
+              <>
+                <Link to='/signin' className='nav-link text-white p-3'>
+                  <CircleUserRound size={30} color='#90875c' /> User
+                </Link>
+                <span> | </span>
+                <Link
+                  to='http://16.171.137.96:5174/'
+                  className='nav-link text-white p-3'
+                >
+                  <img
+                    src='/images/supplier.webp'
+                    style={{
+                      width: '30px',
+                      height: '30px',
+                      borderRadius: '50%',
+                    }}
+                  />{' '}
+                  Supplier
+                </Link>
+              </>
             )}
           </div>
         </div>
