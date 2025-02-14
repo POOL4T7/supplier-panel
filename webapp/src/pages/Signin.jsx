@@ -58,6 +58,8 @@ const LoginForm = () => {
         localStorage.setItem('authAccessToken', res.data.accessToken);
 
         window.location.href = '/user/profile';
+      } else {
+        toast.warn('User is not registred');
       }
     } catch (e) {
       toast.error(e.response?.data?.errorMessage || 'Something went wrong');

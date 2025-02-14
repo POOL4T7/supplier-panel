@@ -57,7 +57,7 @@ const LoginForm = () => {
       //   window.location.href = '/supplier/profile';
       // }
       else {
-        // window.location.href = '/user/profile';
+        toast.warn('User is not registred as admin');
         localStorage.clear();
       }
     } catch (e) {

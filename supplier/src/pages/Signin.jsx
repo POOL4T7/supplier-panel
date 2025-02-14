@@ -55,6 +55,8 @@ const LoginForm = () => {
         localStorage.setItem('user', JSON.stringify(res.data?.userDetails));
         localStorage.setItem('authAccessToken', res.data.accessToken);
         window.location.href = '/supplier/profile';
+      } else {
+        toast.warn('User is not registred as supplier');
       }
       //  else {
       //   window.location.href = '/user/profile';
