@@ -286,7 +286,7 @@ const ProductCategory = () => {
   return (
     <>
       <div className='row'>
-        <div className='col-7'>
+        <div className='col-12 col-md-7'>
           <>
             <div className='mb-2'>
               <CreatableSelect
@@ -498,7 +498,7 @@ const ProductCategory = () => {
             </div>
           )}
         </div>
-        <div className='col-5'>
+        <div className='col-12 col-md-5 mt-1'>
           <div className=' mb-5'>
             <h4>Your Categories by bussiness description</h4>
             <div className='accordion' id='categoryAccordion'>

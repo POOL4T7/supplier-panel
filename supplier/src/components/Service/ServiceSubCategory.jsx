@@ -238,154 +238,158 @@ const ServiceSubCategory = () => {
           <Spinner />
         </div>
       ) : (
-        <div className='container'>
-          <div className='mb-3'>
-            <div className='row'>
-              <div className='col-10'>
-                <h3>Add Service Sub Category</h3>
+        <div className='row'>
+          <div className='col-12 col-md-7'>
+            <div className='mb-3'>
+              <h3>Add Service Sub Category</h3>
+              <div className='mb-2'>
+                <select
+                  className='form-select'
+                  id='categoryName'
+                  onChange={bussinessDescription}
+                >
+                  <option value=''>Select bussiness description</option>
+                  {descriptionList.map((item) => (
+                    <option key={item} value={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <select
+                  className='form-select'
+                  id='categoryName'
+                  onChange={changeCategory}
+                >
+                  {changeDescriptionLoading ? (
+                    <option>Loading...</option>
+                  ) : (
+                    <option value='null'>Select Category</option>
+                  )}
+                  {categoryList.map((item) => (
+                    <option key={item.id} value={JSON.stringify(item)}>
+                      {item.categoryName}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
-            <div className='mb-2'>
-              <select
-                className='form-select'
-                id='categoryName'
-                onChange={bussinessDescription}
-              >
-                <option value=''>Select bussiness description</option>
-                {descriptionList.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <select
-                className='form-select'
-                id='categoryName'
-                onChange={changeCategory}
-              >
-                {changeDescriptionLoading ? (
-                  <option>Loading...</option>
-                ) : (
-                  <option value='null'>Select Category</option>
-                )}
-                {categoryList.map((item) => (
-                  <option key={item.id} value={JSON.stringify(item)}>
-                    {item.categoryName}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          {category && (
-            <>
-              <form>
-                <div className='row'>
-                  <div className='col-10'>
-                    <div className='mb-2'>
-                      <input
-                        type='text'
-                        value={subCategoriesValue}
-                        className='form-control'
-                        placeholder='Enter sub category name'
-                        onChange={(e) => setSubCategoriesValue(e.target.value)}
-                      />
+            {category && (
+              <>
+                <form>
+                  <div className='row'>
+                    <div className='col-10'>
+                      <div className='mb-2'>
+                        <input
+                          type='text'
+                          value={subCategoriesValue}
+                          className='form-control'
+                          placeholder='Enter sub category name'
+                          onChange={(e) =>
+                            setSubCategoriesValue(e.target.value)
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className='col-2'>
+                      <button
+                        className='btn btn-primary'
+                        onClick={handleAddProduct}
+                        disabled={!subCategoriesValue}
+                      >
+                        Add
+                      </button>
                     </div>
                   </div>
-                  <div className='col-2'>
+                </form>
+                <div className='row'>
+                  <div className='col-md-5'>
+                    <input
+                      type='text'
+                      value={searchUploaded}
+                      className='form-control mb-3'
+                      placeholder='Search uploaded sub categories'
+                      onChange={(e) =>
+                        setSearchUploaded(e.target.value, 'uploaded')
+                      }
+                    />
+                    <div
+                      className='border p-3'
+                      style={{ height: '60vh', overflowY: 'scroll' }}
+                    >
+                      <h5>Uploaded Categories</h5>
+                      {filteredUploadedCategories?.map((product) => (
+                        <div key={product.id} className='form-check mb-2'>
+                          <input
+                            type='checkbox'
+                            className='form-check-input'
+                            checked={selectedSubCategories.includes(product)}
+                            onChange={() =>
+                              toggleSelectProduct(product, 'left')
+                            }
+                          />
+                          <label className='form-check-label'>
+                            {product.subCategoryName}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className='col-md-2 d-flex flex-column justify-content-center align-items-center'>
+                    <button
+                      className='btn btn-primary mb-2'
+                      onClick={moveToRight}
+                      disabled={!isRightSelected}
+                    >
+                      &gt;&gt;
+                    </button>
                     <button
                       className='btn btn-primary'
-                      onClick={handleAddProduct}
-                      disabled={!subCategoriesValue}
+                      onClick={moveToLeft}
+                      disabled={!isLeftSelected}
                     >
-                      Add
+                      &lt;&lt;
                     </button>
                   </div>
-                </div>
-              </form>
-              <div className='row'>
-                <div className='col-md-5'>
-                  <input
-                    type='text'
-                    value={searchUploaded}
-                    className='form-control mb-3'
-                    placeholder='Search uploaded sub categories'
-                    onChange={(e) =>
-                      setSearchUploaded(e.target.value, 'uploaded')
-                    }
-                  />
-                  <div
-                    className='border p-3'
-                    style={{ height: '60vh', overflowY: 'scroll' }}
-                  >
-                    <h5>Uploaded Categories</h5>
-                    {filteredUploadedCategories?.map((product) => (
-                      <div key={product.id} className='form-check mb-2'>
-                        <input
-                          type='checkbox'
-                          className='form-check-input'
-                          checked={selectedSubCategories.includes(product)}
-                          onChange={() => toggleSelectProduct(product, 'left')}
-                        />
-                        <label className='form-check-label'>
-                          {product.subCategoryName}
-                        </label>
-                      </div>
-                    ))}
+
+                  <div className='col-md-5'>
+                    <input
+                      type='text'
+                      value={searchMoved}
+                      className='form-control mb-3'
+                      placeholder='Search moved sub categories'
+                      onChange={(e) => setSearchMoved(e.target.value, 'moved')}
+                    />
+                    <div
+                      className='border p-3'
+                      style={{ height: '60vh', overflowY: 'scroll' }}
+                    >
+                      <h5>Moved Categories</h5>
+
+                      {filteredMovedCategories.map((product) => (
+                        <div key={product.id} className='form-check mb-2'>
+                          <input
+                            type='checkbox'
+                            className='form-check-input'
+                            checked={selectedSubCategories.includes(product)}
+                            onChange={() =>
+                              toggleSelectProduct(product, 'right')
+                            }
+                          />
+                          <label className='form-check-label'>
+                            {product.subCategoryName}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-
-                <div className='col-md-2 d-flex flex-column justify-content-center align-items-center'>
-                  <button
-                    className='btn btn-primary mb-2'
-                    onClick={moveToRight}
-                    disabled={!isRightSelected}
-                  >
-                    &gt;&gt;
-                  </button>
-                  <button
-                    className='btn btn-primary'
-                    onClick={moveToLeft}
-                    disabled={!isLeftSelected}
-                  >
-                    &lt;&lt;
-                  </button>
-                </div>
-
-                <div className='col-md-5'>
-                  <input
-                    type='text'
-                    value={searchMoved}
-                    className='form-control mb-3'
-                    placeholder='Search moved sub categories'
-                    onChange={(e) => setSearchMoved(e.target.value, 'moved')}
-                  />
-                  <div
-                    className='border p-3'
-                    style={{ height: '60vh', overflowY: 'scroll' }}
-                  >
-                    <h5>Moved Categories</h5>
-
-                    {filteredMovedCategories.map((product) => (
-                      <div key={product.id} className='form-check mb-2'>
-                        <input
-                          type='checkbox'
-                          className='form-check-input'
-                          checked={selectedSubCategories.includes(product)}
-                          onChange={() => toggleSelectProduct(product, 'right')}
-                        />
-                        <label className='form-check-label'>
-                          {product.subCategoryName}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-          <div className=' mt-5 mb-5'>
+              </>
+            )}
+          </div>
+          <div className='col-12 col-md-5 mt-1'>
             <h4>Your Sub Categories</h4>
             <div className='accordion' id='categoryAccordion'>
               {structure.map((desc, idx) => (

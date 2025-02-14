@@ -18,7 +18,7 @@ const addressSchema = yup.object().shape({
 
 const Tax = () => {
   const [supplier] = useAtom(userDetailsAtom);
-  const [bussiness, setBussiness] = useAtom(bussinessProfile);
+  const [bussiness] = useAtom(bussinessProfile);
   //   const navigate = useNavigate();
   const [certificate, setCertificate] = useState(null);
   // const [shopImageFile, setShopImageFile] = useState(null);
@@ -40,6 +40,7 @@ const Tax = () => {
     file: '',
     extension: '',
   });
+
   const {
     register,
     handleSubmit,
@@ -54,16 +55,21 @@ const Tax = () => {
       data.certificateImagePath = certificateLink;
       data.businessImagePath = shopImageLink;
       data.businessLogoPath = shopLogoLink;
+      console.log({
+        ...data,
+        supplierId: supplier.id,
+        supplierBusinessId: bussiness.id,
+      });
 
       const res = await axiosInstance.post(
         `/proxy/productsearchsupplier/api/supplier/file/addSupplierBusinessNatureAndTaxDetails`,
         { ...data, supplierId: supplier.id, supplierBusinessId: bussiness.id }
       );
-      console.log(res);
+
       toast.success(
         res.data?.data?.message || 'Supplier bussiness profile updated'
       );
-      setBussiness({ ...bussiness, ...data });
+      // setBussiness({ ...bussiness, ...data });
       // saveData(data); // Save step data before moving on
     } catch (e) {
       console.log(e);
@@ -81,6 +87,13 @@ const Tax = () => {
     if (bussiness?.id) {
       if (bussiness.sector) x.sector = bussiness.sector;
       if (bussiness.businessTaxId) x.businessTaxId = bussiness.businessTaxId;
+      if (bussiness.businessImagePath)
+        setShopImageLink(bussiness.businessImagePath);
+      if (bussiness.businessLogoPath)
+        setShopLogoLink(bussiness.businessLogoPath);
+      if (bussiness.certificateImagePath)
+        setCertificateLink(bussiness.certificateImagePath);
+
       reset(x);
       const fetchByteArray = async (type) => {
         try {
@@ -96,7 +109,6 @@ const Tax = () => {
 
           let docType = 'application/pdf'; // Default to PDF
           if (type === 'Certificate' && bussiness.certificateImagePath) {
-            console.log(type, bussiness.certificateImagePath);
             const extension = bussiness.certificateImagePath
               .split('.')
               .pop()
@@ -107,7 +119,7 @@ const Tax = () => {
             }
           }
           // alert(type , bussiness.certificateImagePath )
-          if (type === 'BusinessImage') {
+          else {
             // Assuming BusinessImage is always PNG for now
             docType = 'image/png';
           }
@@ -127,8 +139,6 @@ const Tax = () => {
           } else {
             setShopLogo({ file: url, extension: docType.split('/').pop() });
           }
-
-          console.log('Generated Blob URL:', url);
         } catch (error) {
           console.error('Error fetching byte array:', error);
         }
@@ -139,7 +149,7 @@ const Tax = () => {
       if (bussiness.businessLogoPath) fetchByteArray('BusinessLogo');
     }
   }, [reset, bussiness]);
-
+  // console.log(getValues());
   const uplaodCertificate = async () => {
     // e.preventDefault();
     setImageLoading(true);

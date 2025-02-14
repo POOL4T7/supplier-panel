@@ -134,8 +134,18 @@ const Header = () => {
                 </li>
               </ul>
             ) : (
-              <Link to='/signin' className='nav-link text-white p-3'>
-                Login
+              <Link to='/signin' className='nav-link text-white px-3'>
+                <div className='d-flex justify-content-center'>
+                  <img
+                    src='/images/supplier.webp'
+                    style={{
+                      width: '25px',
+                      height: '25px',
+                      borderRadius: '50%',
+                    }}
+                  />{' '}
+                </div>
+                login
               </Link>
             )}
           </div>

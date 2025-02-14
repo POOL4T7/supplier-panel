@@ -136,23 +136,28 @@ const Header = () => {
               </ul>
             ) : (
               <>
-                <Link to='/signin' className='nav-link text-white p-3'>
-                  <CircleUserRound size={30} color='#90875c' /> User
+                <Link to='/signin' className='nav-link text-white px-3'>
+                  <div className='d-flex justify-content-center'>
+                    <CircleUserRound size={25} color='#90875c' />
+                  </div>{' '}
+                  User login
                 </Link>
                 <span> | </span>
                 <Link
                   to='http://16.171.137.96:5174/'
-                  className='nav-link text-white p-3'
+                  className='nav-link text-white px-3'
                 >
-                  <img
-                    src='/images/supplier.webp'
-                    style={{
-                      width: '30px',
-                      height: '30px',
-                      borderRadius: '50%',
-                    }}
-                  />{' '}
-                  Supplier
+                  <div className='d-flex justify-content-center'>
+                    <img
+                      src='/images/supplier.webp'
+                      style={{
+                        width: '25px',
+                        height: '25px',
+                        borderRadius: '50%',
+                      }}
+                    />{' '}
+                  </div>
+                  Supplier login
                 </Link>
               </>
             )}

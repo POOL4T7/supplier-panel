@@ -161,14 +161,18 @@ const ServiceList = () => {
   }, []);
 
   return (
-    <>
+    <div className='d-flex justify-content-center'>
       {laoding ? (
         <div className='d-flex'>
           {' '}
           <Spinner />
         </div>
       ) : (
-        <div className='container'>
+        <div
+          style={{
+            maxWidth: '600px',
+          }}
+        >
           <div className='mb-3'>
             <div className='d-flex justify-content-between mb-2'>
               <h3>Upload Service File</h3>
@@ -239,7 +243,7 @@ const ServiceList = () => {
           </form>
           <div
             className='row align-items-center justify-content-between'
-            style={{ maxHeight: '80vh', height: '100%' }}
+            style={{ maxHeight: '60vh', height: '100%' }}
           >
             <div
               className='col-md-5 border p-3'
@@ -317,7 +321,7 @@ const ServiceList = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
