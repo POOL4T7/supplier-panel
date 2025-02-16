@@ -625,6 +625,23 @@ const LandingPage = () => {
                               }
                             />
                           )}
+                          slotProps={{
+                            popper: {
+                              modifiers: [
+                                {
+                                  name: 'preventOverflow',
+                                  options: { boundary: 'window' },
+                                },
+                              ],
+                            },
+                            paper: {
+                              sx: {
+                                width: 'auto', // Adjust width based on content
+                                minWidth: 'max-content', // Ensures it doesn’t shrink to input width
+                                maxWidth: '800px', // Optional: Limit maximum width
+                              },
+                            },
+                          }}
                         />
                       )}
                     />
@@ -686,22 +703,14 @@ const LandingPage = () => {
                             },
                             paper: {
                               sx: {
-                                minWidth: '300px', // Ensures dropdown is wider
+                                width: 'auto', // Adjust width based on content
+                                minWidth: 'max-content', // Ensures it doesn’t shrink to input width
+                                maxWidth: '800px', // Optional: Limit maximum width
                               },
                             },
                           }}
                           renderOption={(props, option) => (
-                            <li
-                              {...props}
-                              key={option.premisesName}
-                              style={{
-                                whiteSpace: 'nowrap', // Prevent text wrapping
-                                overflow: 'hidden', // Hide overflow
-                                textOverflow: 'ellipsis', // Add "..." if text is too long
-                                minWidth: '300px', // Make dropdown wider
-                                padding: '8px 12px', // Improve spacing
-                              }}
-                            >
+                            <li {...props} key={option.premisesName}>
                               {['premisesName', 'area', 'city', 'zipcode']
                                 .map((key) => option[key]) // Extract values for the specified keys
                                 .filter(
@@ -729,6 +738,9 @@ const LandingPage = () => {
                           {...field}
                           freeSolo
                           fullWidth
+                          componentsProps={{
+                            paper: { sx: { width: '100%' } },
+                          }}
                           size='small'
                           options={shopSuggestion.map((item) => item.label)}
                           getOptionLabel={(option) =>
@@ -769,7 +781,9 @@ const LandingPage = () => {
                             },
                             paper: {
                               sx: {
-                                minWidth: '300px', // Ensures dropdown is wider
+                                width: 'auto', // Adjust width based on content
+                                minWidth: 'max-content', // Ensures it doesn’t shrink to input width
+                                maxWidth: '800px', // Optional: Limit maximum width
                               },
                             },
                           }}
@@ -777,23 +791,23 @@ const LandingPage = () => {
                             <li
                               {...props}
                               key={option.shopOrBusinessName}
-                              style={{
-                                whiteSpace: 'nowrap', // Prevent text wrapping
-                                overflow: 'hidden', // Hide overflow
-                                textOverflow: 'ellipsis', // Add "..." if text is too long
-                                minWidth: '300px', // Make dropdown wider
-                                padding: '8px 12px', // Improve spacing
-                              }}
+                              // style={{
+                              //   whiteSpace: 'nowrap', // Prevent text wrapping
+                              //   overflow: 'hidden', // Hide overflow
+                              //   textOverflow: 'ellipsis', // Add "..." if text is too long
+                              //   minWidth: '300px', // Make dropdown wider
+                              //   padding: '8px 12px', // Improve spacing
+                              // }}
                             >
                               <div>
                                 <strong>{option.shopOrBusinessName}</strong>
                                 <div
-                                  style={{
-                                    display: 'flex',
-                                    flexWrap: 'wrap',
-                                    gap: '4px',
-                                    marginTop: '4px',
-                                  }}
+                                // style={{
+                                //   display: 'flex',
+                                //   flexWrap: 'wrap',
+                                //   gap: '4px',
+                                //   marginTop: '4px',
+                                // }}
                                 >
                                   {option.businessNickName.map(
                                     (nickname, index) => (
@@ -866,18 +880,35 @@ const LandingPage = () => {
                               <li
                                 key={option}
                                 {...props}
-                                style={{
-                                  whiteSpace: 'nowrap', // Prevent text wrapping
-                                  overflow: 'hidden', // Hide overflow
-                                  textOverflow: 'ellipsis', // Add "..." if text is too long
-                                  minWidth: '300px', // Make dropdown wider
-                                  padding: '8px 12px', // Improve spacing
-                                }}
+                                // style={{
+                                //   whiteSpace: 'nowrap', // Prevent text wrapping
+                                //   overflow: 'hidden', // Hide overflow
+                                //   textOverflow: 'ellipsis', // Add "..." if text is too long
+                                //   minWidth: '300px', // Make dropdown wider
+                                //   padding: '8px 12px', // Improve spacing
+                                // }}
                               >
                                 {option}
                               </li>
                             )}
                             // loading={setsearchLocation}
+                            slotProps={{
+                              popper: {
+                                modifiers: [
+                                  {
+                                    name: 'preventOverflow',
+                                    options: { boundary: 'window' },
+                                  },
+                                ],
+                              },
+                              paper: {
+                                sx: {
+                                  width: 'auto', // Adjust width based on content
+                                  minWidth: 'max-content', // Ensures it doesn’t shrink to input width
+                                  maxWidth: '800px', // Optional: Limit maximum width
+                                },
+                              },
+                            }}
                           />
                         )}
                       />

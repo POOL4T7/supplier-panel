@@ -4,20 +4,102 @@ import { bussinessProfile, userDetailsAtom } from '../../storges/user';
 import { useAtom } from 'jotai';
 import { toast } from 'react-toastify';
 import Spinner from '../common/Spinner';
+import { DataGrid } from '@mui/x-data-grid';
+import {
+  Box,
+  Paper,
+  TextField,
+  Switch,
+  IconButton,
+  Button,
+  Grid,
+  Typography,
+} from '@mui/material';
+import { Trash } from 'lucide-react';
 
 const ServiceList = () => {
   const [uploadedProducts, setUploadedProducts] = useState([]);
-  const [selectedProducts, setSelectedProducts] = useState([]);
-  const [movedProducts, setMovedProducts] = useState([]);
-  const [isLeftSelected, setIsLeftSelected] = useState(false);
-  const [isRightSelected, setIsRightSelected] = useState(false);
   const [supplier] = useAtom(userDetailsAtom);
   const [productValue, setProductValue] = useState('');
-
+  const [price, setPrice] = useState('');
   const [productDescription, setProductDescription] = useState('');
   const [addProductLoading, setAddProductLoading] = useState(false);
-  const [laoding, setLaoding] = useState(true);
+
   const [bussiness] = useAtom(bussinessProfile);
+  const [loading, setLoading] = useState(true);
+  const [selectedRows, setSelectedRows] = useState([]);
+
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [sortModel, setSortModel] = useState([]);
+  const [totalRows, setTotalRows] = useState(0);
+  const [filterModel, setFilterModel] = useState({ items: [] });
+
+  const handleFilterModelChange = (newFilterModel) => {
+    setPage(0); // Reset to first page when filters change
+    setFilterModel(newFilterModel);
+  };
+
+  const columns = [
+    { field: 'sno', headerName: 'S.No', width: 70, disableColumnMenu: true },
+    {
+      field: 'id',
+      headerName: 'Service ID',
+      flex: 1,
+      // disableColumnMenu: true,
+    },
+    {
+      field: 'serviceName',
+      headerName: 'Name',
+      flex: 1,
+      disableColumnMenu: true,
+    },
+
+    {
+      field: 'serviceDescription',
+      headerName: 'Description',
+      flex: 1,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'price',
+      headerName: 'Price',
+      flex: 1,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'active',
+      headerName: 'Status',
+      flex: 1,
+      renderCell: (params) => (
+        <Switch
+          checked={params.row.active}
+          onChange={() => {
+            console.log(params.row.active, params.row.id);
+            return handleStatusChange(params.row.id, params.row.active);
+          }}
+        />
+      ),
+      disableColumnMenu: true,
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      flex: 1,
+      renderCell: (params) => (
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          {/* <IconButton onClick={() => handleEdit(params.row)} color='primary'>
+            <Pencil size={18} />
+          </IconButton> */}
+          <IconButton onClick={() => handleDelete(params.row.id)} color='error'>
+            <Trash size={18} />
+          </IconButton>
+        </Box>
+      ),
+      disableColumnMenu: true,
+      sortable: false,
+    },
+  ];
 
   const handleFileUpload = async (event) => {
     try {
@@ -48,44 +130,6 @@ const ServiceList = () => {
       console.log(e);
       toast.error('file uplaod error');
     }
-  };
-
-  const toggleSelectProduct = (product, type) => {
-    if (type === 'left') {
-      setIsLeftSelected(false);
-      setIsRightSelected(true);
-    } else {
-      setIsLeftSelected(true);
-      setIsRightSelected(false);
-    }
-    setSelectedProducts((prevSelected) => {
-      const newTemp = prevSelected.includes(product)
-        ? prevSelected.filter((p) => p !== product)
-        : [...prevSelected, product];
-      if (newTemp.length == 0) {
-        setIsLeftSelected(false);
-        setIsRightSelected(false);
-      }
-      return newTemp;
-    });
-  };
-
-  const moveToRight = () => {
-    setMovedProducts((prev) => [...prev, ...selectedProducts]);
-    setUploadedProducts((prev) =>
-      prev.filter((p) => !selectedProducts.includes(p))
-    );
-    setSelectedProducts([]);
-    setIsRightSelected(false);
-  };
-
-  const moveToLeft = () => {
-    setUploadedProducts((prev) => [...prev, ...selectedProducts]);
-    setMovedProducts((prev) =>
-      prev.filter((p) => !selectedProducts.includes(p))
-    );
-    setSelectedProducts([]);
-    setIsLeftSelected(false);
   };
 
   const handleAddProduct = async (e) => {
@@ -123,205 +167,386 @@ const ServiceList = () => {
     setAddProductLoading(false);
   };
 
-  const submit = async (e) => {
-    e.preventDefault();
+  const handleStatusChange = async (id, status) => {
     try {
-      const data = {
-        supplierBusinessId: bussiness.id,
-        serviceId: movedProducts.map((item) => item.id),
-        status: true,
-        supplierId: supplier.id,
-      };
-      const res = await axiosInstance.post(
-        '/proxy/productsearchsupplier/api/supplier/file/productservicestatus',
-        data
+      await axiosInstance.post(
+        `/proxy/productsearchsupplier/api/supplier/file/productservicestatus`,
+        {
+          productId: [id],
+          supplierBusinessId: supplier.id,
+          // serviceId: [101, 102, 103],
+          status: !status,
+        }
       );
-      console.log(res);
-      toast.success(res.data.message);
-    } catch (e) {
-      console.log(e);
+      toast.success('Status updated successfully');
+      fetchProducts(); // Refresh the list after status change
+    } catch (error) {
+      console.log(error);
+      toast.error('Error updating status');
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await axiosInstance.delete(`/proxy/productsearchsupplier/products/${id}`);
+      toast.success('Product deleted successfully');
+      fetchProducts(); // Refresh the list after deletion
+    } catch (error) {
+      console.log(error);
+      toast.error('Error deleting product');
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const filters = filterModel.items
+        .map((item) => ({
+          field: item.field,
+          operator: item.operator.toUpperCase(),
+          value: item.value,
+        }))
+        .filter((item) => item.value && item.value != '');
+
+      const formData = {
+        supplierBusinessId: bussiness.id,
+        pageNo: page,
+        noOfEvents: pageSize,
+        filters: filters,
+        specificationsRequired: true,
+        sort: sortModel.map((item) => ({
+          field: item.field,
+          direction: item.sort.toUpperCase() || 'ASC',
+        })),
+      };
+
+      const res = await axiosInstance.post(
+        `/proxy/productsearchsupplier/services/getAllServiceDetails`,
+        formData
+      );
+
+      setUploadedProducts(
+        res.data.content?.map((item, idx) => ({ sno: idx + 1, ...item }))
+      );
+      setTotalRows(res.data.totalElements);
+      setLoading(false);
+    } catch (e) {
+      console.log(e);
+      setLoading(false);
+    }
+  };
+
+  // const submit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const data = {
+  //       supplierBusinessId: bussiness.id,
+  //       serviceId: movedProducts.map((item) => item.id),
+  //       status: true,
+  //       supplierId: supplier.id,
+  //     };
+  //     const res = await axiosInstance.post(
+  //       '/proxy/productsearchsupplier/api/supplier/file/productservicestatus',
+  //       data
+  //     );
+  //     console.log(res);
+  //     toast.success(res.data.message);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLaoding(true);
-        const res = await axiosInstance.get(
-          `/proxy/productsearchsupplier/services/getAllServiceDetails?supplierBusinessId=${bussiness.id}`
-        );
-        setUploadedProducts(res.data.filter((item) => !item.active));
-        setMovedProducts(res.data.filter((item) => item.active));
-        setLaoding(false);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    fetchData();
-  }, []);
+    if (bussiness.id) {
+      fetchProducts();
+    }
+  }, [bussiness.id, page, pageSize, sortModel]);
+
+  const handleBulkDelete = async () => {
+    if (selectedRows.length === 0) {
+      toast.warning('No rows selected');
+      return;
+    }
+
+    try {
+      await axiosInstance.delete(
+        `/proxy/productsearchsupplier/products/bulk-delete`,
+        { data: { productIds: selectedRows } }
+      );
+      toast.success('Selected products deleted successfully');
+      setSelectedRows([]);
+      fetchProducts();
+    } catch (error) {
+      console.log(error);
+      toast.error('Error deleting selected products');
+    }
+  };
+
+  // Handle Bulk Status Update
+  // const handleBulkStatusUpdate = async () => {
+  //   if (selectedRows.length === 0) {
+  //     toast.warning('No rows selected');
+  //     return;
+  //   }
+
+  //   try {
+  //     await axiosInstance.post(
+  //       `/proxy/productsearchsupplier/api/supplier/file/productservicestatus`,
+  //       {
+  //         productId: selectedRows,
+  //         supplierBusinessId: supplier.id,
+  //         status: true, // Set status to true for selected products
+  //       }
+  //     );
+  //     toast.success('Selected products status updated successfully');
+  //     fetchProducts();
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error('Error updating status');
+  //   }
+  // };
 
   return (
-    <div className='d-flex justify-content-center'>
-      {laoding ? (
-        <div className='d-flex'>
-          {' '}
-          <Spinner />
-        </div>
-      ) : (
-        <div
-          style={{
-            maxWidth: '600px',
+    <Box sx={{ p: 2 }}>
+      <Paper sx={{ p: { xs: 2, sm: 3 }, mb: 3, backgroundColor: '#e2e3df' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            mb: 2,
           }}
         >
-          <div className='mb-3'>
-            <div className='d-flex justify-content-between mb-2'>
-              <h3>Upload Service File</h3>
-              <button
-                className='btn btn-primary mt-2'
-                onClick={submit}
-                disabled={!movedProducts.length}
-              >
-                Update
-              </button>
-            </div>
+          <Typography variant='h6' sx={{ flexGrow: 1, mb: { xs: 1, sm: 0 } }}>
+            Add Service
+          </Typography>
+
+          <label htmlFor='file-upload'>
             <input
+              id='file-upload'
               type='file'
-              className='form-control'
+              hidden
               onChange={handleFileUpload}
+              accept='.txt'
             />
-          </div>
-          <form>
-            <div className='row'>
-              <div className='col-10'>
-                <div className='row'>
-                  {/* <div className='col-3'>
-                <div className='mb-2'>
-                  <input
-                    type='text'
-                    value={brand}
-                    className={`form-control`}
-                    onChange={(e) => setBrand(e.target.value)}
-                    placeholder='brand name'
-                  />
-                </div>
-              </div> */}
-                  <div className='col-5'>
-                    <div className='mb-2'>
-                      <input
-                        type='text'
-                        value={productValue}
-                        className={`form-control`}
-                        onChange={(e) => setProductValue(e.target.value)}
-                        placeholder='service name'
-                      />
-                    </div>
-                  </div>
-                  <div className='col-7'>
-                    <div className='mb-2'>
-                      <input
-                        type='text'
-                        value={productDescription}
-                        className={`form-control`}
-                        onChange={(e) => setProductDescription(e.target.value)}
-                        placeholder='service description'
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className='col-2'>
-                <button
-                  className=' btn btn-primary '
-                  onClick={handleAddProduct}
-                  disabled={addProductLoading}
-                >
-                  {addProductLoading && <Spinner width='15px' height='15px' />}{' '}
-                  Add
-                </button>
-              </div>
-            </div>
-          </form>
-          <div
-            className='row align-items-center justify-content-between'
-            style={{ maxHeight: '60vh', height: '100%' }}
+            <Button
+              variant='outlined'
+              component='span'
+              sx={{
+                backgroundColor: '#355e3b',
+                color: '#fff',
+                '&:hover': { backgroundColor: '#2a4a2f' },
+              }}
+            >
+              Bulk Upload
+            </Button>
+          </label>
+        </Box>
+
+        <form onSubmit={handleAddProduct}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label='Service Name'
+                value={productValue}
+                onChange={(e) => setProductValue(e.target.value)}
+                required
+                size='small'
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label='Price'
+                type='number'
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                required
+                size='small'
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label='Description'
+                value={productDescription}
+                onChange={(e) => setProductDescription(e.target.value)}
+                size='small'
+                multiline
+                rows={2}
+              />
+            </Grid>
+
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+              }}
+            >
+              <Button
+                type='submit'
+                variant='contained'
+                disabled={addProductLoading}
+                sx={{
+                  backgroundColor: '#355e3b',
+                  color: '#fff',
+                  height: '40px',
+                  width: '100%',
+                  maxWidth: '150px',
+                  '&:hover': { backgroundColor: '#2a4a2f' },
+                }}
+              >
+                {addProductLoading ? (
+                  <Spinner width='20px' height='20px' />
+                ) : (
+                  'Add'
+                )}
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
+      </Paper>
+      <Paper
+        sx={{ height: 'auto', width: '100%', backgroundColor: '#e2e3df', p: 2 }}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography variant='h6' sx={{ mb: 2 }}>
+            Service List
+          </Typography>
+
+          {/* Bulk Actions */}
+          <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+            <Button
+              variant='contained'
+              color='error'
+              onClick={handleBulkDelete}
+              disabled={selectedRows.length === 0}
+            >
+              Delete Selected
+            </Button>
+            {/* <Button
+              variant='outlined'
+              color='primary'
+              onClick={handleBulkStatusUpdate}
+              disabled={selectedRows.length === 0}
+            >
+              Update Status
+            </Button> */}
+          </Box>
+        </Box>
+        <Grid container spacing={2} alignItems='center' sx={{ mb: 2 }}>
+          <Grid item xs={12} sm={6} md={3}>
+            <TextField
+              fullWidth
+              label='Service Name'
+              value={filterModel.productName || ''}
+              onChange={(e) =>
+                setFilterModel({ ...filterModel, productName: e.target.value })
+              }
+              size='small'
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={2}>
+            <TextField
+              fullWidth
+              label='Price (Min)'
+              type='number'
+              value={filterModel.minPrice || ''}
+              onChange={(e) =>
+                setFilterModel({ ...filterModel, minPrice: e.target.value })
+              }
+              size='small'
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={2}>
+            <TextField
+              fullWidth
+              label='Price (Max)'
+              type='number'
+              value={filterModel.maxPrice || ''}
+              onChange={(e) =>
+                setFilterModel({ ...filterModel, maxPrice: e.target.value })
+              }
+              size='small'
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={2}
+            sx={{ display: 'flex', justifyContent: 'center' }}
           >
-            <div
-              className='col-md-5 border p-3'
-              style={{ height: '60vh', overflow: 'scroll' }}
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={fetchProducts}
+              sx={{
+                backgroundColor: '#355e3b',
+                color: '#fff',
+                height: '40px',
+                width: '100%',
+                maxWidth: '150px',
+                '&:hover': { backgroundColor: '#2a4a2f' },
+              }}
             >
-              <h5 className='mb-3'>Uploaded Services</h5>
+              Apply Filters
+            </Button>
+          </Grid>
+        </Grid>
 
-              {uploadedProducts.length > 0 ? (
-                uploadedProducts.map((product) => (
-                  <div key={product.id} className='form-check mb-2'>
-                    <input
-                      type='checkbox'
-                      className='form-check-input'
-                      id={`uploaded-${product.id}`}
-                      checked={selectedProducts.includes(product)}
-                      onChange={() => toggleSelectProduct(product, 'left')}
-                    />
-                    <label
-                      className='form-check-label'
-                      htmlFor={`uploaded-${product.id}`}
-                    >
-                      {product.productName}
-                    </label>
-                  </div>
-                ))
-              ) : (
-                <p className='text-muted'>No services uploaded.</p>
-              )}
-            </div>
-
-            <div className='col-md-2 d-flex flex-column align-items-center'>
-              <button
-                className='btn btn-primary mb-2'
-                onClick={moveToRight}
-                disabled={!isRightSelected}
-              >
-                &gt;&gt;
-              </button>
-              <button
-                className='btn btn-primary'
-                onClick={moveToLeft}
-                disabled={!isLeftSelected}
-              >
-                &lt;&lt;
-              </button>
-            </div>
-
-            <div
-              className='col-md-5 border pt-3'
-              style={{ height: '60vh', overflow: 'scroll' }}
-            >
-              <h5 className='mb-3'>Selected Services</h5>
-              {movedProducts.length > 0 ? (
-                movedProducts.map((product) => (
-                  <div key={product.id} className='form-check mb-2'>
-                    <input
-                      type='checkbox'
-                      className='form-check-input'
-                      id={`moved-${product.id}`}
-                      checked={selectedProducts.includes(product)}
-                      onChange={() => toggleSelectProduct(product, 'right')}
-                    />
-                    <label
-                      className='form-check-label'
-                      htmlFor={`moved-${product.id}`}
-                    >
-                      {product.productName}
-                    </label>
-                  </div>
-                ))
-              ) : (
-                <p className='text-muted'>No services selected.</p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+        <DataGrid
+          rows={uploadedProducts}
+          columns={columns}
+          pagination
+          checkboxSelection
+          paginationMode='server'
+          sortingMode='server'
+          filterMode='server'
+          page={page}
+          pageSize={pageSize}
+          rowCount={totalRows}
+          onPageChange={(newPage) => setPage(newPage)}
+          onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+          sortModel={sortModel}
+          onSortModelChange={(newSortModel) => setSortModel(newSortModel)}
+          filterModel={filterModel}
+          onFilterModelChange={handleFilterModelChange}
+          loading={loading}
+          onRowSelectionModelChange={(newSelection) => {
+            setSelectedRows(newSelection);
+          }}
+          rowsPerPageOptions={[10, 25, 50, 100]}
+          componentsProps={{
+            loadingOverlay: {
+              style: { backgroundColor: '#e2e3df' }, // Set loading background color
+            },
+          }}
+          sx={{
+            border: 0,
+            '& .MuiDataGrid-columnHeader': {
+              backgroundColor: '#e0e2da',
+              fontWeight: 'bold',
+            },
+            '& .MuiDataGrid-cell:hover': {
+              backgroundColor: '#dbdcd7',
+            },
+            '& .MuiDataGrid-cell:focus': {
+              outline: 'none',
+            },
+            '& .MuiDataGrid-overlay': {
+              backgroundColor: '#e0e2da',
+            },
+          }}
+        />
+      </Paper>
+    </Box>
   );
 };
 
