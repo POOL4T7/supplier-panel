@@ -35,6 +35,13 @@ const Verify = () => {
     <FormContainer>
       <div style={{ maxWidth: '500px', width: '100%', marginTop: '2rem' }}>
         <h1>Verify the business address</h1>
+        {bussiness.verifyAddress ? (
+          <p style={{ color: '#7d9138', textDecoration: 'underline' }}>
+            Address is already verifed
+          </p>
+        ) : (
+          <></>
+        )}
         <div className='mt-3' style={{ maxWidth: '400px' }}>
           <div className=' mb-2'>
             <label className='form-label'>Enter OTP</label>
@@ -45,11 +52,7 @@ const Verify = () => {
               onChange={(e) => setAddressOTP(e.target.value)}
             />
           </div>
-          {bussiness.verifyAddress ? (
-            <p className='text-success'>Address is already verifed</p>
-          ) : (
-            <></>
-          )}
+
           <button
             type='button'
             className='btn btn-primary mt-3'
