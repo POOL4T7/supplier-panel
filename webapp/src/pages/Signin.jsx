@@ -76,7 +76,7 @@ const LoginForm = () => {
         }}
       >
         <form onSubmit={handleSubmit(onSubmit)} className='login-form '>
-          <h2>Login</h2>
+          <h2>User Login</h2>
 
           <div className='mb-3'>
             <label>Email</label>

@@ -67,7 +67,7 @@ const Signup = () => {
           className='register-form'
           // style={{ maxWidth: '400px', width: '100%', marginTop: '6rem' }}
         >
-          <h2>Signup</h2>
+          <h2>Admin Signup</h2>
           {/* <div className='mb-3'>
             <label htmlFor='role' className='form-label'>
               Role
