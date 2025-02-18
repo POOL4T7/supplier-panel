@@ -29,24 +29,32 @@ const ServiceList = () => {
   const [loading, setLoading] = useState(true);
   const [selectedRows, setSelectedRows] = useState([]);
 
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  const [sortModel, setSortModel] = useState([]);
+  const [sortModel, setSortModel] = useState([
+    {
+      field: 'id',
+      sort: 'DESC',
+    },
+  ]);
   const [totalRows, setTotalRows] = useState(0);
   const [filterModel, setFilterModel] = useState({ items: [] });
-
-  const handleFilterModelChange = (newFilterModel) => {
-    setPage(0); // Reset to first page when filters change
-    setFilterModel(newFilterModel);
-  };
+  const [paginationModel, setPaginationModel] = useState({
+    pageSize: 10,
+    page: 0,
+  });
 
   const columns = [
-    { field: 'sno', headerName: 'S.No', width: 70, disableColumnMenu: true },
+    {
+      field: 'sno',
+      headerName: 'S.No',
+      width: 70,
+      disableColumnMenu: true,
+      sortable: false,
+    },
     {
       field: 'id',
       headerName: 'Service ID',
       flex: 1,
-      // disableColumnMenu: true,
+      disableColumnMenu: true,
     },
     {
       field: 'serviceName',
@@ -136,7 +144,7 @@ const ServiceList = () => {
     e.preventDefault();
     if (!productValue) return;
     setAddProductLoading(true);
-    const res = await axiosInstance.post(
+    await axiosInstance.post(
       'proxy/productsearchsupplier/api/supplier/file/addProductsOrServices',
       {
         fileRowDataList: [
@@ -144,6 +152,7 @@ const ServiceList = () => {
             name: productValue,
 
             description: productDescription,
+            price: price,
           },
         ],
         supplierBusinessId: bussiness.id,
@@ -152,19 +161,11 @@ const ServiceList = () => {
       }
     );
 
-    setUploadedProducts([
-      ...uploadedProducts,
-      {
-        id: res.data.productDetailsList[0].id,
-        brand: res.data.productDetailsList[0],
-        productName: productValue,
-        description: productDescription,
-      },
-    ]);
     setProductValue('');
-    // setBrand('');
+    setPrice('');
     setProductDescription('');
     setAddProductLoading(false);
+    await fetchProducts();
   };
 
   const handleStatusChange = async (id, status) => {
@@ -172,9 +173,8 @@ const ServiceList = () => {
       await axiosInstance.post(
         `/proxy/productsearchsupplier/api/supplier/file/productservicestatus`,
         {
-          productId: [id],
           supplierBusinessId: supplier.id,
-          // serviceId: [101, 102, 103],
+          serviceId: [id],
           status: !status,
         }
       );
@@ -188,30 +188,38 @@ const ServiceList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axiosInstance.delete(`/proxy/productsearchsupplier/products/${id}`);
-      toast.success('Product deleted successfully');
+      await axiosInstance.post(
+        `/proxy/productsearchsupplier/services/deleteServices`,
+        {
+          supplierBusinessId: bussiness.id,
+          serviceIds: [id],
+        }
+      );
+      toast.success('service deleted successfully');
       fetchProducts(); // Refresh the list after deletion
     } catch (error) {
       console.log(error);
-      toast.error('Error deleting product');
+      toast.error('Error deleting service');
     }
   };
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const filters = filterModel.items
-        .map((item) => ({
-          field: item.field,
-          operator: item.operator.toUpperCase(),
-          value: item.value,
-        }))
+      const filters = Object.keys(filterModel)
+        .map((key) => {
+          return {
+            field: key,
+            value: filterModel[key],
+            operator: 'LIKE',
+          };
+        })
         .filter((item) => item.value && item.value != '');
 
       const formData = {
         supplierBusinessId: bussiness.id,
-        pageNo: page,
-        noOfEvents: pageSize,
+        pageNo: paginationModel.page,
+        noOfEvents: paginationModel.pageSize,
         filters: filters,
         specificationsRequired: true,
         sort: sortModel.map((item) => ({
@@ -260,7 +268,7 @@ const ServiceList = () => {
     if (bussiness.id) {
       fetchProducts();
     }
-  }, [bussiness.id, page, pageSize, sortModel]);
+  }, [bussiness.id, paginationModel.page, paginationModel.pageSize, sortModel]);
 
   const handleBulkDelete = async () => {
     if (selectedRows.length === 0) {
@@ -269,16 +277,19 @@ const ServiceList = () => {
     }
 
     try {
-      await axiosInstance.delete(
-        `/proxy/productsearchsupplier/products/bulk-delete`,
-        { data: { productIds: selectedRows } }
+      await axiosInstance.post(
+        `/proxy/productsearchsupplier/services/deleteServices`,
+        {
+          supplierBusinessId: bussiness.id,
+          serviceIds: selectedRows,
+        }
       );
-      toast.success('Selected products deleted successfully');
+      toast.success('Selected services deleted successfully');
       setSelectedRows([]);
       fetchProducts();
     } catch (error) {
       console.log(error);
-      toast.error('Error deleting selected products');
+      toast.error('Error deleting selected services');
     }
   };
 
@@ -444,9 +455,9 @@ const ServiceList = () => {
             <TextField
               fullWidth
               label='Service Name'
-              value={filterModel.productName || ''}
+              value={filterModel.serviceName || ''}
               onChange={(e) =>
-                setFilterModel({ ...filterModel, productName: e.target.value })
+                setFilterModel({ ...filterModel, serviceName: e.target.value })
               }
               size='small'
             />
@@ -508,24 +519,17 @@ const ServiceList = () => {
           checkboxSelection
           paginationMode='server'
           sortingMode='server'
-          filterMode='server'
-          page={page}
-          pageSize={pageSize}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
           rowCount={totalRows}
-          onPageChange={(newPage) => setPage(newPage)}
-          onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
           sortModel={sortModel}
-          onSortModelChange={(newSortModel) => setSortModel(newSortModel)}
-          filterModel={filterModel}
-          onFilterModelChange={handleFilterModelChange}
+          onSortModelChange={setSortModel}
           loading={loading}
-          onRowSelectionModelChange={(newSelection) => {
-            setSelectedRows(newSelection);
-          }}
-          rowsPerPageOptions={[10, 25, 50, 100]}
+          onRowSelectionModelChange={setSelectedRows}
+          pageSizeOptions={[10, 25, 50, 100]}
           componentsProps={{
             loadingOverlay: {
-              style: { backgroundColor: '#e2e3df' }, // Set loading background color
+              style: { backgroundColor: '#e2e3df' },
             },
           }}
           sx={{

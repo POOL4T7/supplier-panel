@@ -35,7 +35,12 @@ const ProductList = () => {
 
   // const [page, setPage] = useState(0);
   // const [pageSize, setPageSize] = useState(10);
-  const [sortModel, setSortModel] = useState([]);
+  const [sortModel, setSortModel] = useState([
+    {
+      field: 'id',
+      sort: 'DESC',
+    },
+  ]);
   const [totalRows, setTotalRows] = useState(0);
   const [filterModel, setFilterModel] = useState({
     productName: '',
@@ -90,7 +95,6 @@ const ProductList = () => {
         <Switch
           checked={params.row.active}
           onChange={() => {
-            console.log(params.row.active, params.row.id);
             return handleStatusChange(params.row.id, params.row.active);
           }}
         />
@@ -179,7 +183,7 @@ const ProductList = () => {
       toast.success('Product added successfully');
 
       // Refresh the product list
-      fetchProducts();
+      await fetchProducts();
     } catch (error) {
       console.log(error);
       toast.error('Error adding product');
@@ -208,7 +212,13 @@ const ProductList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axiosInstance.delete(`/proxy/productsearchsupplier/products/${id}`);
+      await axiosInstance.post(
+        `/proxy/productsearchsupplier/products/deleteProducts`,
+        {
+          supplierBusinessId: bussiness.id,
+          productIds: [id],
+        }
+      );
       toast.success('Product deleted successfully');
       fetchProducts(); // Refresh the list after deletion
     } catch (error) {
@@ -243,7 +253,7 @@ const ProductList = () => {
           return {
             field: key,
             value: filterModel[key],
-            operator: '=',
+            operator: 'LIKE',
           };
         })
         .filter((item) => item.value && item.value != '');
@@ -292,10 +302,14 @@ const ProductList = () => {
     }
 
     try {
-      await axiosInstance.delete(
-        `/proxy/productsearchsupplier/products/bulk-delete`,
-        { data: { productIds: selectedRows } }
+      await axiosInstance.post(
+        `/proxy/productsearchsupplier/products/deleteProducts`,
+        {
+          supplierBusinessId: bussiness.id,
+          productIds: selectedRows,
+        }
       );
+
       toast.success('Selected products deleted successfully');
       setSelectedRows([]);
       fetchProducts();
