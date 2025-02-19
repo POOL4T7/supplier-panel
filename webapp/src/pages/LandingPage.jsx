@@ -1013,7 +1013,7 @@ const LandingPage = () => {
                         : item.premises == 'Forum Kopenick'
                         ? '/images/forum.png'
                         : item.premises == 'Dong Xuan Center'
-                        ? '/images/dong.jpg'
+                        ? '/images/exotic.png'
                         : '/images/logo.webp'
                     }
                     alt={item.premises}
