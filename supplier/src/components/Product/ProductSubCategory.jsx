@@ -189,7 +189,7 @@ const ProductSubCategory = () => {
       `/proxy/productsearchsupplier/getSubCategoryDetails?categoryId=${cate.id}&type=products&supplierBusinessId=${bussiness.id}`
     );
     const res2 = await axiosInstance.get(
-      `/proxy/productsearchsupplier/getSupplierSubCategoryDetails?supplierCategoryId=${cate.id}&type=products`
+      `/proxy/productsearchsupplier/getSupplierSubCategoryDetails?supplierCategoryId=${cate.id}&type=products&supplierBusinessId=${bussiness.id}`
     );
     setMovedSubCategories(
       res2.data.map((item) => ({
