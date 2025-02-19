@@ -228,10 +228,10 @@ const SupplierDetails = () => {
                     }}
                   >
                     <img
-                      src={supplierData.businessLogo || '/image.png'}
+                      src={supplierData.businessLogo || '/images/logo.webp'}
                       alt='Profile'
-                      className='w-100 h-100'
-                      style={{ objectFit: 'cover', backgroundColor: 'grey' }}
+                      className='w-100 h-100 shadow'
+                      style={{ objectFit: 'cover', backgroundColor: '#e0e2da' }}
                     />
                   </div>
 
@@ -241,7 +241,7 @@ const SupplierDetails = () => {
                     style={{ width: '100%', height: '100%' }}
                   >
                     <img
-                      src={supplierData.businessImage || '/image.png'}
+                      src={supplierData.businessImage || '/images/logo.webp'}
                       alt='Business'
                       className='img-fluid h-100 w-100'
                       style={{
@@ -313,13 +313,26 @@ const SupplierDetails = () => {
                 <strong>Email:</strong> {supplierData.email || 'NA'}
               </p>
               <p>
-                <strong>Phone:</strong> {supplierData.phoneNumber || 'NA'}
+                <strong>Phone:</strong> {supplierData.phoneNumber || 'NA'}{' '}
+                {supplierData.phoneNumber && (
+                  <Link to={`tel:${supplierData.mobileNumber}`} target='_blank'>
+                    <SquareArrowOutUpRight height={'15px'} />
+                  </Link>
+                )}
               </p>
               <p>
                 <strong>Fax:</strong> {supplierData.faxNumber || 'NA'}
               </p>
               <p>
-                <strong>WhatsApp:</strong> {supplierData.whatsapp || 'NA'}
+                <strong>WhatsApp:</strong> {supplierData.whatsapp || 'NA'}{' '}
+                {supplierData.whatsapp && (
+                  <Link
+                    to={`https://wa.me/${supplierData.whatsappNumber}`}
+                    target='_blank'
+                  >
+                    <SquareArrowOutUpRight height={'15px'} />
+                  </Link>
+                )}
               </p>
             </div>
 

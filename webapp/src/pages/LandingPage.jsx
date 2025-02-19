@@ -96,11 +96,10 @@ const LandingPage = () => {
     const loadPremises = async () => {
       try {
         setLoading(true);
-        const res = await axios.post(
-          '/proxy/productsearch/premisesListing'
-        );
+        const res = await axios.post('/proxy/productsearch/premisesListing');
 
         setPremisesList(res.data);
+        // setPremisesList([...res.data, ...res.data]);
         setLoading(false);
       } catch (e) {
         console.log(e);
@@ -198,13 +197,10 @@ const LandingPage = () => {
     }
     try {
       setSetsearchLocation(true);
-      const res = await axios.post(
-        `/proxy/productsearch/locationSuggestions`,
-        {
-          country: localStorage.getItem('country') || 'germany',
-          location: inputValue,
-        }
-      );
+      const res = await axios.post(`/proxy/productsearch/locationSuggestions`, {
+        country: localStorage.getItem('country') || 'germany',
+        location: inputValue,
+      });
 
       setLocationSuggestion(
         res.data.map((item) => ({
@@ -970,48 +966,55 @@ const LandingPage = () => {
         <h2 style={premisesCircleStyles.title}>Popular Premises</h2>
         <div className='d-flex'>{loading && <Spinner />}</div>
         <div style={premisesCircleStyles.grid}>
-          {premisesList.map((item) => {
-            return (
-              <div
-                key={item.premises}
-                onClick={() => {
-                  switchToBusinessTab();
-                  if (item.address) {
-                    const formattedValue = JSON.stringify(item.address);
-                    const formattedLabel = Object.values(item.address)
-                      .filter((x) => x != null)
-                      .join(', ');
+          {premisesList.map((item) => (
+            <div
+              key={item.premises}
+              style={premisesCircleStyles.circleWrapper}
+              onClick={() => {
+                switchToBusinessTab();
+                if (item.address) {
+                  const formattedValue = JSON.stringify(item.address);
+                  const formattedLabel = Object.values(item.address)
+                    .filter((x) => x != null)
+                    .join(', ');
 
-                    const newOption = {
-                      label: formattedLabel,
-                      value: formattedValue,
-                    };
+                  const newOption = {
+                    label: formattedLabel,
+                    value: formattedValue,
+                  };
 
-                    form2.setValue('address', formattedValue); // Ensure form field updates
-                    setLocationSuggestion((prev) => [...prev, newOption]);
-                  }
-                  form2.setValue('premises', item.premises);
-                }}
-                style={{
-                  ...premisesCircleStyles.circle,
-                  // ...(isHovered ? premisesCircleStyles.circleHover : {}),
-                }}
-                // onMouseEnter={() => setIsHovered(true)}
-                // onMouseLeave={() => setIsHovered(false)}
-              >
-                {item.image && (
+                  form2.setValue('address', formattedValue);
+                  setLocationSuggestion((prev) => [...prev, newOption]);
+                }
+                form2.setValue('premises', item.premises);
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform =
+                  premisesCircleStyles.circleWrapperHover.transform;
+                e.currentTarget.style.boxShadow =
+                  premisesCircleStyles.circleWrapperHover.boxShadow;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'none';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <div style={premisesCircleStyles.circle}>
+                {
                   <img
-                    src={buildImage(item.image)}
+                    src={
+                      item.image ? buildImage(item.image) : '/images/logo.webp'
+                    }
                     alt={item.premises}
                     style={premisesCircleStyles.circleImage}
                   />
-                )}
-                <div style={premisesCircleStyles.premisesName}>
-                  {item.premises}
-                </div>
+                }
               </div>
-            );
-          })}
+              <div style={premisesCircleStyles.premisesName}>
+                {item.premises}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -1107,22 +1110,23 @@ const premisesCircleStyles = {
     justifyContent: 'center',
     padding: '1rem',
   },
-  circle: {
-    position: 'relative',
-    width: '220px',
-    height: '220px',
-    borderRadius: '50%',
-    backgroundColor: '#ffffff',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    border: '2px solid #e0e0e0',
-    overflow: 'hidden',
-    transition: 'all 0.3s ease',
+  circleWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
     cursor: 'pointer',
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
   },
-  circleHover: {
-    transform: 'translateY(-5px)',
-    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
-    borderColor: '#355e3b',
+  circleWrapperHover: {
+    transform: 'translateY(-8px)',
+  },
+  circle: {
+    width: '250px',
+    height: '250px',
+    borderRadius: '50%',
+    overflow: 'hidden',
+    border: '3px solid #3b4223',
+    transition: 'border-color 0.3s ease',
   },
   circleImage: {
     width: '100%',
@@ -1130,27 +1134,12 @@ const premisesCircleStyles = {
     objectFit: 'cover',
   },
   premisesName: {
-    // position: 'absolute',
-    // bottom: 0,
-    // left: 0,
-    // right: 0,
-    // padding: '15px 10px',
-    // backgroundColor: '#e0e2da',
-    // color: 'rgb(59 66 35)',
-    // fontSize: '1.1rem',
-    // fontWeight: 'bold',
-    // textAlign: 'center',
-    // margin: 0,
-    position: 'absolute',
-    bottom: '0px',
-    left: '0px',
-    right: '0px',
-    padding: '14px 10px',
-    backgroundColor: 'rgb(217 225 218 / 50%)',
-    color: 'rgb(18 35 18)',
-    fontWeight: 'bold',
+    marginTop: '1rem',
+    fontSize: '1.3rem',
+    fontWeight: '600',
+    color: '#3b4223',
     textAlign: 'center',
-    margin: '0px',
-    fontSize: '1.4rem',
+    letterSpacing: '0.5px',
+    transition: 'color 0.3s ease',
   },
 };
