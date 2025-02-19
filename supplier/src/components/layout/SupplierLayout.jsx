@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import Header from './supplier/Header.jsx';
 import {
   bussinessProfile,
-  roles,
+  // roles,
   userDetailsAtom,
 } from '../../storges/user.js';
 import { useAtom } from 'jotai';
@@ -14,7 +14,7 @@ const SupplierLayout = () => {
   const [, setUserDetails] = useAtom(userDetailsAtom);
   const [, setBussinessProfile] = useAtom(bussinessProfile);
 
-  const [, setRoles] = useAtom(roles);
+  // const [, setRoles] = useAtom(roles);
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -53,23 +53,23 @@ const SupplierLayout = () => {
       }
     }
 
-    async function fetchRolesData() {
-      try {
-        const res = await axiosInstance.get(
-          `/proxy/productsearchsupplier/role/getAllRoles`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+    // async function fetchRolesData() {
+    //   try {
+    //     const res = await axiosInstance.get(
+    //       `/proxy/productsearchsupplier/role/getAllRoles`,
+    //       {
+    //         headers: {
+    //           Authorization: `Bearer ${token}`,
+    //         },
+    //       }
+    //     );
 
-        // console.log('res.data', res.data);
-        setRoles(res.data);
-      } catch (e) {
-        console.log(e);
-      }
-    }
+    //     // console.log('res.data', res.data);
+    //     setRoles(res.data);
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
+    // }
 
     if (user) {
       if (user.supplierId) {
@@ -79,7 +79,7 @@ const SupplierLayout = () => {
         navigate('/admin');
       }
     }
-    fetchRolesData();
+    // fetchRolesData();
   }, []);
 
   return (
