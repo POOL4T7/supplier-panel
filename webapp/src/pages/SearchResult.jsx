@@ -106,11 +106,11 @@ const SearchResult = () => {
                           {item.supplierBusinessDetails.country}
                         </span>
                       </div>
-                      <div className='d-flex gap-2'>
-                        {item.mobileNumber && (
+                      <div className='d-flex gap-3 mt-3'>
+                        {item.supplierBusinessDetails.mobileNumber && (
                           <div>
                             <a
-                              href={`tel:${item.mobileNumber}`}
+                              href={`tel:${item.supplierBusinessDetails.mobileNumber}`}
                               style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -118,15 +118,15 @@ const SearchResult = () => {
                                 color: 'inherit',
                               }}
                             >
-                              <Phone size={15} />
+                              <Phone size={20} />
                             </a>
                           </div>
                         )}
 
-                        <div>
-                          {item.whatsappNumber && (
+                        <div className=''>
+                          {item.supplierBusinessDetails.whatsappNumber && (
                             <a
-                              href={`https://wa.me/${item.whatsappNumber}`}
+                              href={`https://wa.me/${item.supplierBusinessDetails.whatsappNumber}`}
                               target='_blank'
                               rel='noopener noreferrer'
                               style={{
@@ -138,8 +138,8 @@ const SearchResult = () => {
                             >
                               <svg
                                 xmlns='http://www.w3.org/2000/svg'
-                                width='15'
-                                height='15'
+                                width='20'
+                                height='20'
                                 viewBox='0 0 24 24'
                               >
                                 <path d='M12.011719 2C6.5057187 2 2.0234844 6.478375 2.0214844 11.984375C2.0204844 13.744375 2.4814687 15.462563 3.3554688 16.976562L2 22L7.2324219 20.763672C8.6914219 21.559672 10.333859 21.977516 12.005859 21.978516C17.514766 21.978516 21.995047 17.499141 21.998047 11.994141C22.000047 9.3251406 20.962172 6.8157344 19.076172 4.9277344C17.190172 3.0407344 14.683719 2.001 12.011719 2ZM12.009766 4C14.145766 4.001 16.153109 4.8337969 17.662109 6.3417969C19.171109 7.8517969 20.000047 9.8581875 19.998047 11.992188C19.996047 16.396187 16.413812 19.978516 12.007812 19.978516C10.674812 19.977516 9.3544062 19.642812 8.1914062 19.007812L7.5175781 18.640625 6.7734375 18.816406 4.8046875 19.28125 5.2851562 17.496094 5.5019531 16.695312 5.0878906 15.976562C4.3898906 14.768562 4.0204844 13.387375 4.0214844 11.984375 4.0234844 7.582375 7.6067656 4 12.009766 4Z' />
