@@ -32,7 +32,7 @@ const SupplierList = () => {
       try {
         setLoading(true);
         const res = await axiosInstance.get(
-          '/proxy/productsearchadmin/api/admin/getAllSupplier'
+          '/proxy/productsearchadmin/api/admin/getAllSuppliers'
         );
 
         setData(res.data);
