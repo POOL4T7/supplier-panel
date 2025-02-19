@@ -55,3 +55,5 @@ address: Grunerstraße 20, 10179 Berlin, Germany
 Mall of Berlin
 image: https://c8.alamy.com/comp/KY4HW7/the-mall-of-berlin-shopping-centre-at-leipziger-platz-offering-various-KY4HW7.jpg
 address: Leipziger Pl. 12, 10117 Berlin, Germany
+
+ 

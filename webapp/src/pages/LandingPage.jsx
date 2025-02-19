@@ -1003,12 +1003,23 @@ const LandingPage = () => {
                 {
                   <img
                     src={
-                      item.image ? buildImage(item.image) : '/images/logo.webp'
+                      item.image
+                        ? buildImage(item.image)
+                        : item.premises == 'Alexa Center'
+                        ? '/images/alexa.jpg'
+                        : item.premises == 'Mall of Berlin'
+                        ? '/images/berlin.jpg'
+                        : item.premises == 'Forum Kopenick'
+                        ? '/images/forum.png'
+                        : item.premises == 'Dong Xuan Center'
+                        ? '/images/dong.jpg'
+                        : '/images/logo.webp'
                     }
                     alt={item.premises}
                     style={premisesCircleStyles.circleImage}
                   />
                 }
+                {/* '/images/logo.webp' */}
               </div>
               <div style={premisesCircleStyles.premisesName}>
                 {item.premises}
