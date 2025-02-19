@@ -34,7 +34,7 @@ const SupplierDetails = () => {
     if (supplierBusinessId) {
       axiosInstance
         .get(
-          `/proxy/productsearchsupplier/api/supplier/file/getBusinessProfileDetailsForSupplier?supplierBusinessId=${supplierBusinessId}`
+          `/proxy/productsearch/api/supplier/file/getBusinessProfileDetailsForSupplier?supplierBusinessId=${supplierBusinessId}`
         )
         .then((response) => {
           setSupplierData(response.data);

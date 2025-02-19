@@ -36,7 +36,7 @@ const Signup = () => {
   const onSubmit = async (data) => {
     try {
       const res = await axiosInstance.post(
-        `/proxy/productsearchsupplier/user/register`,
+        `/proxy/productsearch/user/register`,
         data
       );
       toast.success(

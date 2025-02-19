@@ -38,7 +38,7 @@ const Signup = () => {
     try {
       data.userType = 'Admin';
       const res = await axiosInstance.post(
-        `/proxy/productsearchsupplier/user/register`,
+        `/proxy/productsearchadmin/user/register`,
         data
       );
       toast.success(

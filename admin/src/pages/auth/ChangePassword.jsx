@@ -34,7 +34,7 @@ const ChangePassword = () => {
     data.email = email;
     try {
       const res = await axiosInstance.post(
-        '/proxy/productsearchsupplier/user/changePassword',
+        '/proxy/productsearchadmin/user/changePassword',
         data
       );
       toast.success(res.data);

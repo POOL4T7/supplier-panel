@@ -14,7 +14,7 @@ const InnerLayout = () => {
     async function fetchProfileData() {
       try {
         const res = await axiosInstance.get(
-          `/proxy/productsearchsupplier/api/supplier/profile/supplierProfileDetails?supplierUserId=${user?.id}`,
+          `/proxy/productsearchadmin/api/supplier/profile/supplierProfileDetails?supplierUserId=${user?.id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

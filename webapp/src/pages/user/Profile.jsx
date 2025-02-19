@@ -57,7 +57,7 @@ const Profile = () => {
         status: data.status,
       };
       const res = await axiosInstance.post(
-        `/proxy/productsearchsupplier/api/userProfile/addUserProfileInfo`,
+        `/proxy/productsearch/api/userProfile/addUserProfileInfo`,
         formData
       );
       const d = {
@@ -84,7 +84,7 @@ const Profile = () => {
     async function fetchData() {
       try {
         const res = await axiosInstance.get(
-          `/proxy/productsearchsupplier/api/userProfile/getUserProfileDetails?userProfileId=${userDetails?.id}`
+          `/proxy/productsearch/api/userProfile/getUserProfileDetails?userProfileId=${userDetails?.id}`
         );
         console.log('res', res);
         reset({ ...userDetails, status: res?.data?.active });

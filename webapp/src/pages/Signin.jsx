@@ -42,7 +42,7 @@ const LoginForm = () => {
   const onSubmit = async (data) => {
     try {
       const res = await axiosInstance.post(
-        `/proxy/productsearchsupplier/user/login`,
+        `/proxy/productsearch/user/login`,
         data
       );
       console.log(res.data?.userDetails);

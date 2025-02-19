@@ -24,7 +24,7 @@ const ForgotPassword = () => {
   const onSubmit = async (data) => {
     try {
       const res = await axiosInstance.get(
-        `/proxy/productsearchsupplier/user/forgotPassword?email=${data.email}`
+        `/proxy/productsearchadmin/user/forgotPassword?email=${data.email}`
       );
       console.log(res);
       toast.success(res.data);

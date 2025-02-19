@@ -16,7 +16,7 @@ const SupplierLayout = () => {
     async function fetchProfileData() {
       try {
         const res = await axiosInstance.get(
-          `/proxy/productsearchsupplier/api/userProfile/getUserProfileDetails?userProfileId=${user?.userId}`,
+          `/proxy/productsearch/api/userProfile/getUserProfileDetails?userProfileId=${user?.userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

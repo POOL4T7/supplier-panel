@@ -16,7 +16,7 @@ const SearchResult = () => {
         setLoading(true);
         const data = JSON.parse(query);
         const res = await axios.post(
-          `/proxy/productsearchsupplier/search`,
+          `/proxy/productsearch/search`,
           data
         );
         setProductList(res.data);

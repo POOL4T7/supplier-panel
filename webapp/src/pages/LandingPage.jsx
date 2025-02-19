@@ -6,8 +6,17 @@ import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 // import Spinner from '../components/common/Spinner';
 // import LocationIcon from '../components/common/LocationIcon';
-import { Autocomplete, TextField } from '@mui/material';
+import { Autocomplete, Box, Grid, TextField } from '@mui/material';
 // import CircularProgress from '@mui/material/CircularProgress';
+import {
+  Card,
+  CardActionArea,
+  CardMedia,
+  CardContent,
+  Typography,
+  // Grid,
+  Container,
+} from '@mui/material';
 
 import { useNavigate } from 'react-router-dom';
 import Spinner from '../components/common/Spinner';
@@ -17,6 +26,35 @@ const formSchema = yup.object().shape({
   searchTerm: yup.string().optional(),
 });
 
+const discounts = [
+  {
+    id: 1,
+    image:
+      'https://cms-images.mmst.eu/2rj3gcd43pmw/2xslVTe29DChwWBl7wq8if/6971ffc3da3db06f5758f71fcc563a7e/MMS_Logo_outline.svg?q=80',
+    link: 'https://www.mediamarkt.de/',
+    title: 'Limited Time Offer! 50% Off',
+  },
+  {
+    id: 2,
+    image:
+      'https://www.spicevillage.eu/cdn/shop/files/Assetmlogo_1_250x@2x.png?v=1644484561',
+    link: 'https://www.spicevillage.eu/',
+    title: 'Buy One Get One Free',
+  },
+  {
+    id: 3,
+    image: 'https://delhi6-dev.kcspages.com/image/logo.png',
+    link: 'https://delhi6-dev.kcspages.com/',
+    title: 'Exclusive Deal for Members',
+  },
+  {
+    id: 4,
+    image:
+      'https://tapas-mundo.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FlogoN.66bbeb8f.webp&w=256&q=75',
+    link: 'https://tapas-mundo.com/',
+    title: 'Holiday Special - 30% Off',
+  },
+];
 const formSchema2 = yup
   .object()
   .shape({
@@ -59,7 +97,7 @@ const LandingPage = () => {
       try {
         setLoading(true);
         const res = await axios.post(
-          '/proxy/productsearchsupplier/premisesListing'
+          '/proxy/productsearch/premisesListing'
         );
 
         setPremisesList(res.data);
@@ -109,7 +147,7 @@ const LandingPage = () => {
       newData.address = loc;
       newData.country = localStorage.getItem('country') || 'germany';
       // const res = await axios.post(
-      //   `/proxy/productsearchsupplier/search`,
+      //   `/proxy/productsearch/search`,
       //   newData
       // );
 
@@ -142,7 +180,7 @@ const LandingPage = () => {
       newData.address = loc;
       newData.country = localStorage.getItem('country') || 'germany';
       // const res = await axios.post(
-      //   `/proxy/productsearchsupplier/search`,
+      //   `/proxy/productsearch/search`,
       //   newData
       // );
 
@@ -161,7 +199,7 @@ const LandingPage = () => {
     try {
       setSetsearchLocation(true);
       const res = await axios.post(
-        `/proxy/productsearchsupplier/locationSuggestions`,
+        `/proxy/productsearch/locationSuggestions`,
         {
           country: localStorage.getItem('country') || 'germany',
           location: inputValue,
@@ -205,7 +243,7 @@ const LandingPage = () => {
       }
 
       const res = await axios.post(
-        `/proxy/productsearchsupplier/premisesOrShopSuggestions`,
+        `/proxy/productsearch/premisesOrShopSuggestions`,
         {
           premisesOrShopName: inputValue,
           type: 'premises',
@@ -227,9 +265,9 @@ const LandingPage = () => {
 
   const handleSearchTerm = async (value) => {
     try {
-      // productsearchsupplier/searchTermSuggestions
+      // productsearch/searchTermSuggestions
       const res = await axios.post(
-        '/proxy/productsearchsupplier/searchTermSuggestions',
+        '/proxy/productsearch/searchTermSuggestions',
         {
           searchTerm: value,
         }
@@ -261,7 +299,7 @@ const LandingPage = () => {
       }
 
       const res = await axios.post(
-        `/proxy/productsearchsupplier/premisesOrShopSuggestions`,
+        `/proxy/productsearch/premisesOrShopSuggestions`,
         {
           premisesOrShopName: inputValue,
           type: 'shop',
@@ -976,6 +1014,67 @@ const LandingPage = () => {
           })}
         </div>
       </div>
+
+      <Container sx={{ py: 4 }}>
+        <h2 style={premisesCircleStyles.title}>Popular Discounts</h2>
+        <Grid container spacing={3}>
+          {discounts.map((discount) => (
+            <Grid item xs={12} sm={6} md={3} key={discount.id}>
+              <Card
+                sx={{
+                  borderRadius: 2,
+                  boxShadow: 3,
+                  height: '100%',
+                  width: 250,
+                }}
+              >
+                <CardActionArea
+                  component='a'
+                  href={discount.link}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                >
+                  <Box
+                    sx={{
+                      width: 250,
+                      height: 200,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <CardMedia
+                      component='img'
+                      image={discount.image}
+                      alt={discount.title}
+                      sx={{
+                        maxWidth: '100%',
+                        maxHeight: '100%',
+                        objectFit: 'contain',
+                        display: 'block',
+                        margin: 'auto',
+                      }}
+                    />
+                  </Box>
+                  <CardContent sx={{ background: '#f5f5f5' }}>
+                    <Typography
+                      variant='p'
+                      sx={{
+                        fontWeight: 'bold',
+                        color: 'green',
+                        textAlign: 'left',
+                      }}
+                    >
+                      {discount.title}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
     </div>
   );
 };
@@ -1031,16 +1130,27 @@ const premisesCircleStyles = {
     objectFit: 'cover',
   },
   premisesName: {
+    // position: 'absolute',
+    // bottom: 0,
+    // left: 0,
+    // right: 0,
+    // padding: '15px 10px',
+    // backgroundColor: '#e0e2da',
+    // color: 'rgb(59 66 35)',
+    // fontSize: '1.1rem',
+    // fontWeight: 'bold',
+    // textAlign: 'center',
+    // margin: 0,
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: '15px 10px',
-    backgroundColor: '#e0e2da',
-    color: 'rgb(59 66 35)',
-    fontSize: '1.1rem',
+    bottom: '0px',
+    left: '0px',
+    right: '0px',
+    padding: '14px 10px',
+    backgroundColor: 'rgb(217 225 218 / 50%)',
+    color: 'rgb(18 35 18)',
     fontWeight: 'bold',
     textAlign: 'center',
-    margin: 0,
+    margin: '0px',
+    fontSize: '1.4rem',
   },
 };
