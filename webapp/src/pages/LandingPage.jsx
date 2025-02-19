@@ -987,6 +987,7 @@ const LandingPage = () => {
                   setLocationSuggestion((prev) => [...prev, newOption]);
                 }
                 form2.setValue('premises', item.premises);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform =
