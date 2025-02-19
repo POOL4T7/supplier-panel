@@ -315,7 +315,7 @@ const SupplierDetails = () => {
               <p>
                 <strong>Phone:</strong> {supplierData.phoneNumber || 'NA'}{' '}
                 {supplierData.phoneNumber && (
-                  <Link to={`tel:${supplierData.mobileNumber}`} target='_blank'>
+                  <Link to={`tel:${supplierData.phoneNumber}`} target='_blank'>
                     <SquareArrowOutUpRight height={'15px'} />
                   </Link>
                 )}
@@ -327,7 +327,7 @@ const SupplierDetails = () => {
                 <strong>WhatsApp:</strong> {supplierData.whatsapp || 'NA'}{' '}
                 {supplierData.whatsapp && (
                   <Link
-                    to={`https://wa.me/${supplierData.whatsappNumber}`}
+                    to={`https://wa.me/${supplierData.whatsapp}`}
                     target='_blank'
                   >
                     <SquareArrowOutUpRight height={'15px'} />
