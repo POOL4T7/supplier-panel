@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import axiosInstance from "../../axios";
-import Spinner from "../../components/common/Spinner";
+import { useEffect, useState } from 'react';
+import axiosInstance from '../../axios';
+import Spinner from '../../components/common/Spinner';
 
 const SupplierList = () => {
   const [data, setData] = useState([]);
@@ -32,7 +32,7 @@ const SupplierList = () => {
       try {
         setLoading(true);
         const res = await axiosInstance.get(
-          "/proxy/productsearchadmin/api/supplier/profile/getAllSuppliers"
+          '/proxy/productsearchadmin/api/admin/getAllSupplier'
         );
 
         setData(res.data);
@@ -47,7 +47,7 @@ const SupplierList = () => {
   if (loading) {
     return (
       <>
-        <div className="d-flex">
+        <div className='d-flex'>
           <Spinner />
         </div>
       </>
@@ -55,26 +55,26 @@ const SupplierList = () => {
   }
 
   return (
-    <div className="table-responsive mt-3">
-      <h1 className="mt-2">Supplier List</h1>
-      <table className="table table-hover table-bordered shadow-sm table-sm">
-        <thead className="table-light">
+    <div className='table-responsive mt-3'>
+      <h1 className='mt-2'>Supplier List</h1>
+      <table className='table table-hover table-bordered shadow-sm table-sm'>
+        <thead className='table-light'>
           <tr>
-            <th scope="col">S.no.</th>
-            <th scope="col">Supplier ID</th>
-            <th scope="col">Supplier Name</th>
-            <th scope="col">Business Name</th>
-            <th scope="col">Business Description</th>
-            <th scope="col">Business Address</th>
-            <th scope="col">Premises</th>
-            <th scope="col">Address OTP</th>
-            <th scope="col">isAddress Verified</th>
+            <th scope='col'>S.no.</th>
+            <th scope='col'>Supplier ID</th>
+            <th scope='col'>Supplier Name</th>
+            <th scope='col'>Business Name</th>
+            <th scope='col'>Business Description</th>
+            <th scope='col'>Business Address</th>
+            <th scope='col'>Premises</th>
+            <th scope='col'>Address OTP</th>
+            <th scope='col'>isAddress Verified</th>
           </tr>
         </thead>
         <tbody>
           {data.map((item, idx) => (
             <tr key={item.id}>
-              <th scope="row">{idx + 1}</th>
+              <th scope='row'>{idx + 1}</th>
               <td>{item.supplierProfile?.id}</td>
               <td>{item.supplierProfile?.supplierName}</td>
               <td>{item.supplierBusinessDetails?.businessName}</td>
