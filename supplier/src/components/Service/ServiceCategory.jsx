@@ -5,6 +5,8 @@ import { bussinessProfile, userDetailsAtom } from '../../storges/user';
 import CreatableSelect from 'react-select/creatable';
 import Spinner from '../common/Spinner';
 import { toast } from 'react-toastify';
+import useIsMobile from '../../hooks/useIsMobile';
+import { ArrowDown, ArrowUp, MoveLeft, MoveRight } from 'lucide-react';
 
 const customStyles = {
   control: (base) => ({
@@ -26,6 +28,7 @@ const customStyles = {
 
 const ServiceCategory = () => {
   const selectRef = useRef(null);
+  const isMobile = useIsMobile();
   const [uploadedCategories, setUploadedCategories] = useState([]);
   const [filteredUploadedCategories, setFilteredUploadedCategories] = useState(
     []
@@ -484,8 +487,8 @@ const ServiceCategory = () => {
               </div>
             </div>
 
-            <div className='col-md-2 d-flex flex-column justify-content-center align-items-center'>
-              <button
+            <div className='col-md-2 d-flex flex-column justify-content-center align-items-center mt-2'>
+              {/* <button
                 className='btn btn-primary mb-2'
                 onClick={moveToRight}
                 disabled={!isRightSelected}
@@ -498,7 +501,31 @@ const ServiceCategory = () => {
                 disabled={!isLeftSelected}
               >
                 &lt;&lt;
-              </button>
+              </button> */}
+              <div className='row'>
+                <div className='col-6 col-md-12'>
+                  <button
+                    className='btn btn-primary mb-2'
+                    onClick={moveToRight}
+                    disabled={!isRightSelected}
+                  >
+                    {isMobile ? (
+                      <ArrowDown size={24} />
+                    ) : (
+                      <MoveRight size={24} />
+                    )}
+                  </button>
+                </div>
+                <div className='col-6 col-md-12'>
+                  <button
+                    className='btn btn-primary'
+                    onClick={moveToLeft}
+                    disabled={!isLeftSelected}
+                  >
+                    {isMobile ? <ArrowUp size={24} /> : <MoveLeft size={24} />}
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className='col-md-5'>
