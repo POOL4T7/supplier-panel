@@ -19,7 +19,7 @@ const Premises = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
-  const { control, handleSubmit, reset, setValue } = useForm({
+  const { control, handleSubmit, reset, setValue, getValues } = useForm({
     defaultValues: {
       country: 'Germany',
       premisesName: '',
@@ -205,7 +205,7 @@ const Premises = () => {
           }}
         >
           <Typography variant='h6' component='h2'>
-            Add New Premises
+            {getValues('premisesId') ? 'Update' : 'Add New'} Premises
           </Typography>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div style={{ textAlign: 'center', marginBottom: '16px' }}>
