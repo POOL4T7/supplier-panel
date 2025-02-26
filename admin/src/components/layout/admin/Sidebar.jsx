@@ -14,6 +14,12 @@ const Sidebar = () => {
                 </div>
                 Supplier List
               </Link>
+              <Link className='nav-link' to='/admin/premises-list'>
+                <div className='sb-nav-link-icon'>
+                  <i className='fas fa-tachometer-alt'></i>
+                </div>
+                Premises
+              </Link>
               <div className='sb-sidenav-menu-heading'></div>
               {/* 
               <a

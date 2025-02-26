@@ -6,6 +6,7 @@ import Signup from './pages/Signup';
 import SignupCompletion from './pages/SignupCompletion';
 import Admin from './pages/admin/AdminProfile';
 import SupplierList from './pages/admin/SupplierList';
+import Premises from './pages/admin/Premises';
 import AdminLayout from './components/layout/AdminLayout';
 // import SupplierLayout from './components/layout/SupplierLayout';
 // import ProductCategory from './pages/supplier/product/Category';
@@ -88,6 +89,10 @@ const router = () => {
         {
           path: 'supplier-list',
           element: <SupplierList />,
+        },
+        {
+          path: 'premises-list',
+          element: <Premises />,
         },
       ],
     },
