@@ -101,43 +101,43 @@ const Tax = () => {
             // `/proxy/productsearchsupplier/api/supplier/file/getCertificateOrBusinessImage?supplierBusinessId=${
             //   bussiness.id
             // }&type=${type.toLowerCase()}`,
-            `/proxy/productsearchsupplier/api/supplier/file/getCertificateOrBusinessImageOrLogo?supplierBusinessId=${bussiness.id}&type=${type}`,
-            {
-              responseType: 'arraybuffer', // Important for binary data
-            }
+            `/proxy/productsearchsupplier/api/supplier/file/getCertificateOrBusinessImageOrLogo?supplierBusinessId=${bussiness.id}&type=${type}`
           );
 
-          let docType = 'application/pdf'; // Default to PDF
-          if (type === 'Certificate' && bussiness.certificateImagePath) {
-            const extension = bussiness.certificateImagePath
-              .split('.')
-              .pop()
-              .toLowerCase(); // Extract file extension
-            console.log('extension', extension);
-            if (['jpeg', 'jpg', 'png', 'webp'].includes(extension)) {
-              docType = `image/${extension}`;
-            }
-          }
-          // alert(type , bussiness.certificateImagePath )
-          else {
-            // Assuming BusinessImage is always PNG for now
-            docType = 'image/png';
-          }
+          // let docType = 'application/pdf'; // Default to PDF
+          // if (type === 'Certificate' && bussiness.certificateImagePath) {
+          //   const extension = bussiness.certificateImagePath
+          //     .split('.')
+          //     .pop()
+          //     .toLowerCase(); // Extract file extension
+          //   console.log('extension', extension);
+          //   if (['jpeg', 'jpg', 'png', 'webp'].includes(extension)) {
+          //     docType = `image/${extension}`;
+          //   }
+          // }
+          // // alert(type , bussiness.certificateImagePath )
+          // else {
+          //   // Assuming BusinessImage is always PNG for now
+          //   docType = 'image/png';
+          // }
 
-          console.log('Determined Content-Type:', docType);
+          // console.log('Determined Content-Type:', docType);
 
-          const blob = new Blob([response.data], { type: docType });
-          const url = URL.createObjectURL(blob);
+          // const blob = new Blob([response.data], { type: docType });
+          // const url = URL.createObjectURL(blob);
 
           if (type == 'BusinessImage') {
-            setShopImage({ file: url, extension: docType.split('/').pop() });
+            setShopImage({
+              file: response.data.path,
+              extension: 'image',
+            });
           } else if (type === 'Certificate') {
             setCertificateBase64({
-              file: url,
-              extension: docType.split('/').pop(),
+              file: response.data.path,
+              extension: 'image',
             });
           } else {
-            setShopLogo({ file: url, extension: docType.split('/').pop() });
+            setShopLogo({ file: response.data.path, extension: 'image' });
           }
         } catch (error) {
           console.error('Error fetching byte array:', error);
@@ -337,7 +337,7 @@ const Tax = () => {
                 type='file'
                 className='form-control mx-2'
                 id='certificateInput'
-                // accept='image/*'
+                accept='image/*'
                 onChange={(e) => setCertificate(e.target.files)}
               />
               <button
@@ -364,9 +364,7 @@ const Tax = () => {
                 No Certificate Uploaded
               </span>
             )}
-            {['jpeg', 'jpg', 'png', 'webp'].includes(
-              certificateBase64.extension
-            ) ? (
+            {['image'].includes(certificateBase64.extension) ? (
               <img
                 src={certificateBase64.file}
                 alt='Preview'
