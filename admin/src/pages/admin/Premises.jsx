@@ -75,14 +75,30 @@ const Premises = () => {
     handleCloseModal();
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setValue('image', file);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result);
-    };
-    reader.readAsDataURL(file);
+  const handleFileChange = async (e) => {
+    try {
+      const file = e.target.files[0];
+      // setValue('image', file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+
+      const res = await axiosInstance.post(
+        `/proxy/productsearchadmin/api/admin/premises/uploadPremisesImage`,
+        { premisesImage: file, premisesId: getValues('premisesId') },
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      setValue('premisesImage', res.data.premisesImagePath);
+      console.log(res.data);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   if (loading) {
@@ -208,44 +224,48 @@ const Premises = () => {
             {getValues('premisesId') ? 'Update' : 'Add New'} Premises
           </Typography>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-              <input
-                type='file'
-                accept='image/*'
-                onChange={handleFileChange}
-                style={{ display: 'none' }}
-                id='image-upload'
-              />
-              <label htmlFor='image-upload'>
-                <div
-                  style={{
-                    width: '100px',
-                    height: '100px',
-                    border: '1px dashed #ccc',
-                    borderRadius: '50%',
-                    cursor: 'pointer',
-                    overflow: 'hidden',
-                    display: 'inline-block',
-                  }}
-                >
-                  {imagePreview ? (
-                    <img
-                      src={imagePreview}
-                      alt='Preview'
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                      }}
-                    />
-                  ) : (
-                    <Typography variant='body2' color='textSecondary'>
-                      Upload Image
-                    </Typography>
-                  )}
-                </div>
-              </label>
-            </div>
+            {getValues('premisesId') ? (
+              <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                <input
+                  type='file'
+                  accept='image/*'
+                  onChange={handleFileChange}
+                  style={{ display: 'none' }}
+                  id='image-upload'
+                />
+                <label htmlFor='image-upload'>
+                  <div
+                    style={{
+                      width: '100px',
+                      height: '100px',
+                      border: '1px dashed #ccc',
+                      borderRadius: '50%',
+                      cursor: 'pointer',
+                      overflow: 'hidden',
+                      display: 'inline-block',
+                    }}
+                  >
+                    {imagePreview ? (
+                      <img
+                        src={imagePreview}
+                        alt='Preview'
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                        }}
+                      />
+                    ) : (
+                      <Typography variant='body2' color='textSecondary'>
+                        Upload Image
+                      </Typography>
+                    )}
+                  </div>
+                </label>
+              </div>
+            ) : (
+              <></>
+            )}
 
             <Controller
               name='premisesName'
