@@ -10,6 +10,7 @@ const Verify = () => {
   const [addressOTP, setAddressOTP] = useState('');
   const [bussiness, setBussiness] = useAtom(bussinessProfile);
   const [loading, setLoading] = useState(false);
+
   const verifyAddress = async () => {
     try {
       setLoading(true);
@@ -37,7 +38,7 @@ const Verify = () => {
         <h1>Verify the business address</h1>
         {bussiness.verifyAddress ? (
           <p style={{ color: '#7d9138', textDecoration: 'underline' }}>
-            Address is already verifed
+            Address is verified
           </p>
         ) : (
           <></>
