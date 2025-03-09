@@ -51,12 +51,13 @@ const Profile = () => {
 
   const onSubmit = async (data) => {
     try {
-      data.businessKeyWords = data.businessKeyWords.split(',');
-      data.businessNickName = data.businessNickName.split(',');
+      const r = JSON.parse(JSON.stringify(data));
+      r.businessKeyWords = data.businessKeyWords.split(',');
+      r.businessNickName = data.businessNickName.split(',');
 
       const res = await axiosInstance.post(
         `/proxy/productsearchsupplier/api/supplier/file/addSupplierBusinessDetails`,
-        { ...data, supplierId: supplier.id, supplierBusinessId: bussiness.id }
+        { ...r, supplierId: supplier.id, supplierBusinessId: bussiness.id }
       );
 
       toast.success(
