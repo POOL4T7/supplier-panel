@@ -60,3 +60,18 @@ address: Leipziger Pl. 12, 10117 Berlin, Germany
 
  generate pdf for address otp
  address verification message
+
+
+ 🚀 Full-Stack Software Developer | 2+ Years Experience | Node.js | Next.js | MongoDB | AWS
+
+Experienced Full-Stack Developer with 2+ years of expertise in building scalable, high-performance web applications. Strong background in backend development with Node.js, Express.js, MongoDB, and Redis, combined with frontend experience in React.js and Next.js. Skilled in optimizing database queries, implementing real-time communication with WebSockets, and deploying applications on AWS and Vercel.
+
+✅ Key Highlights:
+
+Developed 15+ REST API modules for scalable applications.
+Reduced query response times by 40% through Redis caching and MongoDB optimization.
+Built and deployed LMS and E-commerce solutions within the Solh Wellness platform.
+Led a team of 4 developers to deliver LilMeet, a real-time communication platform.
+Integrated Agora for live video streaming and Socket.io for real-time interactions.
+Passionate about solving complex technical challenges, collaborating with cross-functional teams, and continuously improving software performance. Always eager to learn and adapt to new technologies.
+

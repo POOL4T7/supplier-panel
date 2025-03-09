@@ -31,6 +31,7 @@ const addressSchema = yup.object().shape({
       return keywords.length <= 10;
     }),
   aboutUs: yup.string().required('About us is required'),
+  sector: yup.string().required('Sector is required'),
 });
 
 const Profile = () => {
@@ -76,6 +77,7 @@ const Profile = () => {
         businessNickName: bussiness.businessNickName?.join(',') || '',
         businessKeyWords: bussiness.businessKeyWords?.join(',') || '',
         aboutUs: bussiness.aboutUs || '',
+        sector: bussiness.sector || '',
       });
     }
   }, [reset, bussiness]);
@@ -85,6 +87,34 @@ const Profile = () => {
       <div style={{ maxWidth: '500px', width: '100%', marginTop: '2rem' }}>
         <h1>About Business</h1>
         <form>
+          <div className='mb-2'>
+            <label className='form-label'>Business Sector</label>
+            <select
+              {...register('sector')}
+              className={`form-control ${errors.sector ? 'is-invalid' : ''}`}
+            >
+              <option value=''>Select Sector</option>
+              <option value='product / retail'> Products / Retail </option>
+              <option value='wholesale traders'>Wholesale traders</option>
+              <option value='retail and wholesale'>Retail and wholesale</option>
+              <option value='services'>Services</option>
+              <option value='products and services'>
+                Products and Services
+              </option>
+              <option value='manufacturing'>Manufacturing</option>
+              <option value='charity organizations'>
+                Charity organizations
+              </option>
+
+              <option value='wholeGovt organizationssale'>
+                Govt Organizations
+              </option>
+              <option value='Individuals/ freelancers'>
+                Individuals/ freelancers
+              </option>
+            </select>
+            <div className='invalid-feedback'>{errors.sector?.message}</div>
+          </div>
           <div className='mb-2'>
             <label className='form-label'>Business Name</label>
             <input

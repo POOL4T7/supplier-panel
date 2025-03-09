@@ -224,7 +224,7 @@ const Premises = () => {
             {getValues('premisesId') ? 'Update' : 'Add New'} Premises
           </Typography>
           <form onSubmit={handleSubmit(onSubmit)}>
-            {getValues('premisesId') ? (
+            {/* {getValues('premisesId') ? (
               <div style={{ textAlign: 'center', marginBottom: '16px' }}>
                 <input
                   type='file'
@@ -265,7 +265,45 @@ const Premises = () => {
               </div>
             ) : (
               <></>
-            )}
+            )} */}
+            <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+              <input
+                type='file'
+                accept='image/*'
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+                id='image-upload'
+              />
+              <label htmlFor='image-upload'>
+                <div
+                  style={{
+                    width: '100px',
+                    height: '100px',
+                    border: '1px dashed #ccc',
+                    borderRadius: '50%',
+                    cursor: 'pointer',
+                    overflow: 'hidden',
+                    display: 'inline-block',
+                  }}
+                >
+                  {imagePreview ? (
+                    <img
+                      src={imagePreview}
+                      alt='Preview'
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  ) : (
+                    <Typography variant='body2' color='textSecondary'>
+                      Upload Image
+                    </Typography>
+                  )}
+                </div>
+              </label>
+            </div>
 
             <Controller
               name='premisesName'

@@ -12,7 +12,7 @@ import Spinner from '../../../components/common/Spinner';
 import { Box } from '@mui/material';
 
 const addressSchema = yup.object().shape({
-  sector: yup.string().required('Sector is required'),
+  // sector: yup.string().required('Sector is required'),
   businessTaxId: yup.string().required('Business tax ID is required'),
 });
 
@@ -55,11 +55,11 @@ const Tax = () => {
       data.certificateImagePath = certificateLink;
       data.businessImagePath = shopImageLink;
       data.businessLogoPath = shopLogoLink;
-      console.log({
-        ...data,
-        supplierId: supplier.id,
-        supplierBusinessId: bussiness.id,
-      });
+      // console.log({
+      //   ...data,
+      //   supplierId: supplier.id,
+      //   supplierBusinessId: bussiness.id,
+      // });
 
       const res = await axiosInstance.post(
         `/proxy/productsearchsupplier/api/supplier/file/addSupplierBusinessNatureAndTaxDetails`,
@@ -85,7 +85,7 @@ const Tax = () => {
       businessTaxId: '',
     };
     if (bussiness?.id) {
-      if (bussiness.sector) x.sector = bussiness.sector;
+      // if (bussiness.sector) x.sector = bussiness.sector;
       if (bussiness.businessTaxId) x.businessTaxId = bussiness.businessTaxId;
       if (bussiness.businessImagePath)
         setShopImageLink(bussiness.businessImagePath);
@@ -285,7 +285,7 @@ const Tax = () => {
       <div style={{ maxWidth: '500px', width: '100%', marginTop: '2rem' }}>
         <h1>Business Nature & Tax details</h1>
         <form>
-          <div className='mb-2'>
+          {/* <div className='mb-2'>
             <label className='form-label'>Business Sector</label>
             <select
               {...register('sector')}
@@ -312,7 +312,7 @@ const Tax = () => {
               </option>
             </select>
             <div className='invalid-feedback'>{errors.sector?.message}</div>
-          </div>
+          </div> */}
 
           <div className='mb-2'>
             <label className='form-label'>Business Tax ID</label>

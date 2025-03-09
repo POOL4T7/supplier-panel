@@ -14,10 +14,7 @@ const step1Schema = yup.object().shape({
   supplierName: yup.string().required('Name is required'),
   email: yup.string().email('Invalid email').required('Email is required'),
   gender: yup.string().required('Gender is required'),
-  phoneNumber: yup
-    .string()
-    .required('phoneNumber number is required')
-    .matches(/^\d{10}$/, 'phoneNumber number must be 10 digits'),
+  phoneNumber: yup.string().required('phoneNumber number is required'),
   idProofFront: yup
     .mixed()
     // .required('Required')
@@ -46,10 +43,7 @@ const step1Schema = yup.object().shape({
     .optional(),
   addressLine1: yup.string().required('Address Line 1 is required'),
   addressLine2: yup.string().optional(),
-  zipcode: yup
-    .string()
-    .required('zipcode is required')
-    .matches(/^\d{6}$/, 'zipcode must be 6 digits'),
+  zipcode: yup.string().required('zipcode is required'),
   city: yup.string().required('City is required'),
   country: yup.string().required('Country is required'),
   // status: yup.boolean(),
