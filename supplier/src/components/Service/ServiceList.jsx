@@ -83,8 +83,7 @@ const ServiceList = () => {
         <Switch
           checked={params.row.active}
           onChange={() => {
-            console.log(params.row.active, params.row.id);
-            return handleStatusChange(params.row.id, params.row.active);
+            return handleStatusChange([params.row.id], params.row.active);
           }}
         />
       ),
@@ -168,13 +167,13 @@ const ServiceList = () => {
     await fetchProducts();
   };
 
-  const handleStatusChange = async (id, status) => {
+  const handleStatusChange = async (ids, status) => {
     try {
       await axiosInstance.post(
         `/proxy/productsearchsupplier/api/supplier/file/productservicestatus`,
         {
           supplierBusinessId: supplier.id,
-          serviceId: [id],
+          serviceId: ids,
           status: !status,
         }
       );
@@ -432,6 +431,30 @@ const ServiceList = () => {
 
           {/* Bulk Actions */}
           <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+            <Button
+              variant='contained'
+              onClick={() => {
+                handleStatusChange(selectedRows, false);
+              }}
+              disabled={selectedRows.length === 0}
+              sx={{
+                backgroundColor: '#355e3b',
+                color: '#fff',
+                '&:hover': { backgroundColor: '#2a4a2f' },
+              }}
+            >
+              Active Selected
+            </Button>
+            <Button
+              variant='contained'
+              color='default'
+              onClick={() => {
+                handleStatusChange(selectedRows, true);
+              }}
+              disabled={selectedRows.length === 0}
+            >
+              Inactive Selected
+            </Button>
             <Button
               variant='contained'
               color='error'

@@ -95,7 +95,7 @@ const ProductList = () => {
         <Switch
           checked={params.row.active}
           onChange={() => {
-            return handleStatusChange(params.row.id, params.row.active);
+            return handleStatusChange([params.row.id], params.row.active);
           }}
         />
       ),
@@ -191,12 +191,12 @@ const ProductList = () => {
     }
   };
 
-  const handleStatusChange = async (id, status) => {
+  const handleStatusChange = async (ids, status) => {
     try {
       await axiosInstance.post(
         `/proxy/productsearchsupplier/api/supplier/file/productservicestatus`,
         {
-          productId: [id],
+          productId: ids,
           supplierBusinessId: supplier.id,
           // serviceId: [101, 102, 103],
           status: !status,
@@ -468,6 +468,30 @@ const ProductList = () => {
 
           {/* Bulk Actions */}
           <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+            <Button
+              variant='contained'
+              onClick={() => {
+                handleStatusChange(selectedRows, false);
+              }}
+              disabled={selectedRows.length === 0}
+              sx={{
+                backgroundColor: '#355e3b',
+                color: '#fff',
+                '&:hover': { backgroundColor: '#2a4a2f' },
+              }}
+            >
+              Active Selected
+            </Button>
+            <Button
+              variant='contained'
+              color='default'
+              onClick={() => {
+                handleStatusChange(selectedRows, true);
+              }}
+              disabled={selectedRows.length === 0}
+            >
+              Inactive Selected
+            </Button>
             <Button
               variant='contained'
               color='error'
