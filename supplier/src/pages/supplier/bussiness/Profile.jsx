@@ -63,7 +63,7 @@ const Profile = () => {
       toast.success(
         res.data?.data?.message || 'Supplier business profile updated'
       );
-      setBussiness({ ...bussiness, ...data });
+      setBussiness({ ...bussiness, ...r });
     } catch (e) {
       toast.error(
         e.response?.data?.error || 'Failed: Supplier profile update failed'
@@ -73,10 +73,11 @@ const Profile = () => {
 
   useEffect(() => {
     if (bussiness?.id) {
+      console.log(bussiness);
       reset({
         businessName: bussiness.businessName || '',
-        businessNickName: bussiness.businessNickName?.join(',') || '',
-        businessKeyWords: bussiness.businessKeyWords?.join(',') || '',
+        businessNickName: bussiness?.businessNickName?.join(',') || '',
+        businessKeyWords: bussiness?.businessKeyWords?.join(',') || '',
         aboutUs: bussiness.aboutUs || '',
         sector: bussiness.sector || '',
       });
