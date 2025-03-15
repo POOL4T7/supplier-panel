@@ -330,26 +330,26 @@ const LandingPage = () => {
   );
   const debouncedSearchTerm = debounceFetch(handleSearchTerm, 500);
 
-  const buildImage = (base64String) => {
-    try {
-      // Check if the string is empty or undefined
-      if (!base64String) {
-        return null;
-      }
+  // const buildImage = (base64String) => {
+  //   try {
+  //     // Check if the string is empty or undefined
+  //     if (!base64String) {
+  //       return null;
+  //     }
 
-      // If the string already starts with 'data:', return as is
-      if (base64String.startsWith('data:')) {
-        return base64String;
-      }
+  //     // If the string already starts with 'data:', return as is
+  //     if (base64String.startsWith('data:')) {
+  //       return base64String;
+  //     }
 
-      // Create a complete data URL by adding the prefix
-      const imageUrl = `data:image/jpeg;base64,${base64String}`;
-      return imageUrl;
-    } catch (error) {
-      console.error('Error creating image URL:', error);
-      return null;
-    }
-  };
+  //     // Create a complete data URL by adding the prefix
+  //     const imageUrl = `data:image/jpeg;base64,${base64String}`;
+  //     return imageUrl;
+  //   } catch (error) {
+  //     console.error('Error creating image URL:', error);
+  //     return null;
+  //   }
+  // };
   return (
     <div className='search-main pt-5'>
       {/* search row start  */}
@@ -1003,19 +1003,7 @@ const LandingPage = () => {
               <div style={premisesCircleStyles.circle}>
                 {
                   <img
-                    src={
-                      item.image
-                        ? buildImage(item.image)
-                        : item.premises == 'Alexa Center'
-                        ? '/images/alexa.jpg'
-                        : item.premises == 'Mall of Berlin'
-                        ? '/images/berlin.jpg'
-                        : item.premises == 'Forum Kopenick'
-                        ? '/images/forum.png'
-                        : item.premises == 'Dong Xuan Center'
-                        ? '/images/dong.jpg'
-                        : '/images/logo.webp'
-                    }
+                    src={item.image}
                     alt={item.premises}
                     style={premisesCircleStyles.circleImage}
                   />

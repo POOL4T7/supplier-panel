@@ -25,26 +25,26 @@ const SearchResult = () => {
     if (query) fetchData();
   }, [query]);
 
-  const buildImage = (base64String) => {
-    try {
-      // Check if the string is empty or undefined
-      if (!base64String) {
-        return null;
-      }
+  // const buildImage = (base64String) => {
+  //   try {
+  //     // Check if the string is empty or undefined
+  //     if (!base64String) {
+  //       return null;
+  //     }
 
-      // If the string already starts with 'data:', return as is
-      if (base64String.startsWith('data:')) {
-        return base64String;
-      }
+  //     // If the string already starts with 'data:', return as is
+  //     if (base64String.startsWith('data:')) {
+  //       return base64String;
+  //     }
 
-      // Create a complete data URL by adding the prefix
-      const imageUrl = `data:image/jpeg;base64,${base64String}`;
-      return imageUrl;
-    } catch (error) {
-      console.error('Error creating image URL:', error);
-      return null;
-    }
-  };
+  //     // Create a complete data URL by adding the prefix
+  //     const imageUrl = `data:image/jpeg;base64,${base64String}`;
+  //     return imageUrl;
+  //   } catch (error) {
+  //     console.error('Error creating image URL:', error);
+  //     return null;
+  //   }
+  // };
 
   if (loading) {
     return (
@@ -77,9 +77,7 @@ const SearchResult = () => {
                       <img
                         src={
                           item.supplierBusinessDetails.businessImage
-                            ? buildImage(
-                                item.supplierBusinessDetails.businessImage
-                              )
+                            ? item.supplierBusinessDetails.businessImage
                             : '/images/logo.webp'
                         }
                         alt='Company Logo'

@@ -157,6 +157,7 @@ const Premises = () => {
               setValue('displayOrder', premises.displayOrder);
               setValue('premisesImage', premises.premisesImagePath);
               setValue('premisesId', premises.premisesId);
+              setImagePreview(premises.premisesImagePath);
               setShowModal(true);
             }}
           >
