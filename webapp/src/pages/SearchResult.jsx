@@ -76,8 +76,8 @@ const SearchResult = () => {
                     <div className='col-6 col-md-12'>
                       <img
                         src={
-                          item.supplierBusinessDetails.businessImage
-                            ? item.supplierBusinessDetails.businessImage
+                          item.supplierBusinessDetails.businessImagePath
+                            ? item.supplierBusinessDetails.businessImagePath
                             : '/images/logo.webp'
                         }
                         alt='Company Logo'
