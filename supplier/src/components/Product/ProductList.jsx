@@ -631,7 +631,10 @@ const ProductList = () => {
             border: 0,
             '& .MuiDataGrid-columnHeader': {
               backgroundColor: '#e0e2da',
-              fontWeight: 'bold',
+            },
+            '& .MuiDataGrid-columnHeaderTitle': {
+              // backgroundColor: '#e0e2da',
+              fontWeight: '700',
             },
             '& .MuiDataGrid-cell:hover': {
               backgroundColor: '#dbdcd7',
