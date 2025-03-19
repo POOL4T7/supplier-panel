@@ -3954,6 +3954,7 @@ fieldset:disabled .btn {
 .nav {
   --bs-nav-link-padding-x: 1rem;
   --bs-nav-link-padding-y: 0.5rem;
+  --bs-nav-link-font-size: 1rem;
   --bs-nav-link-font-weight: ;
   --bs-nav-link-color: var(--bs-link-color);
   --bs-nav-link-hover-color: var(--bs-link-hover-color);
@@ -11416,7 +11417,7 @@ body {
   display: flex;
 }
 #layoutSidenav #layoutSidenav_nav {
-  flex-basis: 225px;
+  flex-basis: 280px;
   flex-shrink: 0;
   transition: transform 0.15s ease-in-out;
   z-index: 1038;
@@ -11460,12 +11461,12 @@ body {
     transition: margin 0.15s ease-in-out;
   }
   .sb-sidenav-toggled #layoutSidenav #layoutSidenav_nav {
-    transform: translateX(-225px);
+    transform: translateX(-280px);
     /* flex-basis: 45px;
     overflow: hidden; */
   }
   .sb-sidenav-toggled #layoutSidenav #layoutSidenav_content {
-    margin-left: -225px;
+    margin-left: -280px;
   }
   .sb-sidenav-toggled #layoutSidenav #layoutSidenav_content:before {
     display: none;
@@ -11516,7 +11517,7 @@ body {
   padding-left: 0;
   height: auto;
   z-index: 1039;
-  background-color: #3b4223;
+  background-color: #455a48;
 }
 .sb-topnav .navbar-brand {
   width: 225px;

@@ -10,6 +10,8 @@ import { bussinessProfile, userDetailsAtom } from '../../../storges/user';
 import FormContainer from '../../../components/common/FormContainer';
 
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { FilePenLine, X as CancelIcon } from 'lucide-react';
 
 const addressSchema = yup.object().shape({
   streetName: yup.string().required('Stree tName is required'),
@@ -26,6 +28,7 @@ const Address = () => {
   const [supplier] = useAtom(userDetailsAtom);
   const [bussiness, setBussiness] = useAtom(bussinessProfile);
   const navigate = useNavigate();
+  const [editMode, setEditMode] = useState(false);
   const {
     register,
     handleSubmit,
@@ -90,7 +93,20 @@ const Address = () => {
   return (
     <FormContainer>
       <div style={{ maxWidth: '500px', width: '100%', marginTop: '2rem' }}>
-        <h1>Business Address</h1>
+        <div className='d-flex justify-content-between align-items-center'>
+          <h1>Business Address</h1>
+          <p
+            className=' '
+            style={{ height: '30px' }}
+            onClick={() => setEditMode(!editMode)}
+          >
+            {editMode ? (
+              <CancelIcon className='text-danger' />
+            ) : (
+              <FilePenLine className='text-primary' />
+            )}
+          </p>
+        </div>
         <div className='row'>
           <div className='col-4'>
             <p>Physical address: </p>
@@ -125,6 +141,7 @@ const Address = () => {
                   type='radio'
                   value='individual'
                   {...register('premisesType')}
+                  disabled={!editMode}
                 />{' '}
                 <span className='mr-2'>Individual Premises</span>
               </label>
@@ -133,6 +150,7 @@ const Address = () => {
                   type='radio'
                   value='group'
                   {...register('premisesType')}
+                  disabled={!editMode}
                 />
                 {'  '} Group of Bussiness Premises (Malls)
               </label>
@@ -152,6 +170,7 @@ const Address = () => {
                 className={`form-control ${
                   errors.premisesName ? 'is-invalid' : ''
                 }`}
+                disabled={!editMode}
               />
               <div className='invalid-feedback'>
                 {errors.premisesName?.message}
@@ -168,6 +187,7 @@ const Address = () => {
                 className={`form-control ${
                   errors.streetName ? 'is-invalid' : ''
                 }`}
+                disabled={!editMode}
               />
               <div className='invalid-feedback'>
                 {errors.streetName?.message}
@@ -180,6 +200,7 @@ const Address = () => {
                 {...register('houseNo')}
                 placeholder='House no.'
                 className={`form-control ${errors.houseNo ? 'is-invalid' : ''}`}
+                disabled={!editMode}
               />
               <div className='invalid-feedback'>{errors.houseNo?.message}</div>
             </div>
@@ -191,6 +212,7 @@ const Address = () => {
               {...register('area')}
               placeholder='Area or locality'
               className={`form-control ${errors.area ? 'is-invalid' : ''}`}
+              disabled={!editMode}
             />
             <div className='invalid-feedback'>{errors.area?.message}</div>
           </div>
@@ -203,6 +225,7 @@ const Address = () => {
                 {...register('zipcode')}
                 className={`form-control ${errors.zipcode ? 'is-invalid' : ''}`}
                 // disabled={isUpdating}
+                disabled={!editMode}
               />
               <div className='invalid-feedback'>{errors.zipcode?.message}</div>
             </div>
@@ -214,6 +237,7 @@ const Address = () => {
                 {...register('city')}
                 className={`form-control ${errors.city ? 'is-invalid' : ''}`}
                 // disabled={isUpdating}
+                disabled={!editMode}
               />
               <div className='invalid-feedback'>{errors.city?.message}</div>
             </div>
@@ -225,34 +249,37 @@ const Address = () => {
               {...register('country')}
               className={`form-control ${errors.country ? 'is-invalid' : ''}`}
               // disabled={isUpdating}
+              disabled={!editMode}
             />
             <div className='invalid-feedback'>{errors.country?.message}</div>
           </div>
         </form>
-        <div className='d-flex gap-2'>
-          <button
-            type='button'
-            className='btn btn-primary mt-3 '
-            onClick={handleSubmit(onSubmit)}
-          >
-            Save
-          </button>
-          <button
-            type='button'
-            className='btn btn-primary mt-3'
-            onClick={handleSubmit(async (data) => {
-              try {
-                await onSubmit(data); // Call the API
-                navigate('/supplier/bussiness/contact'); // Navigate only if API succeeds
-              } catch (e) {
-                console.log(e);
-              }
-            })}
-            disabled={isSubmitting}
-          >
-            Save & Next
-          </button>
-        </div>
+        {editMode && (
+          <div className='d-flex gap-2'>
+            <button
+              type='button'
+              className='btn btn-primary mt-3 '
+              onClick={handleSubmit(onSubmit)}
+            >
+              Save
+            </button>
+            <button
+              type='button'
+              className='btn btn-primary mt-3'
+              onClick={handleSubmit(async (data) => {
+                try {
+                  await onSubmit(data); // Call the API
+                  navigate('/supplier/bussiness/contact'); // Navigate only if API succeeds
+                } catch (e) {
+                  console.log(e);
+                }
+              })}
+              disabled={isSubmitting}
+            >
+              Save & Next
+            </button>
+          </div>
+        )}
       </div>
     </FormContainer>
   );

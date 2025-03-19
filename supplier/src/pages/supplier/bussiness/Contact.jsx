@@ -9,6 +9,8 @@ import axiosInstance from '../../../axios';
 import { bussinessProfile, userDetailsAtom } from '../../../storges/user';
 import FormContainer from '../../../components/common/FormContainer';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { FilePenLine, X as CancelIcon } from 'lucide-react';
 
 const addressSchema = yup
   .object()
@@ -61,6 +63,7 @@ const Contact = () => {
   const [supplier] = useAtom(userDetailsAtom);
   const [bussiness, setBussiness] = useAtom(bussinessProfile);
   const navigate = useNavigate();
+  const [editMode, setEditMode] = useState(false);
   const {
     register,
     handleSubmit,
@@ -121,8 +124,21 @@ const Contact = () => {
 
   return (
     <FormContainer>
-      <div style={{ maxWidth: '500px',width: '100%', marginTop: '2rem' }}>
-        <h1>Contact Details</h1>
+      <div style={{ maxWidth: '500px', width: '100%', marginTop: '2rem' }}>
+        <div className='d-flex justify-content-between align-items-center'>
+          <h1>Contact Details</h1>
+          <p
+            className=' '
+            style={{ height: '30px' }}
+            onClick={() => setEditMode(!editMode)}
+          >
+            {editMode ? (
+              <CancelIcon className='text-danger' />
+            ) : (
+              <FilePenLine className='text-primary' />
+            )}
+          </p>
+        </div>
         <form>
           <div className='mb-2'>
             <label className='form-label'>
@@ -132,6 +148,7 @@ const Contact = () => {
               type='text'
               {...register('website')}
               className={`form-control ${errors.website ? 'is-invalid' : ''}`}
+              disabled={!editMode}
             />
             <div className='invalid-feedback'>{errors.website?.message}</div>
           </div>
@@ -142,6 +159,7 @@ const Contact = () => {
               type='email'
               {...register('email')}
               className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+              disabled={!editMode}
             />
             <div className='invalid-feedback'>{errors.email?.message}</div>
           </div>
@@ -158,6 +176,7 @@ const Contact = () => {
                   className={`form-control ${
                     errors.faxCountryCode ? 'is-invalid' : ''
                   }`}
+                  disabled={!editMode}
                 />
                 {/* <div className='invalid-feedback'>
                           {errors.faxCountryCode?.message}
@@ -173,6 +192,7 @@ const Contact = () => {
                   className={`form-control ${
                     errors.faxNumber ? 'is-invalid' : ''
                   }`}
+                  disabled={!editMode}
                 />
                 {/* <div className='invalid-feedback'>
                           {errors.faxNumber?.message}
@@ -190,6 +210,7 @@ const Contact = () => {
                   className={`form-control ${
                     errors.mobileCountryCode ? 'is-invalid' : ''
                   }`}
+                  disabled={!editMode}
                 />
                 {/* <div className='invalid-feedback'>
                           {errors.mobileCountryCode?.message}
@@ -205,6 +226,7 @@ const Contact = () => {
                   className={`form-control ${
                     errors.mobileNumber ? 'is-invalid' : ''
                   }`}
+                  disabled={!editMode}
                 />
                 {/* <div className='invalid-feedback'>
                           {errors.mobileNumber?.message}
@@ -222,6 +244,7 @@ const Contact = () => {
                   className={`form-control ${
                     errors.whatsappCountryCode ? 'is-invalid' : ''
                   }`}
+                  disabled={!editMode}
                 />
                 {/* <div className='invalid-feedback'>
                           {errors.whatsappCountryCode?.message}
@@ -237,6 +260,7 @@ const Contact = () => {
                   className={`form-control ${
                     errors.whatsappNumber ? 'is-invalid' : ''
                   }`}
+                  disabled={!editMode}
                 />
                 {/* <div className='invalid-feedback'>
                           {errors.whatsappNumber?.message}
@@ -248,30 +272,32 @@ const Contact = () => {
             {errors.contactDetails?.message}
           </div>
         </form>
-        <div className='d-flex gap-2'>
-          <button
-            type='button'
-            className='btn btn-primary mt-3 '
-            onClick={handleSubmit(onSubmit)}
-          >
-            Save
-          </button>
-          <button
-            type='button'
-            className='btn btn-primary mt-3 '
-            onClick={handleSubmit(async (data) => {
-              try {
-                await onSubmit(data); // Call the API
-                navigate('/supplier/bussiness/tax-details'); // Navigate only if API succeeds
-              } catch (e) {
-                console.log(e);
-              }
-            })}
-            disabled={isSubmitting}
-          >
-            Save & Next
-          </button>
-        </div>
+        {editMode && (
+          <div className='d-flex gap-2'>
+            <button
+              type='button'
+              className='btn btn-primary mt-3 '
+              onClick={handleSubmit(onSubmit)}
+            >
+              Save
+            </button>
+            <button
+              type='button'
+              className='btn btn-primary mt-3 '
+              onClick={handleSubmit(async (data) => {
+                try {
+                  await onSubmit(data); // Call the API
+                  navigate('/supplier/bussiness/tax-details'); // Navigate only if API succeeds
+                } catch (e) {
+                  console.log(e);
+                }
+              })}
+              disabled={isSubmitting}
+            >
+              Save & Next
+            </button>
+          </div>
+        )}
       </div>
     </FormContainer>
   );

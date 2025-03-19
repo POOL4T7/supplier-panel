@@ -15,7 +15,7 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
-import { Trash } from 'lucide-react';
+import { FilePlus2, Trash, X as CancelButton } from 'lucide-react';
 
 const ProductList = () => {
   const [uploadedProducts, setUploadedProducts] = useState([]);
@@ -32,6 +32,8 @@ const ProductList = () => {
     pageSize: 10,
     page: 0,
   });
+  const [showAddButton, setShowAddButton] = useState(false);
+  const [fileUplaodStatus, setFileUplaodStatus] = useState(false);
 
   // const [page, setPage] = useState(0);
   // const [pageSize, setPageSize] = useState(10);
@@ -124,7 +126,7 @@ const ProductList = () => {
     try {
       const file = event.target.files[0];
       const formData = new FormData();
-
+      setFileUplaodStatus(true);
       if (file) {
         formData.append('file', file);
         formData.append('supplierId', supplier.id);
@@ -145,6 +147,7 @@ const ProductList = () => {
           ...(res.data?.productDetailsList || []),
         ]);
       }
+      setFileUplaodStatus(false);
     } catch (e) {
       console.log(e);
       toast.error('File upload error');
@@ -344,21 +347,35 @@ const ProductList = () => {
   // };
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Paper sx={{ p: { xs: 2, sm: 3 }, mb: 3, backgroundColor: '#e2e3df' }}>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            mb: 2,
-          }}
-        >
-          <Typography variant='h6' sx={{ flexGrow: 1, mb: { xs: 1, sm: 0 } }}>
-            Add Product
-          </Typography>
-
+    <Box sx={{ p: 1 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          mb: 2,
+        }}
+      >
+        <Typography variant='h5'>Product Management</Typography>
+        <Box>
+          <Button
+            variant='outlined'
+            component='span'
+            sx={{
+              // backgroundColor: '#355e3b',
+              color: '#fff',
+              // '&:hover': { backgroundColor: '#2a4a2f' },
+              marginRight: 2,
+            }}
+            onClick={() => setShowAddButton(!showAddButton)}
+          >
+            {showAddButton ? (
+              <CancelButton color='red' />
+            ) : (
+              <FilePlus2 color='#355e3b' />
+            )}
+          </Button>
           <label htmlFor='file-upload'>
             <input
               id='file-upload'
@@ -375,88 +392,96 @@ const ProductList = () => {
                 color: '#fff',
                 '&:hover': { backgroundColor: '#2a4a2f' },
               }}
+              disabled={fileUplaodStatus}
             >
               Bulk Upload
+              {fileUplaodStatus && <Spinner width='20px' height='20px' />}
             </Button>
           </label>
         </Box>
+      </Box>
+      {showAddButton && (
+        <Paper sx={{ p: { xs: 2, sm: 3 }, mb: 3, backgroundColor: '#e2e3df' }}>
+          <Typography variant='h6' mb={2}>
+            Create Product
+          </Typography>
+          <form onSubmit={handleAddProduct}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={5}>
+                <TextField
+                  fullWidth
+                  label='Brand'
+                  value={brand}
+                  onChange={(e) => setBrand(e.target.value)}
+                  size='small'
+                />
+              </Grid>
+              <Grid item xs={12} sm={5}>
+                <TextField
+                  fullWidth
+                  label='Product Name'
+                  value={productValue}
+                  onChange={(e) => setProductValue(e.target.value)}
+                  required
+                  size='small'
+                />
+              </Grid>
+              <Grid item xs={12} sm={2}>
+                <TextField
+                  fullWidth
+                  label='Price'
+                  type='number'
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  required
+                  size='small'
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label='Description'
+                  value={productDescription}
+                  onChange={(e) => setProductDescription(e.target.value)}
+                  size='small'
+                  multiline
+                  rows={2}
+                />
+              </Grid>
 
-        <form onSubmit={handleAddProduct}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={5}>
-              <TextField
-                fullWidth
-                label='Brand'
-                value={brand}
-                onChange={(e) => setBrand(e.target.value)}
-                size='small'
-              />
-            </Grid>
-            <Grid item xs={12} sm={5}>
-              <TextField
-                fullWidth
-                label='Product Name'
-                value={productValue}
-                onChange={(e) => setProductValue(e.target.value)}
-                required
-                size='small'
-              />
-            </Grid>
-            <Grid item xs={12} sm={2}>
-              <TextField
-                fullWidth
-                label='Price'
-                type='number'
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                required
-                size='small'
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label='Description'
-                value={productDescription}
-                onChange={(e) => setProductDescription(e.target.value)}
-                size='small'
-                multiline
-                rows={2}
-              />
-            </Grid>
-
-            <Grid
-              item
-              xs={12}
-              sx={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-              }}
-            >
-              <Button
-                type='submit'
-                variant='contained'
-                disabled={addProductLoading}
+              <Grid
+                item
+                xs={12}
                 sx={{
-                  backgroundColor: '#355e3b',
-                  color: '#fff',
-                  height: '40px',
-                  width: '100%',
-                  maxWidth: '150px',
-                  '&:hover': { backgroundColor: '#2a4a2f' },
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
                 }}
               >
-                {addProductLoading ? (
-                  <Spinner width='20px' height='20px' />
-                ) : (
-                  'Add'
-                )}
-              </Button>
+                <Button
+                  type='submit'
+                  variant='contained'
+                  disabled={addProductLoading}
+                  sx={{
+                    backgroundColor: '#355e3b',
+                    color: '#fff',
+                    height: '40px',
+                    width: '100%',
+                    maxWidth: '150px',
+                    '&:hover': { backgroundColor: '#2a4a2f' },
+                  }}
+                >
+                  {addProductLoading ? (
+                    <Spinner width='20px' height='20px' />
+                  ) : (
+                    'Add'
+                  )}
+                </Button>
+              </Grid>
             </Grid>
-          </Grid>
-        </form>
-      </Paper>
+          </form>
+        </Paper>
+      )}
 
       <Paper
         sx={{ height: 'auto', width: '100%', backgroundColor: '#e2e3df', p: 2 }}

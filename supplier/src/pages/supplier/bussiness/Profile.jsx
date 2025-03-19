@@ -9,6 +9,8 @@ import { bussinessProfile, userDetailsAtom } from '../../../storges/user';
 import FormContainer from '../../../components/common/FormContainer';
 import { Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { FilePenLine, X as CancelIcon } from 'lucide-react';
 
 const addressSchema = yup.object().shape({
   businessName: yup.string().required('Business name is required'),
@@ -38,6 +40,7 @@ const Profile = () => {
   const [supplier] = useAtom(userDetailsAtom);
   const [bussiness, setBussiness] = useAtom(bussinessProfile);
   const navigate = useNavigate();
+  const [editMode, setEditMode] = useState(false);
 
   const {
     register,
@@ -87,13 +90,27 @@ const Profile = () => {
   return (
     <FormContainer>
       <div style={{ maxWidth: '500px', width: '100%', marginTop: '2rem' }}>
-        <h1>About Business</h1>
+        <div className='d-flex justify-content-between align-items-center'>
+          <h1>About Business</h1>
+          <p
+            className=' '
+            style={{ height: '30px' }}
+            onClick={() => setEditMode(!editMode)}
+          >
+            {editMode ? (
+              <CancelIcon className='text-danger' />
+            ) : (
+              <FilePenLine className='text-primary' />
+            )}
+          </p>
+        </div>
         <form>
           <div className='mb-2'>
             <label className='form-label'>Business Sector</label>
             <select
               {...register('sector')}
               className={`form-control ${errors.sector ? 'is-invalid' : ''}`}
+              disabled={!editMode}
             >
               <option value=''>Select Sector</option>
               <option value='product / retail'> Products / Retail </option>
@@ -125,6 +142,7 @@ const Profile = () => {
               className={`form-control ${
                 errors.businessName ? 'is-invalid' : ''
               }`}
+              disabled={!editMode}
             />
             <div className='invalid-feedback'>
               {errors.businessName?.message}
@@ -148,6 +166,7 @@ const Profile = () => {
               className={`form-control ${
                 errors.businessNickName ? 'is-invalid' : ''
               }`}
+              disabled={!editMode}
             />
             <div className='invalid-feedback'>
               {errors.businessNickName?.message}
@@ -171,6 +190,7 @@ const Profile = () => {
                 errors.businessKeyWords ? 'is-invalid' : ''
               }`}
               rows={3}
+              disabled={!editMode}
             />
             <small>Comma-separated keywords (ex: key1, key2)</small>
             <div className='invalid-feedback'>
@@ -183,35 +203,38 @@ const Profile = () => {
               {...register('aboutUs')}
               className={`form-control ${errors.aboutUs ? 'is-invalid' : ''}`}
               rows={5}
+              disabled={!editMode}
             />
             <div className='invalid-feedback'>{errors.aboutUs?.message}</div>
           </div>
         </form>
-        <div className='d-flex gap-2'>
-          <button
-            type='button'
-            className='btn btn-primary mt-3'
-            onClick={handleSubmit(onSubmit)}
-            disabled={isSubmitting}
-          >
-            Save
-          </button>
-          <button
-            type='button'
-            className='btn btn-primary mt-3'
-            onClick={handleSubmit(async (data) => {
-              try {
-                await onSubmit(data); // Call the API
-                navigate('/supplier/bussiness/address'); // Navigate only if API succeeds
-              } catch (e) {
-                console.log(e);
-              }
-            })}
-            disabled={isSubmitting}
-          >
-            Save & Next
-          </button>
-        </div>
+        {editMode && (
+          <div className='d-flex gap-2'>
+            <button
+              type='button'
+              className='btn btn-primary mt-3'
+              onClick={handleSubmit(onSubmit)}
+              disabled={isSubmitting}
+            >
+              Save
+            </button>
+            <button
+              type='button'
+              className='btn btn-primary mt-3'
+              onClick={handleSubmit(async (data) => {
+                try {
+                  await onSubmit(data); // Call the API
+                  navigate('/supplier/bussiness/address'); // Navigate only if API succeeds
+                } catch (e) {
+                  console.log(e);
+                }
+              })}
+              disabled={isSubmitting}
+            >
+              Save & Next
+            </button>
+          </div>
+        )}
       </div>
     </FormContainer>
   );

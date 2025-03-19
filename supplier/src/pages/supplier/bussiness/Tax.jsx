@@ -11,6 +11,8 @@ import FormContainer from '../../../components/common/FormContainer';
 import Spinner from '../../../components/common/Spinner';
 import { Box } from '@mui/material';
 
+import { FilePenLine, X as CancelIcon } from 'lucide-react';
+
 const addressSchema = yup.object().shape({
   // sector: yup.string().required('Sector is required'),
   businessTaxId: yup.string().required('Business tax ID is required'),
@@ -40,6 +42,7 @@ const Tax = () => {
     file: '',
     extension: '',
   });
+  const [editMode, setEditMode] = useState(false);
 
   const {
     register,
@@ -283,7 +286,20 @@ const Tax = () => {
   return (
     <FormContainer>
       <div style={{ maxWidth: '500px', width: '100%', marginTop: '2rem' }}>
-        <h1>Business Nature & Tax details</h1>
+        <div className='d-flex justify-content-between align-items-center'>
+          <h1>Business Nature & Tax details</h1>
+          <p
+            className=' '
+            style={{ height: '30px' }}
+            onClick={() => setEditMode(!editMode)}
+          >
+            {editMode ? (
+              <CancelIcon className='text-danger' />
+            ) : (
+              <FilePenLine className='text-primary' />
+            )}
+          </p>
+        </div>
         <form>
           {/* <div className='mb-2'>
             <label className='form-label'>Business Sector</label>
@@ -322,6 +338,7 @@ const Tax = () => {
               className={`form-control ${
                 errors.businessTaxId ? 'is-invalid' : ''
               }`}
+              disabled={!editMode}
             />
             <div className='invalid-feedback'>
               {errors.businessTaxId?.message}
@@ -339,6 +356,7 @@ const Tax = () => {
                 id='certificateInput'
                 accept='image/*'
                 onChange={(e) => setCertificate(e.target.files)}
+                disabled={!editMode}
               />
               <button
                 type='button'
@@ -348,6 +366,7 @@ const Tax = () => {
                   e.preventDefault();
                   await uplaodCertificate();
                 }}
+                disabled={!editMode}
               >
                 {imageLoading ? (
                   <Spinner width='15px' height='15px' />
@@ -433,6 +452,7 @@ const Tax = () => {
                   accept='image/*'
                   hidden
                   onChange={uplaodShopImage}
+                  disabled={!editMode}
                 />
               </label>
             </div>
@@ -487,6 +507,7 @@ const Tax = () => {
                   accept='image/*'
                   hidden
                   onChange={uplaodShopLogo}
+                  disabled={!editMode}
                 />
               </label>
               <Box
@@ -506,16 +527,18 @@ const Tax = () => {
               </div>
             )}
           </div>
-          <div className='d-flex gap-2'>
-            <button
-              type='submit'
-              className='btn btn-primary mt-3'
-              disabled={isSubmitting}
-              onClick={handleSubmit(onSubmit)}
-            >
-              {isSubmitting && <Spinner width='15px' height='15px' />} Save
-            </button>
-          </div>
+          {editMode && (
+            <div className='d-flex gap-2'>
+              <button
+                type='submit'
+                className='btn btn-primary mt-3'
+                disabled={isSubmitting}
+                onClick={handleSubmit(onSubmit)}
+              >
+                {isSubmitting && <Spinner width='15px' height='15px' />} Save
+              </button>
+            </div>
+          )}
         </form>
       </div>
     </FormContainer>
