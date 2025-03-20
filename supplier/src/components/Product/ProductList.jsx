@@ -607,53 +607,51 @@ const ProductList = () => {
       <Paper
         sx={{ height: 'auto', width: '100%', backgroundColor: '#e2e3df', p: 2 }}
       >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant='h6' sx={{ mb: 2 }}></Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            gap: 2,
+            mb: 2,
+            alignItems: 'center',
+            justifyContent: { xs: 'center', sm: 'flex-end' },
+          }}
+        >
+          <Button
+            variant='contained'
+            onClick={() => handleStatusChange(selectedRows, false)}
+            disabled={selectedRows.length === 0}
+            sx={{
+              backgroundColor: '#355e3b',
+              color: '#fff',
+              '&:hover': { backgroundColor: '#2a4a2f' },
+              width: { xs: '100%', sm: 'auto' },
+            }}
+          >
+            Active Selected
+          </Button>
 
-          {/* Bulk Actions */}
-          <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
-            <Button
-              variant='contained'
-              onClick={() => {
-                handleStatusChange(selectedRows, false);
-              }}
-              disabled={selectedRows.length === 0}
-              sx={{
-                backgroundColor: '#355e3b',
-                color: '#fff',
-                '&:hover': { backgroundColor: '#2a4a2f' },
-              }}
-            >
-              Active Selected
-            </Button>
-            <Button
-              variant='contained'
-              color='default'
-              onClick={() => {
-                handleStatusChange(selectedRows, true);
-              }}
-              disabled={selectedRows.length === 0}
-            >
-              Inactive Selected
-            </Button>
-            <Button
-              variant='contained'
-              color='error'
-              onClick={handleBulkDelete}
-              disabled={selectedRows.length === 0}
-            >
-              Delete Selected
-            </Button>
-            {/* <Button
-              variant='outlined'
-              color='primary'
-              onClick={handleBulkStatusUpdate}
-              disabled={selectedRows.length === 0}
-            >
-              Update Status
-            </Button> */}
-          </Box>
+          <Button
+            variant='contained'
+            color='default'
+            onClick={() => handleStatusChange(selectedRows, true)}
+            disabled={selectedRows.length === 0}
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
+          >
+            Inactive Selected
+          </Button>
+
+          <Button
+            variant='contained'
+            color='error'
+            onClick={handleBulkDelete}
+            disabled={selectedRows.length === 0}
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
+          >
+            Delete Selected
+          </Button>
         </Box>
+
         <Grid container spacing={2} alignItems='center' sx={{ mb: 2 }}>
           <Grid item xs={12} sm={6} md={3}>
             <TextField

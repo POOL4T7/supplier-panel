@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { userDetailsAtom } from '../../../storges/user';
-import { MenuIcon, User } from 'lucide-react';
+import { MenuIcon, User, X as CancelIcon } from 'lucide-react';
 import useSidebarToggle from '../../../hooks/useSidebarToggle';
+import { useState } from 'react';
 
 const Header = () => {
   const [userDetails] = useAtom(userDetailsAtom);
   useSidebarToggle('sidebarToggle', 'sidebarToggle');
+  const [showSidebar, setshowSidebar] = useState(false);
   return (
     <>
       <nav className='sb-topnav navbar navbar-expand shadow-sm'>
@@ -16,11 +18,13 @@ const Header = () => {
           </Link>
 
           <button
-            className='btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 text-white'
+            className='btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 text-white d-lg-none'
             id='sidebarToggle'
             href='#!'
+            onClick={() => setshowSidebar(!showSidebar)}
           >
-            <MenuIcon />
+            {showSidebar ? <CancelIcon /> : <MenuIcon />}
+            {/* <MenuIcon /> */}
           </button>
 
           <div className='d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0'>

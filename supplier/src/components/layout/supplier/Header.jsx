@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { userDetailsAtom } from '../../../storges/user';
-import { MenuIcon, User } from 'lucide-react';
+import { MenuIcon, User, X as CancelIcon } from 'lucide-react';
 import useSidebarToggle from '../../../hooks/useSidebarToggle';
+import { useState } from 'react';
 // import { useState } from 'react';
 // import DialogModal from '../../common/DialogModal';
 
@@ -10,6 +11,7 @@ const Header = () => {
   const [userDetails] = useAtom(userDetailsAtom);
   // const [open, setOpen] = useState(false);
   useSidebarToggle('sidebarToggle', 'sidebarToggle');
+  const [showSidebar, setshowSidebar] = useState(false);
 
   // const handleClickOpen = () => {
   //   setOpen(!open);
@@ -26,12 +28,21 @@ const Header = () => {
           </Link>
 
           <button
-            className='btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 text-white'
+            className='btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 text-white d-lg-none'
+            id='sidebarToggle'
+            href='#!'
+            onClick={() => setshowSidebar(!showSidebar)}
+          >
+            {showSidebar ? <CancelIcon /> : <MenuIcon />}
+            {/* <MenuIcon /> */}
+          </button>
+          {/* <button
+            className='btn btn-link btn-sm me-4 text-white d-lg-none'
             id='sidebarToggle'
             href='#!'
           >
             <MenuIcon />
-          </button>
+          </button> */}
 
           <div className='d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0'>
             {/* <div className='input-group'>
