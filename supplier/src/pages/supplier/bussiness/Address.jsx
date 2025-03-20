@@ -94,7 +94,7 @@ const Address = () => {
     <FormContainer>
       <div style={{ maxWidth: '500px', width: '100%', marginTop: '2rem' }}>
         <div className='d-flex justify-content-between align-items-center'>
-          <h1>Business Address</h1>
+          <h2>Business Address</h2>
           <p
             className=' '
             style={{ height: '30px' }}

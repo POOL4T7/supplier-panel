@@ -1,3 +1,6 @@
+/* #1c321f */
+/* header color  */
+/* ##012907 */
 body {
   font-family: 'Poppins', sans-serif;
   /* background-color: #354013; */
@@ -9,16 +12,23 @@ nav {
 
 h3 {
   padding: 0.5rem 0;
+  font-weight: 400;
 }
 
 h1 {
   font-size: 1.8rem;
   padding: 0.5rem 0;
+  font-weight: 500;
 }
 
 h2 {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   padding: 0.5rem 0;
+  font-weight: 500;
+}
+
+h4 {
+  font-weight: 400;
 }
 
 h1,
@@ -61,7 +71,7 @@ a:hover{
 
 .form-label {
   font-weight: 400;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 table {

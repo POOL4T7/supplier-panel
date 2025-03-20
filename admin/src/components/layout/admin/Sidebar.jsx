@@ -1,6 +1,7 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
+  const location = useLocation();
   return (
     <div id='layoutSidenav'>
       <div id='layoutSidenav_nav'>
@@ -8,13 +9,27 @@ const Sidebar = () => {
           <div className='sb-sidenav-menu'>
             <div className='nav'>
               <div className='sb-sidenav-menu-heading'>Pages</div>
-              <Link className='nav-link' to='/admin/supplier-list'>
+              <Link
+                className={`nav-link ${
+                  location.pathname === '/admin/supplier-list'
+                    ? 'nav-active'
+                    : ''
+                }`}
+                to='/admin/supplier-list'
+              >
                 <div className='sb-nav-link-icon'>
                   <i className='fas fa-tachometer-alt'></i>
                 </div>
                 Supplier List
               </Link>
-              <Link className='nav-link' to='/admin/premises-list'>
+              <Link
+                className={`nav-link ${
+                  location.pathname === '/admin/premises-list'
+                    ? 'nav-active'
+                    : ''
+                }`}
+                to='/admin/premises-list'
+              >
                 <div className='sb-nav-link-icon'>
                   <i className='fas fa-tachometer-alt'></i>
                 </div>

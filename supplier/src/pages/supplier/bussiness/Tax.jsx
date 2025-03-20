@@ -287,7 +287,7 @@ const Tax = () => {
     <FormContainer>
       <div style={{ maxWidth: '500px', width: '100%', marginTop: '2rem' }}>
         <div className='d-flex justify-content-between align-items-center'>
-          <h1>Business Nature & Tax details</h1>
+          <h2>Business Nature & Tax details</h2>
           <p
             className=' '
             style={{ height: '30px' }}
@@ -410,6 +410,7 @@ const Tax = () => {
                   cursor: 'pointer',
                   marginTop: '2rem',
                 }}
+                className='form-label'
               >
                 <span className='mb-0'>Bussiness Image</span>
                 <Box
@@ -465,8 +466,9 @@ const Tax = () => {
                   cursor: 'pointer',
                   marginTop: '2rem',
                 }}
+                className='form-label'
               >
-                <span className='mb-0'>Bussiness Logo</span>
+                Bussiness Logo
                 <Box
                   sx={{
                     // marginTop: '2rem',

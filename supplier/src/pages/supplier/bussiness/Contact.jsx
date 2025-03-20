@@ -126,7 +126,7 @@ const Contact = () => {
     <FormContainer>
       <div style={{ maxWidth: '500px', width: '100%', marginTop: '2rem' }}>
         <div className='d-flex justify-content-between align-items-center'>
-          <h1>Contact Details</h1>
+          <h2>Contact Details</h2>
           <p
             className=' '
             style={{ height: '30px' }}
@@ -164,7 +164,7 @@ const Contact = () => {
             <div className='invalid-feedback'>{errors.email?.message}</div>
           </div>
           {/* second part start here */}
-          <p className='mt-4 mb-2 fw-bold fs-4'>Business Contact numbers </p>
+          <h2 className='mt-4 mb-2'>Business Contact numbers </h2>
 
           <div className='row'>
             <div className='col-3'>

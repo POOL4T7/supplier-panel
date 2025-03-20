@@ -35,7 +35,7 @@ const Verify = () => {
   return (
     <FormContainer>
       <div style={{ maxWidth: '500px', width: '100%', marginTop: '2rem' }}>
-        <h1>Verify the business address</h1>
+        <h2>Verify the business address</h2>
         {bussiness.verifyAddress ? (
           <p style={{ color: '#7d9138', textDecoration: 'underline' }}>
             Address is verified

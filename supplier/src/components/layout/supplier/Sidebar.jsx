@@ -27,7 +27,12 @@ const Sidebar = () => {
           <div className='sb-sidenav-menu'>
             <div className='nav'>
               <div className='sb-sidenav-menu-heading'>Screens</div>
-              <Link className='nav-link' to='/supplier/profile'>
+              <Link
+                className={`nav-link ${
+                  location.pathname === '/supplier/profile' ? 'nav-active' : ''
+                }`}
+                to='/supplier/profile'
+              >
                 <div className='sb-nav-link-icon'>
                   <UserRoundPen />
                 </div>
@@ -40,7 +45,17 @@ const Sidebar = () => {
                 Bussiness Profile
               </Link> */}
               <Link
-                className='nav-link collapsed'
+                className={`nav-link collapsed ${
+                  [
+                    '/supplier/bussiness/profile',
+                    '/supplier/bussiness/address',
+                    '/supplier/bussiness/contact',
+                    '/supplier/bussiness/tax-details',
+                    '/supplier/bussiness/verify',
+                  ].includes(location.pathname)
+                    ? 'nav-active'
+                    : ''
+                }`}
                 href='#'
                 data-bs-toggle='collapse'
                 data-bs-target='#bussinessLayout'
@@ -116,7 +131,15 @@ const Sidebar = () => {
               </div>
               {/* <div className='sb-sidenav-menu-heading'>Product</div> */}
               <Link
-                className='nav-link collapsed'
+                className={`nav-link collapsed ${
+                  [
+                    '/supplier/product-category',
+                    '/supplier/product-subcategory',
+                    '/supplier/products',
+                  ].includes(location.pathname)
+                    ? 'nav-active'
+                    : ''
+                }`}
                 href='#'
                 data-bs-toggle='collapse'
                 data-bs-target='#collapseLayouts'
@@ -176,6 +199,14 @@ const Sidebar = () => {
                   bussiness.sector === 'products and services'
                     ? ''
                     : 'disabled'
+                }   ${
+                  [
+                    '/supplier/service-category',
+                    '/supplier/service-subcategory',
+                    '/supplier/services',
+                  ].includes(location.pathname)
+                    ? 'nav-active'
+                    : ''
                 }`}
                 href='#'
                 data-bs-toggle='collapse'
@@ -236,13 +267,20 @@ const Sidebar = () => {
                   </Link>
                 </nav>
               </div>
-              <Link className='nav-link' to='/supplier/account-activation'>
+              <Link
+                className={`nav-link ${
+                  location.pathname === '/supplier/account-activation'
+                    ? 'nav-active'
+                    : ''
+                }`}
+                to='/supplier/account-activation'
+              >
                 <div className='sb-nav-link-icon'>
                   <UserRoundPen />
                 </div>
                 Activate/ deactivate
               </Link>
-              <Link className='nav-link' to='#' onClick={handleClickOpen}>
+              <Link className={`nav-link`} to='#' onClick={handleClickOpen}>
                 <div className='sb-nav-link-icon'>
                   <Trash color='red' />
                 </div>

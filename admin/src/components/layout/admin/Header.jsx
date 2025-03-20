@@ -16,7 +16,7 @@ const Header = () => {
           </Link>
 
           <button
-            className='btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0'
+            className='btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 text-white'
             id='sidebarToggle'
             href='#!'
           >
@@ -45,7 +45,7 @@ const Header = () => {
             {userDetails ? (
               <li className='nav-item dropdown'>
                 <a
-                  className='nav-link dropdown-toggle'
+                  className='nav-link dropdown-toggle text-white'
                   id='navbarDropdown'
                   href='#'
                   role='button'

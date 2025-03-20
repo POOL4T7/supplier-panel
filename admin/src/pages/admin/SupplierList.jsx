@@ -2,6 +2,17 @@ import { useEffect, useState } from 'react';
 import { jsPDF } from 'jspdf';
 import axiosInstance from '../../axios';
 import Spinner from '../../components/common/Spinner';
+import { DataGrid } from '@mui/x-data-grid';
+import {
+  Button,
+  Box,
+  Typography,
+  Paper,
+  Grid,
+  Card,
+  CardContent,
+} from '@mui/material';
+import { Users, CheckCircle, XCircle } from 'lucide-react';
 
 const SupplierList = () => {
   const [data, setData] = useState([]);
@@ -146,6 +157,99 @@ const SupplierList = () => {
     window.open(pdfUrl);
   };
 
+  const columns = [
+    { field: 'id', headerName: 'S.no.', disableColumnMenu: true, width: 80 },
+    {
+      field: 'supplierId',
+      headerName: 'Supplier ID',
+      disableColumnMenu: true,
+      width: 150,
+      sortable: false,
+    },
+    {
+      field: 'supplierName',
+      headerName: 'Supplier Name',
+      disableColumnMenu: true,
+      width: 200,
+      sortable: false,
+    },
+    {
+      field: 'businessName',
+      headerName: 'Business Name',
+      disableColumnMenu: true,
+      width: 200,
+      sortable: false,
+    },
+    {
+      field: 'businessAddress',
+      headerName: 'Business Address',
+      disableColumnMenu: true,
+      width: 300,
+      sortable: false,
+    },
+    {
+      field: 'premisesType',
+      headerName: 'Premises',
+      disableColumnMenu: true,
+      width: 150,
+      sortable: false,
+    },
+    {
+      field: 'addressOTP',
+      headerName: 'Address OTP',
+      disableColumnMenu: true,
+      width: 150,
+      sortable: false,
+    },
+    {
+      field: 'isVerified',
+      headerName: 'Is Address Verified',
+      disableColumnMenu: true,
+      width: 180,
+      sortable: false,
+    },
+    {
+      field: 'download',
+      headerName: 'Download PDF',
+      disableColumnMenu: true,
+      width: 180,
+      sortable: false,
+      renderCell: (params) => (
+        <Button
+          // variant='contained'
+          size='small'
+          className='btn btn-outline-primary'
+          onClick={() => handleDownloadPDF(params.row.original)}
+          sx={{
+            backgroundColor: '#355e3b',
+            color: '#fff',
+            '&:hover': { backgroundColor: '#2a4a2f' },
+          }}
+        >
+          Download PDF
+        </Button>
+      ),
+    },
+  ];
+
+  const rows = data.map((item, idx) => ({
+    id: idx + 1,
+    supplierId: item.supplierProfile?.id || 'N/A',
+    supplierName: item.supplierProfile?.supplierName || 'N/A',
+    businessName: item.supplierBusinessDetails?.businessName || 'N/A',
+    businessAddress: `${item.supplierBusinessDetails?.houseNo || ''}, ${
+      item.supplierBusinessDetails?.streetName || ''
+    }, ${item.supplierBusinessDetails?.area || ''}, ${
+      item.supplierBusinessDetails?.city || ''
+    }, ${item.supplierBusinessDetails?.zipcode || ''}, ${
+      item.supplierBusinessDetails?.country || ''
+    }`,
+    premisesType: item.supplierBusinessDetails?.premisesType || 'N/A',
+    addressOTP: item.supplierBusinessDetails?.verificationAddressOTP || 'N/A',
+    isVerified: item.supplierBusinessDetails?.verifyAddress ? 'Yes' : 'No',
+    original: item,
+  }));
+
   if (loading) {
     return (
       <div className='d-flex'>
@@ -154,56 +258,94 @@ const SupplierList = () => {
     );
   }
 
+  const verifiedSuppliers =
+    data.filter((item) => item.supplierBusinessDetails?.verifyAddress).length ||
+    0;
+  const unverifiedSuppliers = data.length - verifiedSuppliers || 0;
+  const cardData = [
+    { title: 'Total Suppliers', count: data.length, icon: <Users size={32} /> },
+    {
+      title: 'Verified Suppliers',
+      count: verifiedSuppliers,
+      icon: <CheckCircle size={32} color='#4caf50' />,
+    },
+    {
+      title: 'Unverified Suppliers',
+      count: unverifiedSuppliers,
+      icon: <XCircle size={32} color='#f44336' />,
+    },
+  ];
+
   return (
-    <div className='table-responsive mt-3'>
-      <h1 className='mt-2'>Supplier List</h1>
-      <table className='table table-hover table-bordered shadow-sm table-sm'>
-        <thead className='table-light'>
-          <tr>
-            <th scope='col'>S.no.</th>
-            <th scope='col'>Supplier ID</th>
-            <th scope='col'>Supplier Name</th>
-            <th scope='col'>Business Name</th>
-            <th scope='col'>Business Address</th>
-            <th scope='col'>Premises</th>
-            <th scope='col'>Address OTP</th>
-            <th scope='col'>isAddress Verified</th>
-            <th scope='col'>Download PDF</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, idx) => (
-            <tr key={item.id}>
-              <th scope='row'>{idx + 1}</th>
-              <td>{item.supplierProfile?.id}</td>
-              <td>{item.supplierProfile?.supplierName}</td>
-              <td>{item.supplierBusinessDetails?.businessName}</td>
-              <td>
-                {item.supplierBusinessDetails?.houseNo},{' '}
-                {item.supplierBusinessDetails?.streetName},{' '}
-                {`${item.supplierBusinessDetails?.area || ''}, ${
-                  item.supplierBusinessDetails?.city || ''
-                }`}
-                {`${item.supplierBusinessDetails?.zipcode || ''}, ${
-                  item.supplierBusinessDetails?.country || ''
-                }`}
-              </td>
-              <td>{item.supplierBusinessDetails?.premisesType}</td>
-              <td>{item.supplierBusinessDetails?.verificationAddressOTP}</td>
-              <td>{`${item.supplierBusinessDetails?.verifyAddress}`}</td>
-              <td>
-                <button
-                  className='btn btn-sm btn-primary'
-                  onClick={() => handleDownloadPDF(item)}
+    <Box pt={2}>
+      <Grid container spacing={2} mb={3}>
+        {cardData.map(({ title, count, icon }) => (
+          <Grid item xs={12} sm={4} key={title}>
+            <Card
+              sx={{
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                textAlign: 'center',
+                boxShadow: 3,
+                backgroundColor: '#e0e2da',
+              }}
+            >
+              <CardContent>
+                <Box sx={{ mb: 1 }}>{icon}</Box>
+                <Typography
+                  variant='h6'
+                  sx={{ fontWeight: 'bold' }}
+                  className='text-primary'
                 >
-                  Download PDF
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+                  {title}: <span style={{ fontSize: '24px' }}> {count}</span>
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+      <Paper
+        sx={{ height: 'auto', width: '100%', backgroundColor: '#e2e3df', p: 2 }}
+      >
+        <h3>Supplier List</h3>
+        <Box style={{ width: '100%', marginTop: '2rem' }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            pageSize={10}
+            rowsPerPageOptions={[10, 20, 50]}
+            componentsProps={{
+              loadingOverlay: {
+                style: { backgroundColor: '#e2e3df' },
+              },
+            }}
+            isRowSelectable={false}
+            sx={{
+              border: 0,
+              '& .MuiDataGrid-columnHeader': {
+                backgroundColor: '#e0e2da',
+              },
+              '& .MuiDataGrid-columnHeaderTitle': {
+                // backgroundColor: '#e0e2da',
+                fontWeight: '700',
+              },
+              '& .MuiDataGrid-cell:hover': {
+                backgroundColor: '#dbdcd7',
+              },
+              '& .MuiDataGrid-cell:focus': {
+                outline: 'none',
+              },
+              '& .MuiDataGrid-overlay': {
+                backgroundColor: '#e0e2da',
+              },
+            }}
+          />
+        </Box>
+      </Paper>
+    </Box>
   );
 };
 

@@ -110,7 +110,10 @@ const LoginForm = () => {
         </form>
         <div className='row pt-3'>
           <div className='col-6'>
-            <span style={{ color: '#abc184' }}> New Customer?</span>
+            <span style={{ color: '#4a5931', fontSize: '14px' }}>
+              {' '}
+              New Customer?
+            </span>
 
             <Link className='link-primary' to='/register'>
               {' '}

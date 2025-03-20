@@ -32,6 +32,7 @@ import BussinessTaxProfile from './pages/supplier/bussiness/Tax';
 import BussinessVerify from './pages/supplier/bussiness/Verify';
 
 import ActivateAccount from './pages/supplier/ActivateAccount';
+// import ProductShop from './pages/supplier/product/ProductShop';
 
 const router = () => {
   return createBrowserRouter([

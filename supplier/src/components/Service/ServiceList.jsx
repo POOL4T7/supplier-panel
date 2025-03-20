@@ -14,8 +14,14 @@ import {
   Button,
   Grid,
   Typography,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from '@mui/material';
-import { Trash } from 'lucide-react';
+import { FilePlus2, Trash, X as CancelButton, Upload } from 'lucide-react';
 
 const ServiceList = () => {
   const [uploadedProducts, setUploadedProducts] = useState([]);
@@ -41,7 +47,12 @@ const ServiceList = () => {
     pageSize: 10,
     page: 0,
   });
+  const [showAddButton, setShowAddButton] = useState(false);
+  const [toggleUploadForm, setToggleUploadForm] = useState(false);
+  const [fileUplaodStatus, setFileUplaodStatus] = useState(false);
 
+  const [file, setFile] = useState(null);
+  const [fileData, setFileData] = useState([]);
   const columns = [
     {
       field: 'sno',
@@ -108,11 +119,11 @@ const ServiceList = () => {
     },
   ];
 
-  const handleFileUpload = async (event) => {
+  const handleFileUpload = async (e) => {
     try {
-      const file = event.target.files[0];
+      e.preventDefault();
       const formData = new FormData();
-
+      setFileUplaodStatus(true);
       if (file) {
         formData.append('file', file);
         formData.append('supplierId', supplier.id);
@@ -133,6 +144,10 @@ const ServiceList = () => {
           ...(res.data?.productDetailsList || []),
         ]);
       }
+      setFileUplaodStatus(false);
+      setFile(null);
+      setFileData([]);
+      setToggleUploadForm(false);
     } catch (e) {
       console.log(e);
       toast.error('file uplaod error');
@@ -316,44 +331,168 @@ const ServiceList = () => {
   //   }
   // };
 
-  return (
-    <Box sx={{ p: 2 }}>
-      <Paper sx={{ p: { xs: 2, sm: 3 }, mb: 3, backgroundColor: '#e2e3df' }}>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            mb: 2,
-          }}
-        >
-          <Typography variant='h6' sx={{ flexGrow: 1, mb: { xs: 1, sm: 0 } }}>
-            Add Service
-          </Typography>
+  const readFile = async (e) => {
+    try {
+      const file = e.target.files[0];
+      if (!file) return;
 
+      setFile(file);
+
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const text = event.target.result;
+        const rows = text.trim().split('\n');
+
+        const products = rows.map((row) => {
+          const [name, brand, description, price] = row.split(',');
+          return {
+            name: name?.trim(),
+            brand: brand?.trim(),
+            description: description?.trim(),
+            price: parseFloat(price?.trim()) || 0,
+          };
+        });
+
+        setFileData(products);
+      };
+
+      reader.readAsText(file);
+    } catch (error) {
+      console.error('Error reading file:', error);
+    }
+  };
+
+  return (
+    <Box>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          mb: 2,
+        }}
+      >
+        <Typography variant='h5'>Add Service</Typography>
+        <Box>
+          <Button
+            variant='outlined'
+            component='span'
+            sx={{
+              color: '#fff',
+              marginRight: 2,
+            }}
+            onClick={() => setShowAddButton(!showAddButton)}
+          >
+            {showAddButton ? (
+              <CancelButton color='red' />
+            ) : (
+              <FilePlus2 color='#355e3b' />
+            )}
+          </Button>
           <label htmlFor='file-upload'>
-            <input
+            {/* <input
               id='file-upload'
               type='file'
               hidden
               onChange={handleFileUpload}
               accept='.txt'
-            />
+            /> */}
             <Button
               variant='outlined'
               component='span'
+              sx={{
+                color: '#fff',
+              }}
+              onClick={() => setToggleUploadForm(!toggleUploadForm)}
+            >
+              {toggleUploadForm ? (
+                <CancelButton color='red' />
+              ) : (
+                <>
+                  <Upload style={{ marginRight: '4px' }} color='#355e3b' />{' '}
+                </>
+              )}
+            </Button>
+          </label>
+        </Box>
+      </Box>
+      {toggleUploadForm && (
+        <Paper sx={{ p: { xs: 2, sm: 3 }, mb: 3, backgroundColor: '#e2e3df' }}>
+          <Typography variant='h6'>Bulk Upload</Typography>
+          <input
+            // id='file-upload'
+            type='file'
+            onChange={readFile}
+            accept='.txt'
+            className='form-control'
+            style={{
+              maxWidth: '400px',
+            }}
+          />
+          {file && (
+            <Box mt={2}>
+              <Typography variant='body1'>File Name: {file.name}</Typography>
+            </Box>
+          )}
+
+          {fileData && fileData.length > 0 && (
+            <Box mt={2}>
+              <Typography variant='h6'>Extracted Data:</Typography>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Name</TableCell>
+                      <TableCell>Description</TableCell>
+                      <TableCell>Price</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {fileData.map((product, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{product.name}</TableCell>
+                        <TableCell>{product.description}</TableCell>
+                        <TableCell>{product.price}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
+          )}
+          <Box mt={3} display='flex' justifyContent='flex-end'>
+            {/* <Button
+              variant='contained'
+              sx={{
+                marginRight: '2px',
+              }}
+              color='error'
+              onClick={() => {
+                setFile(null);
+                setFileData([]);
+              }}
+            >
+              Cancel
+            </Button> */}
+            <Button
+              variant='contained'
               sx={{
                 backgroundColor: '#355e3b',
                 color: '#fff',
                 '&:hover': { backgroundColor: '#2a4a2f' },
               }}
+              onClick={handleFileUpload}
+              disabled={fileData.length === 0}
             >
-              Bulk Upload
+              {fileUplaodStatus && <Spinner width='15px' height='15px' />}{' '}
+              Upload
             </Button>
-          </label>
-        </Box>
-
+          </Box>
+        </Paper>
+      )}
+      {showAddButton && (
         <form onSubmit={handleAddProduct}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -420,7 +559,8 @@ const ServiceList = () => {
             </Grid>
           </Grid>
         </form>
-      </Paper>
+      )}
+
       <Paper
         sx={{ height: 'auto', width: '100%', backgroundColor: '#e2e3df', p: 2 }}
       >
@@ -559,7 +699,9 @@ const ServiceList = () => {
             border: 0,
             '& .MuiDataGrid-columnHeader': {
               backgroundColor: '#e0e2da',
-              fontWeight: 'bold',
+            },
+            '& .MuiDataGrid-columnHeaderTitle': {
+              fontWeight: '700',
             },
             '& .MuiDataGrid-cell:hover': {
               backgroundColor: '#dbdcd7',
