@@ -8,12 +8,17 @@ export const SidebarProvider = ({ children }) => {
     return localStorage.getItem('sb|sidebar-toggle') === 'true';
   });
 
+  const isMobileScreen = () => window.innerWidth < 1024; // Adjust breakpoint as needed
+
   const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => {
-      const newState = !prev;
-      localStorage.setItem('sb|sidebar-toggle', newState.toString());
-      return newState;
-    });
+    // Only toggle on non-desktop screens
+    if (isMobileScreen()) {
+      setIsSidebarOpen((prev) => {
+        const newState = !prev;
+        localStorage.setItem('sb|sidebar-toggle', newState.toString());
+        return newState;
+      });
+    }
   };
 
   useEffect(() => {
