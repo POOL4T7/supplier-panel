@@ -7,6 +7,7 @@ import './index.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { SidebarProvider } from './context/SiebarContext.jsx';
 
 const theme = createTheme({
   palette: {
@@ -40,11 +41,11 @@ const theme = createTheme({
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <>
+    <SidebarProvider>
       <ToastContainer />
       <ThemeProvider theme={theme}>
         <App />
       </ThemeProvider>
-    </>
+    </SidebarProvider>
   </StrictMode>
 );

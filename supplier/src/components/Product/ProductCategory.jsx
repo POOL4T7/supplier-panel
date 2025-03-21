@@ -288,10 +288,11 @@ const ProductCategory = () => {
   }
   // console.log('selectRef', selectRef.current);
   return (
-    <>
+    <div>
       <div className='row'>
         <div className='col-12 col-md-7'>
           <>
+            <h2>Product Catgeory</h2>
             <div className='mb-2'>
               <CreatableSelect
                 ref={(el) => {
@@ -457,7 +458,11 @@ const ProductCategory = () => {
                       onClick={moveToRight}
                       disabled={!isRightSelected}
                     >
-                      {isMobile ? <ArrowDown size={24}   /> : <MoveRight size={24} />}
+                      {isMobile ? (
+                        <ArrowDown size={24} />
+                      ) : (
+                        <MoveRight size={24} />
+                      )}
                     </button>
                   </div>
                   <div className='col-6 col-md-12'>
@@ -466,7 +471,11 @@ const ProductCategory = () => {
                       onClick={moveToLeft}
                       disabled={!isLeftSelected}
                     >
-                      {isMobile ? <ArrowUp size={24}  /> : <MoveLeft size={24}  />}
+                      {isMobile ? (
+                        <ArrowUp size={24} />
+                      ) : (
+                        <MoveLeft size={24} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -569,7 +578,7 @@ const ProductCategory = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

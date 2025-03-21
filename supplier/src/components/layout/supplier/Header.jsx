@@ -2,20 +2,13 @@ import { Link } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { userDetailsAtom } from '../../../storges/user';
 import { MenuIcon, User, X as CancelIcon } from 'lucide-react';
-import useSidebarToggle from '../../../hooks/useSidebarToggle';
-import { useState } from 'react';
-// import { useState } from 'react';
-// import DialogModal from '../../common/DialogModal';
+import { useSidebar } from '../../../context/SiebarContext';
 
 const Header = () => {
   const [userDetails] = useAtom(userDetailsAtom);
-  // const [open, setOpen] = useState(false);
-  useSidebarToggle('sidebarToggle', 'sidebarToggle');
-  const [showSidebar, setshowSidebar] = useState(false);
 
-  // const handleClickOpen = () => {
-  //   setOpen(!open);
-  // };
+  const { isSidebarOpen, toggleSidebar } = useSidebar();
+
   return (
     <>
       <nav
@@ -31,9 +24,9 @@ const Header = () => {
             className='btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 text-white d-lg-none'
             id='sidebarToggle'
             href='#!'
-            onClick={() => setshowSidebar(!showSidebar)}
+            onClick={toggleSidebar}
           >
-            {showSidebar ? <CancelIcon /> : <MenuIcon />}
+            {isSidebarOpen ? <CancelIcon /> : <MenuIcon />}
             {/* <MenuIcon /> */}
           </button>
           {/* <button

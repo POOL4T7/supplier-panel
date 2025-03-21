@@ -11,15 +11,19 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { bussinessProfile } from '../../../storges/user';
 import { useState } from 'react';
 import DialogModal from '../../common/DialogModal';
+import { useSidebar } from '../../../context/SiebarContext';
 
 const Sidebar = () => {
   const location = useLocation();
   const [bussiness] = useAtom(bussinessProfile);
   const [open, setOpen] = useState(false);
+  const { toggleSidebar } = useSidebar();
 
   const handleClickOpen = () => {
+    toggleSidebar();
     setOpen(!open);
   };
+
   return (
     <div id='layoutSidenav'>
       <div id='layoutSidenav_nav'>
@@ -32,6 +36,7 @@ const Sidebar = () => {
                   location.pathname === '/supplier/profile' ? 'nav-active' : ''
                 }`}
                 to='/supplier/profile'
+                onClick={toggleSidebar}
               >
                 <div className='sb-nav-link-icon'>
                   <UserRoundPen />
@@ -84,6 +89,7 @@ const Sidebar = () => {
                         : ''
                     }`}
                     to='/supplier/bussiness/profile'
+                    onClick={toggleSidebar}
                   >
                     About business
                   </Link>
@@ -94,6 +100,7 @@ const Sidebar = () => {
                         : ''
                     }`}
                     to='/supplier/bussiness/address'
+                    onClick={toggleSidebar}
                   >
                     Business address
                   </Link>
@@ -104,6 +111,7 @@ const Sidebar = () => {
                         : ''
                     }`}
                     to='/supplier/bussiness/contact'
+                    onClick={toggleSidebar}
                   >
                     Contact details
                   </Link>
@@ -114,6 +122,7 @@ const Sidebar = () => {
                         : ''
                     }`}
                     to='/supplier/bussiness/tax-details'
+                    onClick={toggleSidebar}
                   >
                     Legal/tax details
                   </Link>
@@ -124,6 +133,7 @@ const Sidebar = () => {
                         : ''
                     }`}
                     to='/supplier/bussiness/verify'
+                    onClick={toggleSidebar}
                   >
                     Verify the business
                   </Link>
@@ -168,6 +178,7 @@ const Sidebar = () => {
                         : ''
                     }`}
                     to='/supplier/product-category'
+                    onClick={toggleSidebar}
                   >
                     Category
                   </Link>
@@ -178,6 +189,7 @@ const Sidebar = () => {
                         : ''
                     }`}
                     to='/supplier/product-subcategory'
+                    onClick={toggleSidebar}
                   >
                     Sub Category
                   </Link>
@@ -188,6 +200,7 @@ const Sidebar = () => {
                         : ''
                     }`}
                     to='/supplier/products'
+                    onClick={toggleSidebar}
                   >
                     Products List
                   </Link>
@@ -242,6 +255,7 @@ const Sidebar = () => {
                         : ''
                     }`}
                     to='/supplier/service-category'
+                    onClick={toggleSidebar}
                   >
                     Category
                   </Link>
@@ -252,6 +266,7 @@ const Sidebar = () => {
                         : ''
                     }`}
                     to='/supplier/service-subcategory'
+                    onClick={toggleSidebar}
                   >
                     Sub Category
                   </Link>
@@ -262,6 +277,7 @@ const Sidebar = () => {
                         : ''
                     }`}
                     to='/supplier/services'
+                    onClick={toggleSidebar}
                   >
                     Service List
                   </Link>
@@ -274,6 +290,7 @@ const Sidebar = () => {
                     : ''
                 }`}
                 to='/supplier/account-activation'
+                onClick={toggleSidebar}
               >
                 <div className='sb-nav-link-icon'>
                   <UserRoundPen />
