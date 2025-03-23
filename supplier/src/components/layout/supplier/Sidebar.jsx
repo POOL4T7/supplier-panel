@@ -173,6 +173,17 @@ const Sidebar = () => {
                 <nav className='sb-sidenav-menu-nested nav'>
                   <Link
                     className={`nav-link ${
+                      location.pathname === '/supplier/product-shop'
+                        ? 'nav-active'
+                        : ''
+                    }`}
+                    to='/supplier/product-shop'
+                    onClick={toggleSidebar}
+                  >
+                    Shop
+                  </Link>
+                  <Link
+                    className={`nav-link ${
                       location.pathname === '/supplier/product-category'
                         ? 'nav-active'
                         : ''

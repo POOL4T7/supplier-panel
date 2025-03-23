@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axiosInstance from '../../../axios';
 import { useAtom } from 'jotai';
 import { bussinessProfile, userDetailsAtom } from '../../../storges/user';
+import Spinner from '../../../components/common/Spinner';
+import CreatableSelect from 'react-select/creatable';
+import { toast } from 'react-toastify';
 
 const debounceFetch = (func, delay) => {
   let timer;
@@ -11,82 +14,185 @@ const debounceFetch = (func, delay) => {
   };
 };
 
+const customStyles = {
+  control: (base) => ({
+    ...base,
+    backgroundColor: 'transparent',
+    borderColor: '#1f2317',
+    color: '#e0e2da',
+  }),
+  option: (base, { isFocused, isSelected }) => ({
+    ...base,
+    backgroundColor: isSelected ? '#e0e2da' : isFocused ? '#e0e2da' : 'white',
+    color: isSelected ? 'green' : '#355e3b',
+  }),
+  singleValue: (base) => ({
+    ...base,
+    color: '#182402',
+  }),
+};
+
 const ProductShop = () => {
+  const selectRef = useRef(null);
+  // eslint-disable-next-line no-unused-vars
   const [supplier] = useAtom(userDetailsAtom);
   const [bussiness] = useAtom(bussinessProfile);
-  const [description, setDescription] = useState('');
+  const [descriptionOptionList, setDescriptionOptionList] = useState([]);
   const [category, setCategory] = useState('');
   const [subCategory, setSubCategory] = useState('');
   const [listData, setListData] = useState([]);
-  const [descriptionList, setDescriptionList] = useState([]);
+  const [structure, setStructure] = useState(null);
+  const [bussinessLoading, setBussinessLoading] = useState(false);
+  const [createCategoryLoading, setCreateCategoryLoading] = useState(false);
+  const [createSubCategoryLoading, setSubCreateCategoryLoading] =
+    useState(false);
+  const [movedCategoryLoading, setMovedCategoryLoading] = useState(false);
+  const [movedSubCategoryLoading, setMovedSubCategoryLoading] = useState(false);
+  const [allDesc, setAllDesc] = useState([]);
+  const [description, setDescription] = useState('');
+  const [movedSubCategories, setMovedSubCategories] = useState([]);
+
+  const [movedCategories, setMovedCategories] = useState([]);
+
+  const [globalLoading, setGlobalLoading] = useState(true);
+
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState([]);
+
+  const [uploadLoading, setUploadLoading] = useState(false);
 
   const handleInputChange = async (inputValue) => {
-    setDescription(inputValue);
     try {
+      setBussinessLoading(true);
       const res = await axiosInstance.get(
         `/proxy/productsearchsupplier/getAllBusinessDescription?description=${inputValue}&type=products`
       );
-      console.log(res);
-      setListData(
-        res.data.map((item) => ({
-          id: item.id,
-          name: item.description,
-          type: 'description',
+
+      const data = Array.isArray(res.data) ? res.data : [];
+      setDescriptionOptionList(
+        data.map((desc) => ({
+          value: desc.description,
+          label: desc.description,
         }))
       );
-      //   setDescriptionList(
-      //     res.data.map((item) => ({
-      //       id: item.id,
-      //       name: item.description,
-      //     }))
-      //   );
+      setBussinessLoading(false);
     } catch (error) {
       console.error('Error fetching business descriptions:', error);
     }
   };
 
-  const createDescription = async (e) => {
-    e.preventDefault();
-    try {
-      await axiosInstance.post(
-        '/proxy/productsearchsupplier/api/supplier/file/addSupplierBusinessDescription',
-        {
-          supplierBusinessId: bussiness.id,
-          supplierBusinessDescription: description,
-          type: 'products',
+  const handleCreate = async (value) => {
+    if (value) {
+      try {
+        // setBussinessLoading(true);
+        await axiosInstance.post(
+          '/proxy/productsearchsupplier/api/supplier/file/addSupplierBusinessDescription',
+          {
+            supplierBusinessId: bussiness.id,
+            supplierBusinessDescription: value,
+            type: 'products',
+          }
+        );
+        const res2 = await axiosInstance.get(
+          `/proxy/productsearchsupplier/getAllDetailsByBusinessDescription?supplierBusinessId=${bussiness.id}&productOrService=products`
+        );
+        setStructure(res2.data);
+        setDescriptionOptionList([
+          ...descriptionOptionList,
+          { label: value, value },
+        ]);
+        // setDescriptionOptionList(value);
+        // setBussinessLoading(false);
+        if (selectRef.current && value) {
+          selectRef.current.setValue({
+            value: value,
+            label: value,
+          });
         }
-      );
-      setListData([
-        {
-          id: description,
-          name: description,
-          type: 'description',
-        },
-      ]);
-    } catch (e) {
-      console.log(e);
+        console.log('Business description added successfully');
+      } catch (error) {
+        console.error('Error adding business description:', error);
+      }
     }
   };
 
-  const fetchCategories = async () => {
-    try {
-      //   setLoading(true);
-      const res = await axiosInstance.get(
-        `/proxy/productsearchsupplier/getBusinessDescriptionByType?type=products&supplierBusinessId=${bussiness.id}`
-      );
-      setDescriptionList(res.data); // string[]
-      //   const res2 = await axiosInstance.get(
-      //     `/proxy/productsearchsupplier/getSupplierCategoriesForStructured?type=products&supplierBusinessId=${bussiness.id}`
-      //   );
-      //   console.log(res2);
-      console.log(res);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
+  const handleCreateCategory = async (e) => {
+    e.preventDefault();
+    if (!description) {
+      toast.error('Bussiness description is required for adding category');
+      return;
     }
+    setCreateCategoryLoading(true);
+    const res = await axiosInstance.post(
+      '/proxy/productsearchsupplier/saveCategoryDetails',
+      {
+        categoryName: category,
+        productsServices: 'products',
+        supplierBusinessId: bussiness.id,
+        categoryDescription: description,
+        supplierBusinessDescription: description,
+      }
+    );
+    const p = {
+      name: res.data.categoryName,
+      id: res.data.id,
+    };
+
+    const res2 = await axiosInstance.get(
+      `/proxy/productsearchsupplier/getAllDetailsByBusinessDescription?supplierBusinessId=${bussiness.id}&productOrService=products`
+    );
+    setStructure(res2.data);
+
+    setListData([...listData, p]);
+
+    setCreateCategoryLoading(false);
+  };
+
+  const handleCreateSubCatgeory = async (e) => {
+    e.preventDefault();
+    setSubCreateCategoryLoading(true);
+    const res = await axiosInstance.post(
+      '/proxy/productsearchsupplier/saveSubCategoryDetails',
+      {
+        subCategoryName: subCategory,
+        productsServices: 'products',
+        categoryId: category.id,
+        supplierBusinessId: bussiness.id,
+        supplierBusinessDescription: description,
+      }
+    );
+    const res2 = await axiosInstance.get(
+      `/proxy/productsearchsupplier/getAllDetailsByBusinessDescription?supplierBusinessId=${bussiness.id}&productOrService=products`
+    );
+    setStructure(res2.data);
+
+    const newCategory = {
+      subCategoryName: res.data.subCategoryName,
+      id: res.data.id,
+    };
+    setListData([...listData, newCategory]);
+    // setSubCategoriesValue('');
+    setSubCreateCategoryLoading(false);
   };
 
   useEffect(() => {
-    if (bussiness?.id) fetchCategories();
+    const fetchData = async () => {
+      try {
+        setGlobalLoading(true);
+        const res = await axiosInstance.get(
+          `/proxy/productsearchsupplier/getBusinessDescriptionByType?type=products&supplierBusinessId=${bussiness.id}`
+        );
+        const res2 = await axiosInstance.get(
+          `/proxy/productsearchsupplier/getAllDetailsByBusinessDescription?supplierBusinessId=${bussiness.id}&productOrService=products`
+        );
+        setAllDesc(res.data);
+        setStructure(res2.data);
+        setGlobalLoading(false);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    if (bussiness?.id) fetchData();
   }, [bussiness.id]);
 
   const handleDescriptionChange = debounceFetch(handleInputChange, 500);
@@ -99,32 +205,98 @@ const ProductShop = () => {
             <h2>Create Shop</h2>
           </div>
           <div className='row align-items-end g-2'>
-            <div className='col-8 col-md-10'>
+            <div className='col-12'>
               <div className='mb-2'>
-                <label className='form-label'>Business Description</label>
-                <input
-                  type='text'
-                  className='form-control'
-                  placeholder='Enter description'
-                  value={description}
-                  onChange={(e) => handleDescriptionChange(e.target.value)}
+                <CreatableSelect
+                  ref={(el) => {
+                    if (el) selectRef.current = el;
+                  }}
+                  styles={customStyles}
+                  isClearable
+                  options={descriptionOptionList}
+                  classNamePrefix='react-select'
+                  isLoading={bussinessLoading}
+                  value={{ label: description, value: description }}
+                  onChange={async (value) => {
+                    setDescription(value?.value);
+                    // console.log('here', value, allMovedcategory);
+                    if (value) {
+                      // setCategoryLoading(true);
+                      setMovedCategoryLoading(true);
+                      const res2 = await axiosInstance.get(
+                        `/proxy/productsearchsupplier/getCategoryDetails?type=products&businessDescription=${value.value}&supplierBusinessId=${bussiness.id}`
+                      );
+                      const res = await axiosInstance.get(
+                        `/proxy/productsearchsupplier/getSupplierCategoryDetails?type=products&supplierBusinessId=${bussiness.id}&businessDescription=${value.value}`
+                      );
+                      console.log('res2', res2.data);
+                      console.log('res2', res.data);
+                      setListData(
+                        res2.data.map((item) => {
+                          return {
+                            id: item.id,
+                            name: item.categoryName,
+                            categoryDescription: item.categoryDescription,
+                            supplierBusinessDescription: value.value,
+                            type: 'category',
+                          };
+                        })
+                      );
+                      setMovedCategories(
+                        res.data.map((item) => {
+                          return {
+                            id: item.categoryId,
+                            name: item.supplierCategoryName,
+                            categoryDescription:
+                              item.supplierCategoryDescription,
+                            supplierBusinessDescription:
+                              item.supplierBusinessDescription,
+                            type: 'category',
+                            categoryId: item.categoryId,
+                          };
+                        })
+                      );
+                      // setCategoryLoading(false);
+                      setMovedCategoryLoading(false);
+                    } else {
+                      setListData([]);
+                      setMovedCategories([]);
+                    }
+                    setMovedSubCategories([]);
+                    setCategory('');
+                    setSubCategory('');
+                  }}
+                  onInputChange={(inputValue) => {
+                    if (inputValue.length > 2)
+                      handleDescriptionChange(inputValue);
+                    return inputValue;
+                  }}
+                  onCreateOption={handleCreate}
+                  placeholder='bussiness description'
                 />
-                <div className='invalid-feedback'>
-                  Please provide a valid description.
-                </div>
               </div>
+              {allDesc.length > 0 && (
+                <div className='mb-4 d-flex flex-wrap gap-2'>
+                  {allDesc.map((item, index) => (
+                    <span
+                      key={index}
+                      className='badge rounded-pill bg-primary px-2 py-1 text-white'
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        if (selectRef.current) {
+                          selectRef.current.setValue({
+                            value: item,
+                            label: item,
+                          });
+                        }
+                      }}
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
-            <div className='col-4 col-md-2 d-flex justify-content-end'>
-              <button
-                className='btn btn-primary w-100'
-                onClick={createDescription}
-              >
-                Add
-              </button>
-            </div>
-            {descriptionList.map((item) => (
-              <span key={item}>{item}</span>
-            ))}
           </div>
           <div className='row align-items-end g-2'>
             <div className='col-8 col-md-10'>
@@ -134,8 +306,20 @@ const ProductShop = () => {
                   type='text'
                   className='form-control'
                   placeholder='Enter category'
-                  onChange={(e) => setCategory(e.target.value)}
-                  disabled={!description}
+                  onChange={(e) => {
+                    setCategory(e.target.value);
+                    if (e.target.value == '') {
+                      setListData([]);
+                      setSelectedCategory(null);
+                      if (selectRef.current) {
+                        selectRef.current.setValue({
+                          value: selectRef?.current?.getValue?.()?.[0]?.value,
+                          label: selectRef?.current?.getValue?.()?.[0]?.value,
+                        });
+                      }
+                    }
+                  }}
+                  disabled={!selectRef?.current?.getValue?.()?.[0]?.value}
                   value={category}
                 />
                 <div className='invalid-feedback'>
@@ -143,9 +327,78 @@ const ProductShop = () => {
                 </div>
               </div>
             </div>
-            <div className='col-4 col-md-2 d-flex justify-content-end'>
-              <button className='btn btn-primary w-100'>Add</button>
+            <div
+              className='col-4 col-md-2 d-flex justify-content-end'
+              style={{ marginBottom: '8px' }}
+            >
+              <button
+                className='btn btn-primary w-100'
+                onClick={handleCreateCategory}
+              >
+                {createCategoryLoading && (
+                  <Spinner width='20px' height='20px' />
+                )}{' '}
+                <span> Add</span>
+              </button>
             </div>
+            {movedCategoryLoading ? (
+              <Spinner width='15px' height='15px' />
+            ) : (
+              <div className='mb-4 d-flex flex-wrap gap-2'>
+                {movedCategories.map((item, index) => (
+                  <span
+                    key={index}
+                    className='badge rounded-pill bg-primary px-2 py-1 text-white'
+                    style={{ cursor: 'pointer' }}
+                    onClick={async () => {
+                      try {
+                        setSelectedCategory(item);
+                        setCategory(item.name);
+                        setMovedSubCategoryLoading(true);
+                        const res = await axiosInstance.get(
+                          `/proxy/productsearchsupplier/getSubCategoryDetails?categoryId=${item.categoryId}&type=products&supplierBusinessId=${bussiness.id}`
+                        );
+                        const res2 = await axiosInstance.get(
+                          `/proxy/productsearchsupplier/getSupplierSubCategoryDetails?supplierCategoryId=${item.categoryId}&type=products&supplierBusinessId=${bussiness.id}`
+                        );
+
+                        console.log(res2.data);
+                        console.log(res.data);
+
+                        setListData(
+                          res.data.map((item) => ({
+                            id: item.id,
+                            name: item.subCategoryName,
+                            supplierBusinessDescription:
+                              item.supplierBusinessDescription,
+                            subCategoryDescription:
+                              item.supplierCategoryDescription,
+                            type: 'subCategory',
+                            categoryId: item.categoryId,
+                          }))
+                        );
+                        setMovedSubCategories(
+                          res2.data.map((item) => ({
+                            id: item.id,
+                            name: item.supplierSubCategoryName,
+                            supplierBusinessDescription:
+                              item.supplierBusinessDescription,
+                            subCategoryDescription:
+                              item.supplierCategoryDescription,
+                            type: 'subCategory',
+                          }))
+                        );
+                        setMovedSubCategoryLoading(false);
+                      } catch (e) {
+                        console.log(e);
+                      }
+                    }}
+                  >
+                    {item.name}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
           <div className='row align-items-end g-2'>
             <div className='col-8 col-md-10'>
@@ -164,9 +417,35 @@ const ProductShop = () => {
                 </div>
               </div>
             </div>
-            <div className='col-4 col-md-2 d-flex justify-content-end'>
-              <button className='btn btn-primary w-100'>Add</button>
+            <div
+              className='col-4 col-md-2 d-flex justify-content-end'
+              style={{ marginBottom: '8px' }}
+            >
+              <button
+                className='btn btn-primary w-100'
+                onClick={handleCreateSubCatgeory}
+              >
+                {createSubCategoryLoading && (
+                  <Spinner width='20px' height='20px' />
+                )}{' '}
+                <span> Add</span>
+              </button>
             </div>
+            {movedSubCategoryLoading ? (
+              <Spinner width='20px' height='20px' />
+            ) : (
+              <div className='mb-4 d-flex flex-wrap gap-2'>
+                {movedSubCategories.map((item, index) => (
+                  <span
+                    key={index}
+                    className='badge rounded-pill bg-primary px-2 py-1 text-white'
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {item.name}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
           <div
             className='border p-3 mt-2'
@@ -176,20 +455,121 @@ const ProductShop = () => {
               position: 'relative',
             }}
           >
-            {listData?.map((product) => (
-              <div key={product.id} className='form-check mb-2'>
-                <input
-                  type='checkbox'
-                  className='form-check-input'
-                  //   checked={selectedSubCategories.includes(product)}
-                  //   onChange={() => toggleSelectProduct(product, 'left')}
-                />
-                <label className='form-check-label'>{product.name}</label>
+            <h5>
+              {category ? (
+                <>Sub Category List</>
+              ) : description ? (
+                <>Category List</>
+              ) : (
+                <></>
+              )}
+            </h5>
+            {movedSubCategoryLoading || movedCategoryLoading ? (
+              <div className='d-flex'>
+                <Spinner height='100px' width='100px' />
               </div>
-            ))}
+            ) : (
+              listData?.map((product) => (
+                <div key={product.id} className='form-check mb-2'>
+                  <input
+                    type='checkbox'
+                    className='form-check-input'
+                    checked={selectedIds.includes(product.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedIds([...selectedIds, product.id]);
+                      } else {
+                        setSelectedIds(
+                          selectedIds.filter((id) => id !== product.id)
+                        );
+                      }
+                    }}
+                  />
+                  <label className='form-check-label'>{product.name}</label>
+                </div>
+              ))
+            )}
             <div style={{ position: 'absolute', bottom: '5px', right: '5px' }}>
-              <button className='btn btn-outline-danger m-2'>Cancel</button>
-              <button className='btn btn-primary'>Update</button>
+              <button
+                className='btn btn-outline-danger m-2'
+                onClick={() => {
+                  setSelectedIds([]);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className='btn btn-primary'
+                disabled={uploadLoading || selectedIds.length === 0}
+                onClick={async () => {
+                  setUploadLoading(true);
+                  if (category) {
+                    console.log('moved to active sub category');
+                    await axiosInstance.post(
+                      '/proxy/productsearchsupplier/supplierSubCategoryDetailsStatus',
+                      {
+                        supplierBusinessId: bussiness.id,
+                        subCategoryIds: selectedIds,
+                        status: true,
+                        categoryId: selectedCategory.categoryId,
+                        supplierBusinessDescription: description,
+                      }
+                    );
+                    const res2 = await axiosInstance.get(
+                      `/proxy/productsearchsupplier/getSupplierSubCategoryDetails?supplierCategoryId=${selectedCategory.categoryId}&type=products&supplierBusinessId=${bussiness.id}`
+                    );
+                    setMovedSubCategories(
+                      res2.data.map((item) => ({
+                        id: item.id,
+                        name: item.supplierSubCategoryName,
+                        supplierBusinessDescription:
+                          item.supplierBusinessDescription,
+                        subCategoryDescription:
+                          item.supplierCategoryDescription,
+                        type: 'subCategory',
+                      }))
+                    );
+                  } else {
+                    console.log('moved to active category');
+                    await axiosInstance.post(
+                      '/proxy/productsearchsupplier/supplierCategoryDetailsStatus',
+                      {
+                        supplierBusinessId: bussiness.id,
+                        categoryIds: selectedIds,
+                        status: true,
+                        supplierBusinessDescription: description,
+                      }
+                    );
+                    const res = await axiosInstance.get(
+                      `/proxy/productsearchsupplier/getSupplierCategoryDetails?type=products&supplierBusinessId=${bussiness.id}&businessDescription=${description}`
+                    );
+                    setMovedCategories(
+                      res.data.map((item) => {
+                        return {
+                          id: item.categoryId,
+                          name: item.supplierCategoryName,
+                          categoryDescription: item.supplierCategoryDescription,
+                          supplierBusinessDescription:
+                            item.supplierBusinessDescription,
+                          type: 'category',
+                          categoryId: item.categoryId,
+                        };
+                      })
+                    );
+                  }
+                  const res2 = await axiosInstance.get(
+                    `/proxy/productsearchsupplier/getAllDetailsByBusinessDescription?supplierBusinessId=${bussiness.id}&productOrService=products`
+                  );
+
+                  setStructure(res2.data);
+                  setUploadLoading(false);
+                  setListData(
+                    listData.filter((item) => !selectedIds.includes(item.id))
+                  );
+                }}
+              >
+                Update
+              </button>
             </div>
           </div>
         </div>
@@ -200,55 +580,69 @@ const ProductShop = () => {
             </div>
           </div>
 
-          <div className='accordion' id='categoryAccordion'>
-            {[].map((desc, idx) => (
-              <div className='accordion-item' key={desc.businessDescription}>
-                <h2 className='accordion-header' id={`heading${idx}`}>
-                  <button
-                    className='accordion-button'
-                    type='button'
-                    data-bs-toggle='collapse'
-                    data-bs-target={`#collapse${idx}`}
-                    aria-expanded='true'
-                    aria-controls={`collapse${idx}`}
+          {globalLoading ? (
+            <div className='d-flex'>
+              <Spinner />
+            </div>
+          ) : (
+            <div className='accordion' id='categoryAccordion'>
+              {structure?.map((desc, idx) => (
+                <div className='accordion-item' key={desc.businessDescription}>
+                  <h2 className='accordion-header' id={`heading${idx}`}>
+                    <button
+                      className='accordion-button'
+                      type='button'
+                      data-bs-toggle='collapse'
+                      data-bs-target={`#collapse${idx}`}
+                      aria-expanded='true'
+                      aria-controls={`collapse${idx}`}
+                    >
+                      {desc.businessDescription}
+                    </button>
+                  </h2>
+                  <div
+                    id={`collapse${idx}`}
+                    className='accordion-collapse collapse'
+                    aria-labelledby={`heading${idx}`}
+                    data-bs-parent='#categoryAccordion'
                   >
-                    {desc.businessDescription}
-                  </button>
-                </h2>
-                <div
-                  id={`collapse${idx}`}
-                  className='accordion-collapse collapse'
-                  aria-labelledby={`heading${idx}`}
-                  data-bs-parent='#categoryAccordion'
-                >
-                  <div className='accordion-body'>
-                    {desc.categories.map((cate) => (
-                      <div key={cate.categoryName}>
-                        <div className='row'>
-                          <div className='col-12 col-md-4'>
-                            <strong>{cate.categoryName}</strong>
-                          </div>
-                          <div className='col-12 col-md-8'>
-                            {cate.subCategories.length > 0 ? (
-                              <ul>
-                                {cate.subCategories.map((subCate, subIdx) => (
-                                  <li key={subIdx}>
-                                    {subCate.subCategoryName}
-                                  </li>
-                                ))}
-                              </ul>
-                            ) : (
-                              <p>No Subcategories Available</p>
-                            )}
-                          </div>
+                    <div className='accordion-body'>
+                      <div className='row '>
+                        <div className='col-4'>
+                          <h5>Category</h5>
+                        </div>
+                        <div className='col-8'>
+                          <h5>Sub Category</h5>
                         </div>
                       </div>
-                    ))}
+                      {desc.categories.map((cate) => (
+                        <div key={cate.categoryName}>
+                          <div className='row'>
+                            <div className='col-12 col-md-4'>
+                              <strong>{cate.categoryName}</strong>
+                            </div>
+                            <div className='col-12 col-md-8'>
+                              {cate.subCategories.length > 0 ? (
+                                <ul>
+                                  {cate.subCategories.map((subCate, subIdx) => (
+                                    <li key={subIdx}>
+                                      {subCate.subCategoryName}
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                <p>No Subcategories Available</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

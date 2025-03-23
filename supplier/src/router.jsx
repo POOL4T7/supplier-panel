@@ -32,7 +32,7 @@ import BussinessTaxProfile from './pages/supplier/bussiness/Tax';
 import BussinessVerify from './pages/supplier/bussiness/Verify';
 
 import ActivateAccount from './pages/supplier/ActivateAccount';
-// import ProductShop from './pages/supplier/product/ProductShop';
+import ProductShop from './pages/supplier/product/ProductShop';
 
 const router = () => {
   return createBrowserRouter([
@@ -103,6 +103,10 @@ const router = () => {
         {
           path: 'product-category',
           element: <ProductCategory />,
+        },
+        {
+          path: 'product-shop',
+          element: <ProductShop />,
         },
         {
           path: 'product-subcategory',

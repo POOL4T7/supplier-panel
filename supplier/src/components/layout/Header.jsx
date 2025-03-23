@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
-import { useAtom } from 'jotai';
-import { userDetailsAtom } from '../../storges/user';
+// import { useAtom } from 'jotai';
+// import { userDetailsAtom } from '../../storges/user';
+// import { MenuIcon } from 'lucide-react';
 // import { useState } from 'react';
 
 const Header = () => {
-  const [userDetails] = useAtom(userDetailsAtom);
+  // const [userDetails] = useAtom(userDetailsAtom);
   // const [selectedCountry, setSelectedCountry] = useState(
   //   localStorage.getItem('country') || 'Germany'
   // );
@@ -30,8 +31,8 @@ const Header = () => {
         </Link>
 
         {/* Navbar Toggler for Mobile */}
-        <button
-          className='navbar-toggler'
+        {/* <button
+          className='navbar-toggler text-white'
           type='button'
           data-bs-toggle='collapse'
           data-bs-target='#navbarColor02'
@@ -39,62 +40,14 @@ const Header = () => {
           aria-expanded='false'
           aria-label='Toggle navigation'
         >
-          <span className='navbar-toggler-icon'></span>
+          <MenuIcon />
         </button>
 
-        {/* Navbar Links & Controls */}
         <div className='collapse navbar-collapse' id='navbarColor02'>
           <ul className='navbar-nav me-auto'>
-            {/* Additional nav items can go here */}
           </ul>
 
           <div className='d-flex align-items-center'>
-            {/* Country Dropdown */}
-            {/* <div className='dropdown me-3'>
-              <button
-                className='btn btn-light dropdown-toggle d-flex align-items-center country-dropdown bg-primary border-primary'
-                type='button'
-                id='countryDropdown'
-                data-bs-toggle='dropdown'
-                aria-expanded='false'
-                // style={{}}
-              >
-                <img
-                  src={`https://flagcdn.com/w40/${
-                    countries.find((c) => c.name === selectedCountry)?.code
-                  }.png`}
-                  alt={selectedCountry}
-                  className='me-2'
-                  style={{ width: '24px', height: '16px' }}
-                />
-              </button>
-              <ul
-                className='dropdown-menu dropdown-menu-end'
-                aria-labelledby='countryDropdown'
-              >
-                {countries.map((country, index) => (
-                  <li key={index}>
-                    <button
-                      className='dropdown-item d-flex align-items-center'
-                      onClick={() => {
-                        setSelectedCountry(country.name);
-                        localStorage.setItem('country', country.name);
-                      }}
-                    >
-                      <img
-                        src={`https://flagcdn.com/w40/${country.code}.png`}
-                        alt={country.name}
-                        className='me-2'
-                        style={{ width: '24px', height: '16px' }}
-                      />
-                      {country.name}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div> */}
-
-            {/* User Dropdown */}
             {userDetails?.id ? (
               <ul className='navbar-nav'>
                 <li className='nav-item dropdown'>
@@ -149,7 +102,7 @@ const Header = () => {
               </Link>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
     </nav>
   );

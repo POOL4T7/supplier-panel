@@ -8,6 +8,7 @@ const FormContainer = ({ children }) => {
         sx={{
           display: 'flex',
           justifyContent: 'center',
+          padding: '1rem',
         }}
       >
         {children}
