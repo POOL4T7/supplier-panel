@@ -5,6 +5,8 @@ import { bussinessProfile, userDetailsAtom } from '../../../storges/user';
 import Spinner from '../../../components/common/Spinner';
 import CreatableSelect from 'react-select/creatable';
 import { toast } from 'react-toastify';
+import RightDrawer from '../../../components/Product/RightDrawer';
+import FormContainer from '../../../components/common/FormContainer';
 
 const debounceFetch = (func, delay) => {
   let timer;
@@ -57,7 +59,7 @@ const ProductShop = () => {
   const [globalLoading, setGlobalLoading] = useState(true);
 
   const [selectedIds, setSelectedIds] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   const [uploadLoading, setUploadLoading] = useState(false);
 
@@ -146,6 +148,8 @@ const ProductShop = () => {
     setListData([...listData, p]);
 
     setCreateCategoryLoading(false);
+    setSelectedCategory(null);
+    setCategory('');
   };
 
   const handleCreateSubCatgeory = async (e) => {
@@ -167,12 +171,14 @@ const ProductShop = () => {
     setStructure(res2.data);
 
     const newCategory = {
-      subCategoryName: res.data.subCategoryName,
+      name: res.data.subCategoryName,
       id: res.data.id,
+      categoryId: category.id,
     };
     setListData([...listData, newCategory]);
     // setSubCategoriesValue('');
     setSubCreateCategoryLoading(false);
+    setSubCategory('');
   };
 
   useEffect(() => {
@@ -197,10 +203,18 @@ const ProductShop = () => {
 
   const handleDescriptionChange = debounceFetch(handleInputChange, 500);
 
+  if (globalLoading)
+    return (
+      <div className='d-flex'>
+        {' '}
+        <Spinner />{' '}
+      </div>
+    );
+
   return (
-    <div className='mt-3'>
-      <div className='row'>
-        <div className='col-12 col-md-6'>
+    <FormContainer>
+      <div className='row' style={{ maxWidth: '600px', width: '100%' }}>
+        <div>
           <div className='col-12'>
             <h2>Create Shop</h2>
           </div>
@@ -261,6 +275,7 @@ const ProductShop = () => {
                     } else {
                       setListData([]);
                       setMovedCategories([]);
+                      setSelectedCategory(null);
                     }
                     setMovedSubCategories([]);
                     setCategory('');
@@ -362,9 +377,6 @@ const ProductShop = () => {
                           `/proxy/productsearchsupplier/getSupplierSubCategoryDetails?supplierCategoryId=${item.categoryId}&type=products&supplierBusinessId=${bussiness.id}`
                         );
 
-                        console.log(res2.data);
-                        console.log(res.data);
-
                         setListData(
                           res.data.map((item) => ({
                             id: item.id,
@@ -456,7 +468,7 @@ const ProductShop = () => {
             }}
           >
             <h5>
-              {category ? (
+              {selectedCategory ? (
                 <>Sub Category List</>
               ) : description ? (
                 <>Category List</>
@@ -503,7 +515,7 @@ const ProductShop = () => {
                 disabled={uploadLoading || selectedIds.length === 0}
                 onClick={async () => {
                   setUploadLoading(true);
-                  if (category) {
+                  if (selectedCategory) {
                     console.log('moved to active sub category');
                     await axiosInstance.post(
                       '/proxy/productsearchsupplier/supplierSubCategoryDetailsStatus',
@@ -573,7 +585,7 @@ const ProductShop = () => {
             </div>
           </div>
         </div>
-        <div className='col-12 col-md-6 mt-4 mt-md-0'>
+        {/* <div className='col-12 col-md-6 mt-4 mt-md-0'>
           <div className='row'>
             <div className='col-12'>
               <h2>Your Shop</h2>
@@ -643,9 +655,10 @@ const ProductShop = () => {
               ))}
             </div>
           )}
-        </div>
+        </div> */}
       </div>
-    </div>
+      <RightDrawer structure={structure} />
+    </FormContainer>
   );
 };
 

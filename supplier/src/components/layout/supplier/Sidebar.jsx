@@ -2,7 +2,8 @@ import { useAtom } from 'jotai';
 import {
   ChartNoAxesGantt,
   ChevronDown,
-  PackageOpen,
+  // PackageOpen,
+  Store,
   Trash,
   UserCog,
   UserRoundPen,
@@ -139,8 +140,34 @@ const Sidebar = () => {
                   </Link>
                 </nav>
               </div>
-              {/* <div className='sb-sidenav-menu-heading'>Product</div> */}
               <Link
+                className={`nav-link ${
+                  location.pathname === '/supplier/product-shop'
+                    ? 'nav-active'
+                    : ''
+                }`}
+                to='/supplier/product-shop'
+                onClick={toggleSidebar}
+              >
+                <div className='sb-nav-link-icon'>
+                  <Store />
+                </div>
+                Product Shop
+              </Link>
+              <Link
+                className={`nav-link ${
+                  location.pathname === '/supplier/products' ? 'nav-active' : ''
+                }`}
+                to='/supplier/products'
+                onClick={toggleSidebar}
+              >
+                <div className='sb-nav-link-icon'>
+                  <Store />
+                </div>
+                Product List
+              </Link>
+              {/* <div className='sb-sidenav-menu-heading'>Product</div> */}
+              {/* <Link
                 className={`nav-link collapsed ${
                   [
                     '/supplier/product-category',
@@ -216,7 +243,7 @@ const Sidebar = () => {
                     Products List
                   </Link>
                 </nav>
-              </div>
+              </div> */}
               <Link
                 className={`nav-link collapsed ${
                   bussiness.sector === 'services' ||
