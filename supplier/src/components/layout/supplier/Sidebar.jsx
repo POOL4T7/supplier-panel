@@ -2,6 +2,8 @@ import { useAtom } from 'jotai';
 import {
   ChartNoAxesGantt,
   ChevronDown,
+  ServerCog,
+  ShoppingBasket,
   // PackageOpen,
   Store,
   Trash,
@@ -162,9 +164,45 @@ const Sidebar = () => {
                 onClick={toggleSidebar}
               >
                 <div className='sb-nav-link-icon'>
-                  <Store />
+                  <ShoppingBasket />
                 </div>
                 Product List
+              </Link>
+              <Link
+                className={`nav-link ${
+                  location.pathname === '/supplier/service-shop'
+                    ? 'nav-active'
+                    : ''
+                }  ${
+                  bussiness.sector === 'services' ||
+                  bussiness.sector === 'products and services'
+                    ? ''
+                    : 'disabled'
+                }`}
+                to='/supplier/service-shop'
+                onClick={toggleSidebar}
+              >
+                <div className='sb-nav-link-icon'>
+                  <UserCog />
+                </div>
+                Service Shop
+              </Link>
+              <Link
+                className={`nav-link ${
+                  location.pathname === '/supplier/services' ? 'nav-active' : ''
+                } ${
+                  bussiness.sector === 'services' ||
+                  bussiness.sector === 'products and services'
+                    ? ''
+                    : 'disabled'
+                }`}
+                to='/supplier/services'
+                onClick={toggleSidebar}
+              >
+                <div className='sb-nav-link-icon'>
+                  <ServerCog />
+                </div>
+                Service List
               </Link>
               {/* <div className='sb-sidenav-menu-heading'>Product</div> */}
               {/* <Link
@@ -244,7 +282,7 @@ const Sidebar = () => {
                   </Link>
                 </nav>
               </div> */}
-              <Link
+              {/* <Link
                 className={`nav-link collapsed ${
                   bussiness.sector === 'services' ||
                   bussiness.sector === 'products and services'
@@ -320,7 +358,7 @@ const Sidebar = () => {
                     Service List
                   </Link>
                 </nav>
-              </div>
+              </div> */}
               <Link
                 className={`nav-link ${
                   location.pathname === '/supplier/account-activation'

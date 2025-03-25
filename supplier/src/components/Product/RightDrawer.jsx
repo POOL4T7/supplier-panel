@@ -23,7 +23,7 @@ import {
   Folder,
   FolderOpen,
   ChevronUp,
-  Combine,
+  // Combine,
 } from 'lucide-react';
 
 const RightDrawer = ({ structure }) => {
@@ -43,35 +43,39 @@ const RightDrawer = ({ structure }) => {
     <>
       {/* Floating action button with vertical text */}
       {!open && (
-        <Button
-          variant='contained'
+        <button
+          // variant='contained'
           onClick={toggleDrawer(true)}
-          sx={{
+          style={{
             position: 'fixed',
             right: 0,
             top: '50%',
-            transform: 'translateY(-100%)',
-            borderRadius: '30px 0 0 30px',
+            transform: 'translateY(-50%)',
+            // borderRadius: '30px 0 0 30px',
             zIndex: 1300,
             boxShadow: theme.shadows[4],
-            px: 1.5,
-            py: 3,
+            padding: '20px',
+            width: '25px', // Thinner width
             backgroundColor: '#012908',
             '&:hover': {
               backgroundColor: '#000b02',
             },
+            color: 'white',
             transition: 'all 0.3s ease',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             flexDirection: 'column',
             gap: 0.5,
           }}
         >
-          <Combine size={20} />
-          <Box sx={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+          {/* <Combine size={20} /> */}
+          <Box sx={{ writingMode: 'vertical-lr', transform: 'rotate(180deg)' }}>
             <Typography variant='button' sx={{ fontSize: '0.75rem' }}>
-              Browse Categories
+              Your Shop
             </Typography>
           </Box>
-        </Button>
+        </button>
       )}
 
       {/* Enhanced Drawer */}

@@ -33,6 +33,7 @@ import BussinessVerify from './pages/supplier/bussiness/Verify';
 
 import ActivateAccount from './pages/supplier/ActivateAccount';
 import ProductShop from './pages/supplier/product/ProductShop';
+import ServiceShop from './pages/supplier/services/ServiceShop';
 
 const router = () => {
   return createBrowserRouter([
@@ -144,6 +145,10 @@ const router = () => {
         {
           path: 'service-category',
           element: <SupplierCategory />,
+        },
+        {
+          path: 'service-shop',
+          element: <ServiceShop />,
         },
         {
           path: 'service-subcategory',
