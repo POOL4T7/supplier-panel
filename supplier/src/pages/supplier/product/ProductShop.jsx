@@ -125,8 +125,12 @@ const ProductShop = () => {
       return;
     }
     if (
-      movedCategories.findIndex((item) => item.name === category) != -1 ||
-      listData.findIndex((item) => item.name === category) != -1
+      movedCategories.findIndex(
+        (item) => item.name.toLowerCase() === category.toLowerCase()
+      ) != -1 ||
+      listData.findIndex(
+        (item) => item.name.toLowerCase() === category.toLowerCase()
+      ) != -1
     ) {
       toast.error('Category already exists');
       return;
@@ -161,6 +165,17 @@ const ProductShop = () => {
 
   const handleCreateSubCatgeory = async (e) => {
     e.preventDefault();
+    if (
+      movedSubCategories.findIndex(
+        (item) => item.name.toLowerCase() === subCategory.toLowerCase()
+      ) != -1 ||
+      listData.findIndex(
+        (item) => item.name.toLowerCase() === subCategory.toLowerCase()
+      ) != -1
+    ) {
+      toast.error('Category already exists');
+      return;
+    }
     setSubCreateCategoryLoading(true);
     const res = await axiosInstance.post(
       '/proxy/productsearchsupplier/saveSubCategoryDetails',

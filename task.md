@@ -75,3 +75,24 @@ Led a team of 4 developers to deliver LilMeet, a real-time communication platfor
 Integrated Agora for live video streaming and Socket.io for real-time interactions.
 Passionate about solving complex technical challenges, collaborating with cross-functional teams, and continuously improving software performance. Always eager to learn and adapt to new technologies.
 
+
+1. add view mode for bussiness form.  (done)
+2. toggle the add product form, and bulk upload.
+3. add the progress status in bulk upload.
+4. change the color of header.
+
+1. before upload the file show the file, details and uplaod button.
+2. show the data of file, and add update button.
+
+
+file Uplaod and show data --> 45 min (issue working)
+
+
+
+check category list heading. 
+
+remove product dropdown.
+create shop.
+product list.
+
+UI for category list.
