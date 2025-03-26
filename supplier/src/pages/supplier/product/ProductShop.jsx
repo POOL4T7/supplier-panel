@@ -348,14 +348,24 @@ const ProductShop = () => {
                   placeholder='Enter category'
                   onChange={(e) => {
                     setCategory(e.target.value);
-                    setListData([]);
-                    setSelectedCategory(null);
+                    // setListData([]);
+                    // setSelectedCategory(null);
                     if (e.target.value == '') {
                       if (selectRef.current) {
                         selectRef.current.setValue({
                           value: selectRef?.current?.getValue?.()?.[0]?.value,
                           label: selectRef?.current?.getValue?.()?.[0]?.value,
                         });
+                      }
+                    } else {
+                      if (selectedCategory) {
+                        setSelectedCategory(null);
+                        if (selectRef.current) {
+                          selectRef.current.setValue({
+                            value: selectRef?.current?.getValue?.()?.[0]?.value,
+                            label: selectRef?.current?.getValue?.()?.[0]?.value,
+                          });
+                        }
                       }
                     }
                   }}
