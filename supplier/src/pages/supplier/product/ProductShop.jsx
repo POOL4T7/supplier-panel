@@ -232,7 +232,7 @@ const ProductShop = () => {
         <Spinner />{' '}
       </div>
     );
-
+  console.log('selectedIds', selectedIds);
   return (
     <FormContainer>
       <div className='row' style={{ maxWidth: '600px', width: '100%' }}>
@@ -297,8 +297,8 @@ const ProductShop = () => {
                     } else {
                       setListData([]);
                       setMovedCategories([]);
-                      setSelectedCategory(null);
                     }
+                    setSelectedCategory(null);
                     setMovedSubCategories([]);
                     setCategory('');
                     setSubCategory('');
@@ -555,6 +555,7 @@ const ProductShop = () => {
               onClick={async () => {
                 setUploadLoading(true);
                 if (selectedCategory) {
+                  console.log('###', selectedIds);
                   console.log('moved to active sub category');
                   await axiosInstance.post(
                     '/proxy/productsearchsupplier/supplierSubCategoryDetailsStatus',
@@ -616,6 +617,7 @@ const ProductShop = () => {
                 setListData(
                   listData.filter((item) => !selectedIds.includes(item.id))
                 );
+                setSelectedIds([]);
               }}
             >
               Update

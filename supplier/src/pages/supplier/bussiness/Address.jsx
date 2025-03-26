@@ -16,6 +16,8 @@ import { FilePenLine, X as CancelIcon } from 'lucide-react';
 const addressSchema = yup.object().shape({
   streetName: yup.string().required('Stree tName is required'),
   area: yup.string().optional(),
+  floorNo: yup.string().optional(),
+  shopNo: yup.string().optional(),
   houseNo: yup.string().required('building no. is required'),
   zipcode: yup.string().required('zipcode is required'),
   city: yup.string().required('City is required'),
@@ -205,6 +207,38 @@ const Address = () => {
               <div className='invalid-feedback'>{errors.houseNo?.message}</div>
             </div>
           </div>
+          {watch('premisesType') == 'individual' && (
+            <div className='row'>
+              <div className='col-6 mb-2'>
+                <label className='form-label'>Floor no.</label>
+                <input
+                  type='text'
+                  {...register('floorNo')}
+                  placeholder='Stree Name'
+                  className={`form-control ${
+                    errors.floorNo ? 'is-invalid' : ''
+                  }`}
+                  disabled={!editMode}
+                />
+                <div className='invalid-feedback'>
+                  {errors.floorNo?.message}
+                </div>
+              </div>
+              <div className='mb-2 col-6'>
+                <label className='form-label'>Shop no.</label>
+                <input
+                  type='text'
+                  {...register('shopNo')}
+                  placeholder='House no.'
+                  className={`form-control ${
+                    errors.shopNo ? 'is-invalid' : ''
+                  }`}
+                  disabled={!editMode}
+                />
+                <div className='invalid-feedback'>{errors.shopNo?.message}</div>
+              </div>
+            </div>
+          )}
           <div className='mb-2 '>
             <label className='form-label'>Place / locality name</label>
             <input
@@ -242,7 +276,7 @@ const Address = () => {
               <div className='invalid-feedback'>{errors.city?.message}</div>
             </div>
           </div>
-          <div className=' mb-2'>
+          {/* <div className=' mb-2'>
             <label className='form-label'>Country</label>
             <input
               type='text'
@@ -251,6 +285,21 @@ const Address = () => {
               // disabled={isUpdating}
               disabled={!editMode}
             />
+            <div className='invalid-feedback'>{errors.country?.message}</div>
+          </div> */}
+
+          <div className='mb-2'>
+            <label className='form-label'>Country</label>
+            <select
+              {...register('country')}
+              className={`form-control ${errors.country ? 'is-invalid' : ''}`}
+            >
+              <option value=''>Select Country</option>
+              <option value='India'>India</option>
+              <option value='Europe'>Europe</option>
+              <option value='US'>US</option>
+              {/* Add more countries as needed */}
+            </select>
             <div className='invalid-feedback'>{errors.country?.message}</div>
           </div>
         </form>

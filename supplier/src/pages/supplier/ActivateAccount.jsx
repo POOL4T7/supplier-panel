@@ -43,12 +43,13 @@ const ActivateAccount = () => {
       <div style={{ maxWidth: '500px', marginTop: '4rem' }}>
         <h1>Update Account status</h1>
         <div className='mb-2'>
-          <label className='form-label'>Profile Status</label>
+          <label className='form-label'>Select Profile Status</label>
           <select
             value={status}
             className={`form-control`}
             onChange={(e) => setStatus(e.target.value)}
           >
+            <option value={''}></option>
             <option value={'false'}>Inactive</option>
             <option value={'true'}>Active</option>
           </select>

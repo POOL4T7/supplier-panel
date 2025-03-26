@@ -289,8 +289,8 @@ const SupplierDetails = () => {
                 >
                   <option value=''>Select Country</option>
                   <option value='India'>India</option>
-                  <option value='USA'>USA</option>
-                  <option value='UK'>UK</option>
+                  <option value='Europe'>Europe</option>
+                  <option value='US'>US</option>
                   {/* Add more countries as needed */}
                 </select>
                 <div className='invalid-feedback'>

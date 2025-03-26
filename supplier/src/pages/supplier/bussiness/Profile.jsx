@@ -32,7 +32,10 @@ const addressSchema = yup.object().shape({
       const keywords = value.split(',').map((keyword) => keyword.trim());
       return keywords.length <= 10;
     }),
-  aboutUs: yup.string().required('About us is required'),
+  aboutUs: yup
+    .string()
+    .required('About us is required')
+    .max(1500, 'About us must be at most 1500 characters'),
   sector: yup.string().required('Sector is required'),
 });
 

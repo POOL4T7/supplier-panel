@@ -28,33 +28,59 @@ const addressSchema = yup
 
     whatsappCountryCode: yup.string().optional(),
     whatsappNumber: yup.string().optional(),
+    telegramCountryCode: yup.string().optional(),
+    telegramNumber: yup.string().optional(),
   })
   .test(
     'at-least-one-contact',
-    'At least one contact method is required (Fax, Mobile, or WhatsApp)',
+    'At least one valid contact method (Fax, Mobile, WhatsApp, or Telegram) is required.',
     function (value) {
-      const { faxNumber, mobileNumber, faxCountryCode, mobileCountryCode } =
-        value;
+      const {
+        faxNumber,
+        faxCountryCode,
+        mobileNumber,
+        mobileCountryCode,
+        whatsappNumber,
+        whatsappCountryCode,
+        telegramNumber,
+        telegramCountryCode,
+      } = value;
 
-      if (!faxNumber && !mobileNumber) {
+      // Ensure at least one contact method is provided
+      if (!faxNumber && !mobileNumber && !whatsappNumber && !telegramNumber) {
         return this.createError({
-          path: 'contactDetails', // Attach the error to the "premises" field
+          path: 'contactDetails',
           message:
-            'At least one valid contact method (Fax or Mobile) is required.',
+            'At least one valid contact method (Fax, Mobile, WhatsApp, or Telegram) is required.',
         });
       }
+
+      // Validate that country code is provided for each contact method
       if (faxNumber && !faxCountryCode) {
         return this.createError({
-          path: 'contactDetails', // Attach the error to the "premises" field
-          message: 'country code is required for fax number',
+          path: 'faxCountryCode',
+          message: 'Country code is required for fax number.',
         });
       }
       if (mobileNumber && !mobileCountryCode) {
         return this.createError({
-          path: 'contactDetails', // Attach the error to the "premises" field
-          message: 'country code is required for mobilr number',
+          path: 'mobileCountryCode',
+          message: 'Country code is required for mobile number.',
         });
       }
+      if (whatsappNumber && !whatsappCountryCode) {
+        return this.createError({
+          path: 'whatsappCountryCode',
+          message: 'Country code is required for WhatsApp number.',
+        });
+      }
+      if (telegramNumber && !telegramCountryCode) {
+        return this.createError({
+          path: 'telegramCountryCode',
+          message: 'Country code is required for Telegram number.',
+        });
+      }
+
       return true;
     }
   );
@@ -103,6 +129,8 @@ const Contact = () => {
       mobileNumber: '',
       whatsappCountryCode: '',
       whatsappNumber: '',
+      telegramCountryCode: '',
+      telegramNumber: '',
     };
     if (bussiness?.id) {
       if (bussiness.faxCountryCode) x.faxCountryCode = bussiness.faxCountryCode;
@@ -115,6 +143,9 @@ const Contact = () => {
       if (bussiness.whatsappCountryCode)
         x.whatsappCountryCode = bussiness.whatsappCountryCode;
       if (bussiness.whatsappNumber) x.whatsappNumber = bussiness.whatsappNumber;
+      if (bussiness.telegramCountryCode)
+        x.telegramCountryCode = bussiness.telegramCountryCode;
+      if (bussiness.telegramNumber) x.telegramNumber = bussiness.telegramNumber;
       if (bussiness.website) x.website = bussiness.website;
       if (bussiness.email) x.email = bussiness.email;
 
@@ -185,7 +216,7 @@ const Contact = () => {
             </div>
             <div className='col-9'>
               <div className='mb-2'>
-                <label className='form-label'>Fixed Number / Fax Number</label>
+                <label className='form-label'>Fixed Number</label>
                 <input
                   type='text'
                   {...register('faxNumber')}
@@ -264,6 +295,40 @@ const Contact = () => {
                 />
                 {/* <div className='invalid-feedback'>
                           {errors.whatsappNumber?.message}
+                        </div> */}
+              </div>
+            </div>
+          </div>
+          <div className='row'>
+            <div className='col-3'>
+              <div className='mb-2'>
+                <label className='form-label'>Country Code</label>
+                <input
+                  type='text'
+                  {...register('telegramCountryCode')}
+                  className={`form-control ${
+                    errors.telegramCountryCode ? 'is-invalid' : ''
+                  }`}
+                  disabled={!editMode}
+                />
+                {/* <div className='invalid-feedback'>
+                          {errors.telegramCountryCode?.message}
+                        </div> */}
+              </div>
+            </div>
+            <div className='col-9'>
+              <div className='mb-2'>
+                <label className='form-label'>Telegram number</label>
+                <input
+                  type='text'
+                  {...register('telegramNumber')}
+                  className={`form-control ${
+                    errors.telegramNumber ? 'is-invalid' : ''
+                  }`}
+                  disabled={!editMode}
+                />
+                {/* <div className='invalid-feedback'>
+                          {errors.telegramNumber?.message}
                         </div> */}
               </div>
             </div>
