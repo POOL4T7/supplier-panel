@@ -21,6 +21,8 @@ const addressSchema = yup
       .required('Website is required')
       .matches(/.*\..*/, 'Invalid website'),
     email: yup.string().email('Invalid email').required('Email is required'),
+    facebookUrl: yup.string().optional(),
+    instagramUrl: yup.string().optional(),
 
     faxCountryCode: yup.string().optional(),
     faxNumber: yup.string().optional(),
@@ -132,6 +134,8 @@ const Contact = () => {
       whatsappNumber: '',
       telegramCountryCode: '',
       telegramNumber: '',
+      facebookUrl: '',
+      instagramUrl: '',
     };
     if (bussiness?.id) {
       if (bussiness.faxCountryCode) x.faxCountryCode = bussiness.faxCountryCode;
@@ -149,6 +153,8 @@ const Contact = () => {
       if (bussiness.telegramNumber) x.telegramNumber = bussiness.telegramNumber;
       if (bussiness.website) x.website = bussiness.website;
       if (bussiness.email) x.email = bussiness.email;
+      if (bussiness.facebookUrl) x.facebookUrl = bussiness.facebookUrl;
+      if (bussiness.instagramUrl) x.instagramUrl = bussiness.instagramUrl;
 
       reset(x);
     }
@@ -207,6 +213,41 @@ const Contact = () => {
             />
             <div className='invalid-feedback'>{errors.email?.message}</div>
           </div>
+          <div className='row'>
+            <div className='col-12 col-md-6'>
+              <div className='mb-2'>
+                <label className='form-label'>Facebook</label>
+                <input
+                  type='text'
+                  {...register('facebookUrl')}
+                  className={`form-control ${
+                    errors.facebookUrl ? 'is-invalid' : ''
+                  }`}
+                  disabled={!editMode}
+                />
+                <div className='invalid-feedback'>
+                  {errors.facebookUrl?.message}
+                </div>
+              </div>
+            </div>
+            <div className='col-12 col-md-6'>
+              <div className='mb-2'>
+                <label className='form-label'>Instagram</label>
+                <input
+                  type='text'
+                  {...register('instagramUrl')}
+                  className={`form-control ${
+                    errors.instagramUrl ? 'is-invalid' : ''
+                  }`}
+                  disabled={!editMode}
+                />
+                <div className='invalid-feedback'>
+                  {errors.instagramUrl?.message}
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* second part start here */}
           <h2 className='mt-4 mb-2'>Business Contact numbers </h2>
 

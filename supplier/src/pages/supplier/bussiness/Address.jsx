@@ -224,7 +224,7 @@ const Address = () => {
               <div className='invalid-feedback'>{errors.houseNo?.message}</div>
             </div>
           </div>
-          {watch('premisesType') == 'individual' && (
+          {watch('premisesType') == 'group' && (
             <div className='row'>
               <div className='col-6 mb-2'>
                 <label className='form-label'>Floor no.</label>
