@@ -42,6 +42,25 @@ const ActivateAccount = () => {
     <FormContainer>
       <div style={{ maxWidth: '500px', marginTop: '4rem' }}>
         <h1>Update Account status</h1>
+        {status && (
+          <p>
+            Current status:{' '}
+            <span
+              style={{
+                padding: '4px 10px',
+                borderRadius: '6px',
+                fontWeight: 'bold',
+                color: status == 'true' ? '#155724' : '#721c24',
+                // backgroundColor: status === 'true' ? '#d4edda' : '#f8d7da',
+                // border:
+                //   status === 'true' ? '1px solid #c3e6cb' : '1px solid #f5c6cb',
+              }}
+            >
+              {status === 'true' ? 'Active' : 'Inactive'}
+            </span>
+          </p>
+        )}
+
         <div className='mb-2'>
           <label className='form-label'>Select Profile Status</label>
           <select
