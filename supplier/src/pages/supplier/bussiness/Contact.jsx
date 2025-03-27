@@ -11,6 +11,7 @@ import FormContainer from '../../../components/common/FormContainer';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { FilePenLine, X as CancelIcon } from 'lucide-react';
+import { Button } from '@mui/material';
 
 const addressSchema = yup
   .object()
@@ -158,17 +159,29 @@ const Contact = () => {
       <div style={{ maxWidth: '500px', width: '100%', marginTop: '2rem' }}>
         <div className='d-flex justify-content-between align-items-center'>
           <h2>Contact Details</h2>
-          <p
+          <div
             className=' '
             style={{ height: '30px' }}
             onClick={() => setEditMode(!editMode)}
           >
             {editMode ? (
-              <CancelIcon className='text-danger' />
+              <Button
+                variant='outlined'
+                size='small'
+                startIcon={<CancelIcon color='red' />}
+              >
+                Cancel
+              </Button>
             ) : (
-              <FilePenLine className='text-primary' />
+              <Button
+                variant='outlined'
+                size='small'
+                startIcon={<FilePenLine size={18} color='green' />}
+              >
+                Edit
+              </Button>
             )}
-          </p>
+          </div>
         </div>
         <form>
           <div className='mb-2'>

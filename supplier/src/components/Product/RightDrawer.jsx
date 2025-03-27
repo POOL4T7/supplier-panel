@@ -85,7 +85,7 @@ const RightDrawer = ({ structure }) => {
         onClose={toggleDrawer(false)}
         PaperProps={{
           sx: {
-            width: { xs: '90vw', sm: 450 },
+            width: { xs: '90vw', sm: 550 },
             background: '#e0e2da',
             boxShadow: theme.shadows[16],
           },

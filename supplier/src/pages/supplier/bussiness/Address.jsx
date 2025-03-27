@@ -12,6 +12,7 @@ import FormContainer from '../../../components/common/FormContainer';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { FilePenLine, X as CancelIcon } from 'lucide-react';
+import { Button } from '@mui/material';
 
 const addressSchema = yup.object().shape({
   streetName: yup.string().required('Stree tName is required'),
@@ -77,6 +78,8 @@ const Address = () => {
       country: '',
       premisesType: '',
       premisesName: '',
+      shopNo: '',
+      floorNo: '',
     };
     if (bussiness?.id) {
       if (bussiness.streetName) x.streetName = bussiness.streetName;
@@ -87,6 +90,8 @@ const Address = () => {
       if (bussiness.country) x.country = bussiness.country;
       if (bussiness.premisesType) x.premisesType = bussiness.premisesType;
       if (bussiness.premisesName) x.premisesName = bussiness.premisesName;
+      if (bussiness.shopNo) x.shopNo = bussiness.shopNo;
+      if (bussiness.floorNo) x.floorNo = bussiness.floorNo;
 
       reset(x);
     }
@@ -97,17 +102,29 @@ const Address = () => {
       <div style={{ maxWidth: '500px', width: '100%', marginTop: '2rem' }}>
         <div className='d-flex justify-content-between align-items-center'>
           <h2>Business Address</h2>
-          <p
+          <div
             className=' '
             style={{ height: '30px' }}
             onClick={() => setEditMode(!editMode)}
           >
             {editMode ? (
-              <CancelIcon className='text-danger' />
+              <Button
+                variant='outlined'
+                size='small'
+                startIcon={<CancelIcon color='red' />}
+              >
+                Cancel
+              </Button>
             ) : (
-              <FilePenLine className='text-primary' />
+              <Button
+                variant='outlined'
+                size='small'
+                startIcon={<FilePenLine size={18} color='green' />}
+              >
+                Edit
+              </Button>
             )}
-          </p>
+          </div>
         </div>
         <div className='row'>
           <div className='col-4'>
