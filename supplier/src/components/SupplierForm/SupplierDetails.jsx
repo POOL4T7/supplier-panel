@@ -9,6 +9,7 @@ import { useAtom } from 'jotai';
 import { userDetailsAtom } from '../../storges/user';
 import { toast } from 'react-toastify';
 import Spinner from '../common/Spinner';
+import { europeanCountries } from '../../data/static';
 
 const step1Schema = yup.object().shape({
   supplierName: yup.string().required('Name is required'),
@@ -288,9 +289,14 @@ const SupplierDetails = () => {
                   }`}
                 >
                   <option value=''>Select Country</option>
-                  <option value='India'>India</option>
+                  {europeanCountries.map((country, idx) => (
+                    <option key={idx} value={country}>
+                      {country}
+                    </option>
+                  ))}
+                  {/* <option value='India'>India</option>
                   <option value='Europe'>Europe</option>
-                  <option value='US'>US</option>
+                  <option value='US'>US</option> */}
                   {/* Add more countries as needed */}
                 </select>
                 <div className='invalid-feedback'>

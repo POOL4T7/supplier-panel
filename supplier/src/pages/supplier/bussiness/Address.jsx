@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { FilePenLine, X as CancelIcon } from 'lucide-react';
 import { Button } from '@mui/material';
+import { europeanCountries } from '../../../data/static';
 
 const addressSchema = yup.object().shape({
   streetName: yup.string().required('Stree tName is required'),
@@ -312,9 +313,14 @@ const Address = () => {
               className={`form-control ${errors.country ? 'is-invalid' : ''}`}
             >
               <option value=''>Select Country</option>
-              <option value='India'>India</option>
+              {/* <option value='India'>India</option>
               <option value='Europe'>Europe</option>
-              <option value='US'>US</option>
+              <option value='US'>US</option> */}
+              {europeanCountries.map((country, idx) => (
+                <option key={idx} value={country}>
+                  {country}
+                </option>
+              ))}
               {/* Add more countries as needed */}
             </select>
             <div className='invalid-feedback'>{errors.country?.message}</div>

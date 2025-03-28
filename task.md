@@ -96,3 +96,22 @@ create shop.
 product list.
 
 UI for category list.
+
+Bugs:
+Business Profile:
+	About Business:
+		1. Display Europe, US and India countries list in Supplier Profile section. (done)
+		2. About Us field characters size limit should be increased in backend. Also, characters limit validations and count should be 	mentioned on UI. (done)
+
+
+Changes/Additions:
+Business Profile:
+	Business Address:
+		1. Add floor and shop no fields for address type premises (Both UI and Backend). (done)
+		2. Update Fax Number to Fixed Number. Add new contact number for Telegram. Validation should be any one contact number is required. (done)
+	Active/Inactive:
+		1. Make sure to invoke API call whenever there is a click on the side menu option to refresh current status
+
+show the status 
+
+check with sub category and provide the X button.
