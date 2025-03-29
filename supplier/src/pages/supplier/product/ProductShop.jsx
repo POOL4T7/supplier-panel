@@ -6,9 +6,7 @@ import Spinner from '../../../components/common/Spinner';
 import CreatableSelect from 'react-select/creatable';
 import { toast } from 'react-toastify';
 import RightDrawer from '../../../components/Product/RightDrawer';
-// import FormContainer from '../../../components/common/FormContainer';
-import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
-import { ChevronDown } from 'lucide-react';
+
 const debounceFetch = (func, delay) => {
   let timer;
   return function (...args) {
@@ -240,8 +238,7 @@ const ProductShop = () => {
         <Spinner />{' '}
       </div>
     );
-  // console.log('selectedIds', selectedIds);
-  console.log('cateExpanded', cateExpanded);
+
   return (
     <>
       <div
@@ -419,7 +416,146 @@ const ProductShop = () => {
               </button>
             </div>
 
-            <Accordion
+            {!movedCategoryLoading && movedCategories.length > 0 && (
+              <div className='mb-4'>
+                <div
+                  className='d-flex flex-wrap gap-1'
+                  style={{
+                    maxHeight: cateExpanded ? 'none' : '30px', // Single line height
+                    overflow: 'hidden',
+                  }}
+                >
+                  {movedCategories.map((item, index) => (
+                    <span
+                      key={index}
+                      className='badge px-2 py-1 text-white d-flex align-items-center'
+                      style={{
+                        cursor: 'pointer',
+                        borderRadius: '6px',
+                        height: '24px',
+                        display: 'inline-flex',
+                        gap: '5px',
+                        margin: '4px',
+                        backgroundColor: '#567e5c',
+                        fontWeight: '500',
+                      }}
+                      onClick={async (e) => {
+                        try {
+                          e.preventDefault();
+
+                          setSelectedCategory(item);
+                          setCategory(item.name);
+                          setMovedSubCategoryLoading(true);
+                          const res = await axiosInstance.get(
+                            `/proxy/productsearchsupplier/getSubCategoryDetails?categoryId=${item.categoryId}&type=products&supplierBusinessId=${bussiness.id}`
+                          );
+                          const res2 = await axiosInstance.get(
+                            `/proxy/productsearchsupplier/getSupplierSubCategoryDetails?supplierCategoryId=${item.categoryId}&type=products&supplierBusinessId=${bussiness.id}`
+                          );
+
+                          setListData(
+                            res.data.map((item) => ({
+                              id: item.id,
+                              name: item.subCategoryName,
+                              supplierBusinessDescription:
+                                item.supplierBusinessDescription,
+                              subCategoryDescription:
+                                item.supplierCategoryDescription,
+                              type: 'subCategory',
+                              categoryId: item.categoryId,
+                            }))
+                          );
+                          setMovedSubCategories(
+                            res2.data.map((item) => ({
+                              id: item.id,
+                              name: item.supplierSubCategoryName,
+                              supplierBusinessDescription:
+                                item.supplierBusinessDescription,
+                              subCategoryDescription:
+                                item.supplierCategoryDescription,
+                              type: 'subCategory',
+                            }))
+                          );
+                          setMovedSubCategoryLoading(false);
+                        } catch (e) {
+                          console.log(e);
+                        }
+                      }}
+                    >
+                      {item.name}
+                      <span
+                        className='ms-2 text-danger'
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: 'bold',
+                          cursor: 'pointer',
+                          borderRadius: '50%',
+                          width: '18px',
+                          height: '18px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: 'white',
+                          color: 'red',
+                          border: '1px solid red',
+                        }}
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          await axiosInstance.post(
+                            '/proxy/productsearchsupplier/supplierCategoryDetailsStatus',
+                            {
+                              supplierBusinessId: bussiness.id,
+                              categoryIds: [item.id],
+                              status: false,
+                            }
+                          );
+                          const res2 = await axiosInstance.get(
+                            `/proxy/productsearchsupplier/getAllDetailsByBusinessDescription?supplierBusinessId=${bussiness.id}&productOrService=products`
+                          );
+                          setStructure(res2.data);
+                          setMovedCategories(
+                            movedCategories.filter((x) => x.id !== item.id)
+                          );
+                          setSelectedCategory(null);
+                          setListData([]);
+                          // setMovedSubCategories([]);
+                          setCategory('');
+                          setSubCategory('');
+                          if (selectRef.current) {
+                            selectRef.current.setValue({
+                              value:
+                                selectRef?.current?.getValue?.()?.[0]?.value,
+                              label:
+                                selectRef?.current?.getValue?.()?.[0]?.value,
+                            });
+                          }
+                        }}
+                      >
+                        X
+                      </span>
+                    </span>
+                  ))}
+                </div>
+                {movedSubCategories.length > 2 && ( // Show toggle only if more than 3 items (adjust as needed)
+                  <button
+                    onClick={() => setCateExpanded(!cateExpanded)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#567e5c',
+                      cursor: 'pointer',
+                      padding: '4px 8px',
+                      fontSize: '12px',
+                      marginTop: '4px',
+                    }}
+                  >
+                    {cateExpanded ? 'Show Less' : 'Show More'}
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* <Accordion
               expanded={cateExpanded}
               onChange={(e) => {
                 e.preventDefault();
@@ -557,7 +693,7 @@ const ProductShop = () => {
                   </div>
                 )}
               </AccordionDetails>
-            </Accordion>
+            </Accordion> */}
           </div>
           <div className='row align-items-end g-2 mt-2'>
             <div className='col-8 col-md-10'>
@@ -660,7 +796,7 @@ const ProductShop = () => {
               </div>
             )} */}
 
-            <Accordion
+            {/* <Accordion
               expanded={expanded}
               onChange={() => setExpanded(!expanded)}
               sx={{
@@ -745,7 +881,93 @@ const ProductShop = () => {
                   </div>
                 )}
               </AccordionDetails>
-            </Accordion>
+            </Accordion> */}
+            {/* First, add state for tracking show more/less */}
+            {!movedSubCategoryLoading && movedSubCategories.length > 0 && (
+              <div className='mb-4'>
+                <div
+                  className='d-flex flex-wrap gap-1'
+                  style={{
+                    maxHeight: expanded ? 'none' : '30px', // Single line height
+                    overflow: 'hidden',
+                  }}
+                >
+                  {movedSubCategories.map((item, index) => (
+                    <span
+                      key={index}
+                      className='badge px-2 py-1 text-white d-flex align-items-center'
+                      style={{
+                        cursor: 'pointer',
+                        borderRadius: '6px',
+                        height: '24px',
+                        display: 'inline-flex',
+                        gap: '5px',
+                        margin: '4px',
+                        backgroundColor: '#567e5c',
+                        fontWeight: '500',
+                      }}
+                    >
+                      {item.name}
+                      <span
+                        className='ms-2 text-danger'
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: 'bold',
+                          cursor: 'pointer',
+                          borderRadius: '50%',
+                          width: '18px',
+                          height: '18px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: 'white',
+                          color: 'red',
+                          border: '1px solid red',
+                        }}
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          await axiosInstance.post(
+                            '/proxy/productsearchsupplier/supplierSubCategoryDetailsStatus',
+                            {
+                              supplierBusinessId: bussiness.id,
+                              subCategoryIds: [item.id],
+                              status: false,
+                              categoryId: item.categoryId,
+                            }
+                          );
+                          const res2 = await axiosInstance.get(
+                            `/proxy/productsearchsupplier/getAllDetailsByBusinessDescription?supplierBusinessId=${bussiness.id}&productOrService=products`
+                          );
+                          setStructure(res2.data);
+                          setMovedSubCategories(
+                            movedSubCategories.filter((x) => x.id !== item.id)
+                          );
+                          setSubCategory('');
+                        }}
+                      >
+                        X
+                      </span>
+                    </span>
+                  ))}
+                </div>
+                {movedSubCategories.length > 3 && ( // Show toggle only if more than 3 items (adjust as needed)
+                  <button
+                    onClick={() => setExpanded(!expanded)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#567e5c',
+                      cursor: 'pointer',
+                      padding: '4px 8px',
+                      fontSize: '12px',
+                      marginTop: '4px',
+                    }}
+                  >
+                    {expanded ? 'Show Less' : 'Show More'}
+                  </button>
+                )}
+              </div>
+            )}
           </div>
           <div
             className='border p-3 mt-2'
