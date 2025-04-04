@@ -9,6 +9,7 @@ import { useAtom } from 'jotai';
 const ActivateAccount = () => {
   const [status, setStatus] = useState('false');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currStatus, setCurrStatus] = useState('false');
   const [supplier] = useAtom(userDetailsAtom);
   const onSubmit = async () => {
     try {
@@ -26,6 +27,7 @@ const ActivateAccount = () => {
         res.data?.data?.message || 'Supplier Account status updated'
       );
       setIsSubmitting(false);
+      setCurrStatus(status);
     } catch (e) {
       toast.error(
         e.response?.data?.error || 'failed: Supplier profile updated'
@@ -36,6 +38,7 @@ const ActivateAccount = () => {
 
   useEffect(() => {
     setStatus(`${supplier.active}`);
+    setCurrStatus(`${supplier.active}`);
   }, [supplier.active]);
 
   return (
@@ -56,7 +59,7 @@ const ActivateAccount = () => {
                 //   status === 'true' ? '1px solid #c3e6cb' : '1px solid #f5c6cb',
               }}
             >
-              {status === 'true' ? 'Active' : 'Inactive'}
+              {currStatus === 'true' ? 'Active' : 'Inactive'}
             </span>
           </p>
         )}

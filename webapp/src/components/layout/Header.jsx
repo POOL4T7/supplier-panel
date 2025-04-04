@@ -3,6 +3,7 @@ import { useAtom } from 'jotai';
 import { userDetailsAtom } from '../../storges/user';
 import { useState } from 'react';
 import { CircleUserRound } from 'lucide-react';
+import { europeanCountries } from '../../data/static';
 
 const Header = () => {
   const [userDetails] = useAtom(userDetailsAtom);
@@ -10,14 +11,14 @@ const Header = () => {
     localStorage.getItem('country') || 'Germany'
   );
 
-  const countries = [
-    { name: 'Germany', code: 'de' },
-    { name: 'France', code: 'fr' },
-    { name: 'USA', code: 'us' },
-    { name: 'India', code: 'in' },
-    { name: 'UK', code: 'gb' },
-    { name: 'Canada', code: 'ca' },
-  ];
+  // const countries = [
+  //   { name: 'Germany', code: 'de' },
+  //   { name: 'France', code: 'fr' },
+  //   { name: 'USA', code: 'us' },
+  //   { name: 'India', code: 'in' },
+  //   { name: 'UK', code: 'gb' },
+  //   { name: 'Canada', code: 'ca' },
+  // ];
 
   return (
     <nav
@@ -61,9 +62,9 @@ const Header = () => {
                 style={{ backgroundColor: '#90875c' }}
               >
                 <img
-                  src={`https://flagcdn.com/w40/${
-                    countries.find((c) => c.name === selectedCountry)?.code
-                  }.png`}
+                  src={`https://flagcdn.com/w40/${europeanCountries
+                    .find((c) => c.name === selectedCountry)
+                    ?.code.toLowerCase()}.png`}
                   alt={selectedCountry}
                   className='me-2'
                   style={{ width: '24px', height: '16px' }}
@@ -72,8 +73,9 @@ const Header = () => {
               <ul
                 className='dropdown-menu dropdown-menu-end'
                 aria-labelledby='countryDropdown'
+                style={{ maxHeight: '300px', overflowY: 'auto' }}
               >
-                {countries.map((country, index) => (
+                {europeanCountries.map((country, index) => (
                   <li key={index}>
                     <button
                       className='dropdown-item d-flex align-items-center'
@@ -83,7 +85,7 @@ const Header = () => {
                       }}
                     >
                       <img
-                        src={`https://flagcdn.com/w40/${country.code}.png`}
+                        src={`https://flagcdn.com/w40/${country.code.toLowerCase()}.png`}
                         alt={country.name}
                         className='me-2'
                         style={{ width: '24px', height: '16px' }}

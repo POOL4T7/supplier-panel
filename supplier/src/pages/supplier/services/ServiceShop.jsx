@@ -6,9 +6,11 @@ import Spinner from '../../../components/common/Spinner';
 import CreatableSelect from 'react-select/creatable';
 import { toast } from 'react-toastify';
 import RightDrawer from '../../../components/Product/RightDrawer';
-// import FormContainer from '../../../components/common/FormContainer';
-// import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
-// import { ChevronDown } from 'lucide-react';
+import { Chip, IconButton } from '@mui/material';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import CloseIcon from '@mui/icons-material/Close';
+
 const debounceFetch = (func, delay) => {
   let timer;
   return function (...args) {
@@ -37,7 +39,7 @@ const customStyles = {
 
 const ServiceShop = () => {
   const selectRef = useRef(null);
-  const [expanded, setExpanded] = useState(false);
+  const [subCateExpanded, setSubCateExpanded] = useState(false);
   const [cateExpanded, setCateExpanded] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [supplier] = useAtom(userDetailsAtom);
@@ -380,87 +382,80 @@ const ServiceShop = () => {
               </button>
             </div>
             {!movedCategoryLoading && movedCategories.length > 0 && (
-              <div className='mb-4'>
-                <div
-                  className='d-flex flex-wrap gap-1'
-                  style={{
-                    maxHeight: cateExpanded ? 'none' : '30px', // Single line height
-                    overflow: 'hidden',
-                  }}
-                >
-                  {movedCategories.map((item, index) => (
-                    <span
-                      key={index}
-                      className='badge px-2 py-1 text-white d-flex align-items-center'
-                      style={{
-                        cursor: 'pointer',
-                        borderRadius: '6px',
-                        height: '24px',
-                        display: 'inline-flex',
-                        gap: '5px',
-                        margin: '4px',
-                        backgroundColor: '#567e5c',
-                        fontWeight: '500',
-                      }}
-                      onClick={async () => {
-                        try {
-                          setSelectedCategory(item);
-                          setCategory(item.name);
-                          setMovedSubCategoryLoading(true);
-                          const res = await axiosInstance.get(
-                            `/proxy/productsearchsupplier/getSubCategoryDetails?categoryId=${item.categoryId}&type=services&supplierBusinessId=${bussiness.id}`
-                          );
-                          const res2 = await axiosInstance.get(
-                            `/proxy/productsearchsupplier/getSupplierSubCategoryDetails?supplierCategoryId=${item.categoryId}&type=services&supplierBusinessId=${bussiness.id}`
-                          );
-
-                          setListData(
-                            res.data.map((item) => ({
-                              id: item.id,
-                              name: item.subCategoryName,
-                              supplierBusinessDescription:
-                                item.supplierBusinessDescription,
-                              subCategoryDescription:
-                                item.supplierCategoryDescription,
-                              type: 'subCategory',
-                              categoryId: item.categoryId,
-                            }))
-                          );
-                          setMovedSubCategories(
-                            res2.data.map((item) => ({
-                              id: item.id,
-                              name: item.supplierSubCategoryName,
-                              supplierBusinessDescription:
-                                item.supplierBusinessDescription,
-                              subCategoryDescription:
-                                item.supplierCategoryDescription,
-                              type: 'subCategory',
-                            }))
-                          );
-                          setMovedSubCategoryLoading(false);
-                        } catch (e) {
-                          console.log(e);
-                        }
-                      }}
-                    >
-                      {item.name}
-                      <span
-                        className='ms-2 text-danger'
-                        style={{
-                          fontSize: '14px',
-                          fontWeight: 'bold',
-                          cursor: 'pointer',
-                          borderRadius: '50%',
-                          width: '18px',
-                          height: '18px',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          backgroundColor: 'white',
-                          color: 'red',
-                          border: '1px solid red',
+              <div className='mb-2'>
+                <div className='position-relative'>
+                  <div
+                    className='d-flex flex-wrap'
+                    style={{
+                      maxHeight: cateExpanded ? 'none' : '30px',
+                      overflow: 'hidden',
+                      transition: 'max-height 0.3s ease-in-out',
+                      marginBottom: movedCategories.length > 2 ? '24px' : '0',
+                    }}
+                  >
+                    {movedCategories.map((item, index) => (
+                      <Chip
+                        key={index}
+                        label={item.name}
+                        sx={{
+                          bgcolor: '#567e5c',
+                          color: 'white',
+                          height: '24px',
+                          margin: '2px',
+                          '&:hover': {
+                            bgcolor: '#567e5c', // Keep same background on hover
+                          },
+                          '& .MuiChip-deleteIcon': {
+                            color: 'red',
+                            bgcolor: 'white',
+                            width: '18px',
+                            height: '18px',
+                            borderRadius: '50%',
+                            border: '1px solid red',
+                            fontSize: '14px',
+                          },
                         }}
-                        onClick={async (e) => {
+                        onClick={async () => {
+                          try {
+                            setSelectedCategory(item);
+                            setCategory(item.name);
+                            setMovedSubCategoryLoading(true);
+                            const res = await axiosInstance.get(
+                              `/proxy/productsearchsupplier/getSubCategoryDetails?categoryId=${item.categoryId}&type=services&supplierBusinessId=${bussiness.id}`
+                            );
+                            const res2 = await axiosInstance.get(
+                              `/proxy/productsearchsupplier/getSupplierSubCategoryDetails?supplierCategoryId=${item.categoryId}&type=services&supplierBusinessId=${bussiness.id}`
+                            );
+
+                            setListData(
+                              res.data.map((item) => ({
+                                id: item.id,
+                                name: item.subCategoryName,
+                                supplierBusinessDescription:
+                                  item.supplierBusinessDescription,
+                                subCategoryDescription:
+                                  item.supplierCategoryDescription,
+                                type: 'subCategory',
+                                categoryId: item.categoryId,
+                              }))
+                            );
+                            setMovedSubCategories(
+                              res2.data.map((item) => ({
+                                id: item.id,
+                                name: item.supplierSubCategoryName,
+                                supplierBusinessDescription:
+                                  item.supplierBusinessDescription,
+                                subCategoryDescription:
+                                  item.supplierCategoryDescription,
+                                type: 'subCategory',
+                              }))
+                            );
+                            setMovedSubCategoryLoading(false);
+                          } catch (e) {
+                            console.log(e);
+                          }
+                        }}
+                        onDelete={async (e) => {
                           e.stopPropagation();
                           await axiosInstance.post(
                             '/proxy/productsearchsupplier/supplierCategoryDetailsStatus',
@@ -491,28 +486,30 @@ const ServiceShop = () => {
                             });
                           }
                         }}
-                      >
-                        X
-                      </span>
-                    </span>
-                  ))}
+                        deleteIcon={<CloseIcon style={{ fontSize: '16px' }} />}
+                      />
+                    ))}
+                  </div>
+                  {movedCategories.length > 2 && (
+                    <IconButton
+                      size='small'
+                      onClick={() => setCateExpanded(!cateExpanded)}
+                      sx={{
+                        position: 'absolute',
+                        right: 0,
+                        bottom: 0,
+                        color: '#567e5c',
+                        padding: '4px',
+                      }}
+                    >
+                      {cateExpanded ? (
+                        <KeyboardArrowUpIcon />
+                      ) : (
+                        <KeyboardArrowDownIcon />
+                      )}
+                    </IconButton>
+                  )}
                 </div>
-                {movedSubCategories.length > 2 && ( // Show toggle only if more than 3 items (adjust as needed)
-                  <button
-                    onClick={() => setCateExpanded(!cateExpanded)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#567e5c',
-                      cursor: 'pointer',
-                      padding: '4px 8px',
-                      fontSize: '12px',
-                      marginTop: '4px',
-                    }}
-                  >
-                    {cateExpanded ? 'Show Less' : 'Show More'}
-                  </button>
-                )}
               </div>
             )}
             {/* <Accordion
@@ -744,47 +741,41 @@ const ServiceShop = () => {
               </AccordionDetails>
             </Accordion> */}
             {!movedSubCategoryLoading && movedSubCategories.length > 0 && (
-              <div className='mb-4'>
-                <div
-                  className='d-flex flex-wrap gap-1'
-                  style={{
-                    maxHeight: expanded ? 'none' : '30px', // Single line height
-                    overflow: 'hidden',
-                  }}
-                >
-                  {movedSubCategories.map((item, index) => (
-                    <span
-                      key={index}
-                      className='badge px-2 py-1 text-white d-flex align-items-center'
-                      style={{
-                        cursor: 'pointer',
-                        borderRadius: '6px',
-                        height: '24px',
-                        display: 'inline-flex',
-                        gap: '5px',
-                        margin: '4px',
-                        backgroundColor: '#567e5c',
-                        fontWeight: '500',
-                      }}
-                    >
-                      {item.name}
-                      <span
-                        className='ms-2 text-danger'
-                        style={{
-                          fontSize: '14px',
-                          fontWeight: 'bold',
-                          cursor: 'pointer',
-                          borderRadius: '50%',
-                          width: '18px',
-                          height: '18px',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          backgroundColor: 'white',
-                          color: 'red',
-                          border: '1px solid red',
+              <div className='mb-2'>
+                <div className='position-relative'>
+                  <div
+                    className='d-flex flex-wrap'
+                    style={{
+                      maxHeight: subCateExpanded ? 'none' : '30px',
+                      overflow: 'hidden',
+                      transition: 'max-height 0.3s ease-in-out',
+                      marginBottom:
+                        movedSubCategories.length > 2 ? '24px' : '0',
+                    }}
+                  >
+                    {movedSubCategories.map((item, index) => (
+                      <Chip
+                        key={index}
+                        label={item.name}
+                        sx={{
+                          bgcolor: '#567e5c',
+                          color: 'white',
+                          height: '24px',
+                          margin: '2px',
+                          '&:hover': {
+                            bgcolor: '#567e5c', // Keep same background on hover
+                          },
+                          '& .MuiChip-deleteIcon': {
+                            color: 'red',
+                            bgcolor: 'white',
+                            width: '18px',
+                            height: '18px',
+                            borderRadius: '50%',
+                            border: '1px solid red',
+                            fontSize: '14px',
+                          },
                         }}
-                        onClick={async (e) => {
+                        onDelete={async (e) => {
                           e.stopPropagation();
                           await axiosInstance.post(
                             '/proxy/productsearchsupplier/supplierSubCategoryDetailsStatus',
@@ -805,28 +796,30 @@ const ServiceShop = () => {
                           setListData([...listData, item]);
                           setSubCategory('');
                         }}
-                      >
-                        X
-                      </span>
-                    </span>
-                  ))}
+                        deleteIcon={<CloseIcon style={{ fontSize: '16px' }} />}
+                      />
+                    ))}
+                  </div>
+                  {movedSubCategories.length > 2 && (
+                    <IconButton
+                      size='small'
+                      onClick={() => setSubCateExpanded(!subCateExpanded)}
+                      sx={{
+                        position: 'absolute',
+                        right: 0,
+                        bottom: 0,
+                        color: '#567e5c',
+                        padding: '4px',
+                      }}
+                    >
+                      {subCateExpanded ? (
+                        <KeyboardArrowUpIcon />
+                      ) : (
+                        <KeyboardArrowDownIcon />
+                      )}
+                    </IconButton>
+                  )}
                 </div>
-                {movedSubCategories.length > 3 && ( // Show toggle only if more than 3 items (adjust as needed)
-                  <button
-                    onClick={() => setExpanded(!expanded)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#567e5c',
-                      cursor: 'pointer',
-                      padding: '4px 8px',
-                      fontSize: '12px',
-                      marginTop: '4px',
-                    }}
-                  >
-                    {expanded ? 'Show Less' : 'Show More'}
-                  </button>
-                )}
               </div>
             )}
           </div>

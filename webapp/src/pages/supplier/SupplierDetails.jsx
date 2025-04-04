@@ -1,34 +1,66 @@
-import { useRef, useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import axiosInstance from '../../axios';
-import { SquareArrowOutUpRight, Menu, X } from 'lucide-react';
+import {
+  Box,
+  Container,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+  Button,
+  Avatar,
+  Chip,
+  Paper,
+  IconButton,
+  Collapse,
+  Rating,
+  Stack,
+  createTheme,
+  ThemeProvider,
+} from '@mui/material';
+import {
+  Phone as PhoneIcon,
+  Email as EmailIcon,
+  Language as WebIcon,
+  Facebook as FacebookIcon,
+  WhatsApp as WhatsAppIcon,
+  LocationOn as LocationIcon,
+  ExpandMore as ExpandMoreIcon,
+  Store as StoreIcon,
+  Verified as VerifiedIcon,
+} from '@mui/icons-material';
 import Spinner from '../../components/common/Spinner';
-import { User, MapPin, List, Briefcase, Link as LinkIcon } from 'lucide-react';
 
 const SupplierDetails = () => {
   const [supplierData, setSupplierData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
   const supplierBusinessId = searchParams.get('id');
-  const [activeSection, setActiveSection] = useState('profile');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [isSubCategoryOpen, setIsSubCategoryOpen] = useState(false);
+  const [showFullAbout, setShowFullAbout] = useState(false);
+  const [textRef, setTextRef] = useState(null);
+  const [showMoreButton, setShowMoreButton] = useState(false);
 
-  // Add screen size listener
-  useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      if (!mobile) {
-        setIsSidebarOpen(true);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    handleResize(); // Initial check
-
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  // Theme colors
+  const theme = createTheme({
+    palette: {
+      background: {
+        default: '#f4f6f1',
+        paper: '#e8eae3',
+      },
+      primary: {
+        main: '#4b6043',
+        light: '#6b8063',
+        dark: '#2b4023',
+      },
+      success: {
+        main: '#5a7152',
+      },
+    },
+  });
 
   useEffect(() => {
     if (supplierBusinessId) {
@@ -47,367 +79,397 @@ const SupplierDetails = () => {
     }
   }, [supplierBusinessId]);
 
-  const profileRef = useRef(null);
-  const addressRef = useRef(null);
-  const productsRef = useRef(null);
-  const servicesRef = useRef(null);
-  const connectRef = useRef(null);
-
-  const handleScroll = (ref, section) => {
-    ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setActiveSection(section);
-    if (isMobile) {
-      setIsSidebarOpen(false);
+  useEffect(() => {
+    if (textRef && supplierData?.aboutUs) {
+      const lineHeight = parseInt(window.getComputedStyle(textRef).lineHeight);
+      const height = textRef.scrollHeight;
+      const lines = height / lineHeight;
+      setShowMoreButton(lines > 3);
     }
-  };
+  }, [textRef, supplierData?.aboutUs]);
+
+  const getTextStyles = (showFull) => ({
+    overflow: 'hidden',
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: showFull ? 'unset' : 3,
+  });
 
   if (loading)
     return (
-      <div
-        className='d-flex justify-content-center'
-        style={{ marginTop: '6rem' }}
-      >
-        <Spinner />
-      </div>
+      <ThemeProvider theme={theme}>
+        <Box
+          display='flex'
+          justifyContent='center'
+          alignItems='center'
+          minHeight='calc(100vh - 6rem)'
+          mt={8}
+          sx={{ backgroundColor: 'background.default' }}
+        >
+          <Spinner />
+        </Box>
+      </ThemeProvider>
     );
 
   if (!supplierData)
     return (
-      <div className='container' style={{ marginTop: '6rem' }}>
-        <p>Supplier details not found.</p>
-      </div>
+      <ThemeProvider theme={theme}>
+        <Box
+          display='flex'
+          justifyContent='center'
+          alignItems='center'
+          minHeight='calc(100vh - 6rem)'
+          mt={8}
+          sx={{ backgroundColor: 'background.default' }}
+        >
+          <Box textAlign='center'>
+            <img
+              src='/images/not-found.webp'
+              alt='Not Found'
+              style={{ width: '200px', marginBottom: '1rem' }}
+            />
+            <Typography variant='h5' color='text.secondary'>
+              Supplier details not found
+            </Typography>
+          </Box>
+        </Box>
+      </ThemeProvider>
     );
 
   return (
-    <div className='container-fluid px-0' style={{ marginTop: '6rem' }}>
-      {/* Mobile Menu Toggle - Only show on mobile */}
-      {isMobile && (
-        <button
-          className='btn btn-light position-fixed'
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          style={{
-            top: '75px',
-            right: '15px',
-            zIndex: 1040,
-            padding: '8px 12px',
-            borderRadius: '8px',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-            backgroundColor: '#fff',
-          }}
-        >
-          {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
-      )}
-
-      <div className='row g-0'>
-        {/* Overlay for mobile only */}
-        {isMobile && isSidebarOpen && (
-          <div
-            className='sidebar-overlay'
-            onClick={() => setIsSidebarOpen(false)}
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              zIndex: 1030,
-            }}
-          />
-        )}
-
-        {/* Modified Sidebar */}
-        <div
-          className={`col-md-3 position-fixed ${
-            isMobile ? (isSidebarOpen ? 'd-block' : 'd-none') : 'd-block'
-          }`}
-          style={{
-            height: '100vh',
-            overflowY: 'auto',
-            maxWidth: '280px',
-            backgroundColor: '#cdcfc7',
-            padding: '20px',
-            boxShadow: '2px 0 10px #acafa5',
-            zIndex: 1035,
-            top: 0,
-            left: 0,
-            paddingTop: '80px',
-            transition: 'transform 0.3s ease-in-out',
-            transform:
-              isMobile && !isSidebarOpen
-                ? 'translateX(-100%)'
-                : 'translateX(0)',
-          }}
-        >
-          <div className='nav flex-column'>
-            {[
-              {
-                ref: profileRef,
-                icon: <User size={18} />,
-                label: 'Profile',
-                id: 'profile',
-              },
-              {
-                ref: addressRef,
-                icon: <MapPin size={18} />,
-                label: 'Address',
-                id: 'address',
-              },
-              {
-                ref: connectRef,
-                icon: <LinkIcon size={18} />,
-                label: 'Connect',
-                id: 'connect',
-              },
-              {
-                ref: productsRef,
-                icon: <List size={18} />,
-                label: 'Categories',
-                id: 'categories',
-              },
-              {
-                ref: servicesRef,
-                icon: <Briefcase size={18} />,
-                label: 'Services',
-                id: 'services',
-              },
-            ].map((item) => (
-              <button
-                key={item.id}
-                className={`nav-link mb-2 d-flex align-items-center ${
-                  activeSection === item.id ? 'active' : ''
-                }`}
-                onClick={() => handleScroll(item.ref, item.id)}
-                style={{
-                  padding: '12px 15px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  backgroundColor:
-                    activeSection === item.id ? '#3e5012' : 'transparent',
-                  color: activeSection === item.id ? 'white' : '#333',
-                  transition: 'all 0.3s ease',
-                  textAlign: 'left',
-                  width: '100%',
+    <ThemeProvider theme={theme}>
+      <Box sx={{ backgroundColor: 'background.default', minHeight: '100vh' }}>
+        <Container maxWidth='lg' sx={{ pt: 10, pb: 4 }}>
+          <Grid container spacing={3}>
+            {/* Main Content */}
+            <Grid item xs={12} md={9}>
+              {/* Profile Card */}
+              <Card
+                sx={{
+                  mb: 3,
+                  position: 'relative',
+                  backgroundColor: 'background.paper',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                 }}
               >
-                <span className='me-2'>{item.icon}</span>
-                {item.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Content Area */}
-        <div className='col-12 col-md-9 offset-md-3'>
-          <div className='px-3 px-md-4'>
-            <div
-              ref={profileRef}
-              className='p-4 border rounded mb-4  '
-              style={style}
-            >
-              <div className='row align-items-center'>
-                {/* Image Section with Profile Picture */}
-                <div
-                  className='col-md-4 text-center position-relative'
-                  style={{ height: '200px' }}
+                {/* Cover Image */}
+                <CardMedia
+                  component='div'
+                  sx={{
+                    height: 350,
+                    backgroundColor: '#e0e2da',
+                    position: 'relative',
+                  }}
                 >
-                  {/* Profile Picture */}
-                  <div
-                    className='position-absolute'
+                  <img
+                    src={
+                      supplierData.businessImage || '/images/placeholder.webp'
+                    }
+                    alt='Business Cover'
                     style={{
-                      top: '-15px',
-                      left: '0px',
-                      width: '70px',
-                      height: '70px',
-                      zIndex: 2,
-                      border: '1px solid green',
-                      borderRadius: '50%',
-                      overflow: 'hidden',
-                      // boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
                     }}
-                  >
-                    <img
-                      src={supplierData.businessLogo || '/images/logo.webp'}
-                      alt='Profile'
-                      className='w-100 h-100 shadow'
-                      style={{ objectFit: 'cover', backgroundColor: '#e0e2da' }}
+                  />
+                  {/* Logo */}
+                  <Avatar
+                    src={supplierData.businessLogo || '/images/logo.webp'}
+                    sx={{
+                      width: 120,
+                      height: 120,
+                      position: 'absolute',
+                      bottom: -60,
+                      left: 24,
+                      border: '4px solid',
+                      borderColor: 'background.paper',
+                      boxShadow: 2,
+                    }}
+                  />
+                </CardMedia>
+
+                <CardContent
+                  sx={{ pt: 8, backgroundColor: 'background.paper' }}
+                >
+                  {/* Business Name and Verification */}
+                  <Box display='flex' alignItems='center' mb={2}>
+                    <Typography variant='h4' component='h1' fontWeight='bold'>
+                      {supplierData.businessName}
+                    </Typography>
+                    <VerifiedIcon color='primary' sx={{ ml: 1 }} />
+                  </Box>
+
+                  {/* Business Type and Rating */}
+                  <Box display='flex' alignItems='center' mb={2}>
+                    <StoreIcon color='action' sx={{ mr: 1 }} />
+                    <Typography variant='subtitle1' color='text.secondary'>
+                      {supplierData.businessType}
+                    </Typography>
+                    <Rating
+                      value={4.5}
+                      precision={0.5}
+                      readOnly
+                      size='small'
+                      sx={{ ml: 2 }}
                     />
-                  </div>
+                  </Box>
 
-                  {/* Main Business Image */}
-                  <div
-                    className='border rounded overflow-hidden'
-                    style={{ width: '100%', height: '100%' }}
+                  {/* Address */}
+                  <Box display='flex' mb={2}>
+                    <LocationIcon color='action' sx={{ mr: 1, mt: 0.5 }} />
+                    <Typography color='text.secondary'>
+                      {[
+                        supplierData.street,
+                        supplierData.area,
+                        supplierData.businessCity,
+                        supplierData.businessCountry,
+                        supplierData.businessZipCode,
+                      ]
+                        .filter(Boolean)
+                        .join(', ')}
+                    </Typography>
+                  </Box>
+
+                  {/* Description */}
+                  {supplierData.aboutUs && (
+                    <Box>
+                      <Typography
+                        ref={(el) => setTextRef(el)}
+                        color='text.secondary'
+                        paragraph
+                        sx={{
+                          mt: 2,
+                          ...getTextStyles(showFullAbout),
+                          transition: 'all 0.3s ease-out',
+                        }}
+                      >
+                        {supplierData.aboutUs}
+                      </Typography>
+                      {showMoreButton && (
+                        <Button
+                          size='small'
+                          onClick={() => setShowFullAbout(!showFullAbout)}
+                          sx={{
+                            mt: -1,
+                            color: 'text.secondary',
+                            '&:hover': {
+                              backgroundColor: 'transparent',
+                              color: 'primary.main',
+                            },
+                          }}
+                        >
+                          {showFullAbout ? 'Show Less' : 'Show More'}
+                        </Button>
+                      )}
+                    </Box>
+                  )}
+
+                  {/* Contact Buttons */}
+                  <Stack
+                    direction='row'
+                    spacing={1}
+                    flexWrap='wrap'
+                    sx={{ mt: 3 }}
                   >
-                    <img
-                      src={supplierData.businessImage || '/images/logo.webp'}
-                      alt='Business'
-                      className='img-fluid h-100 w-100'
-                      style={{
-                        borderRadius: '10px',
-                        objectFit: 'cover',
-                      }}
-                    />
-                  </div>
-                </div>
+                    {supplierData.phoneNumber && (
+                      <Button
+                        variant='contained'
+                        startIcon={<PhoneIcon />}
+                        href={`tel:${supplierData.phoneNumber}`}
+                        sx={{ mb: 1 }}
+                      >
+                        Call Now
+                      </Button>
+                    )}
+                    {supplierData.whatsapp && (
+                      <Button
+                        variant='contained'
+                        color='success'
+                        startIcon={<WhatsAppIcon />}
+                        href={`https://wa.me/${supplierData.whatsapp}`}
+                        target='_blank'
+                        sx={{ mb: 1 }}
+                      >
+                        WhatsApp
+                      </Button>
+                    )}
+                    {supplierData.email && (
+                      <Button
+                        variant='outlined'
+                        startIcon={<EmailIcon />}
+                        href={`mailto:${supplierData.email}`}
+                        sx={{ mb: 1 }}
+                      >
+                        Email
+                      </Button>
+                    )}
+                    {supplierData.webSite && (
+                      <Button
+                        variant='outlined'
+                        startIcon={<WebIcon />}
+                        href={supplierData.webSite}
+                        target='_blank'
+                        sx={{ mb: 1 }}
+                      >
+                        Website
+                      </Button>
+                    )}
+                    {supplierData.facebookUrl && (
+                      <Button
+                        variant='outlined'
+                        startIcon={<FacebookIcon />}
+                        href={supplierData.facebookUrl}
+                        target='_blank'
+                        sx={{ mb: 1 }}
+                      >
+                        Facebook
+                      </Button>
+                    )}
+                  </Stack>
+                </CardContent>
+              </Card>
 
-                {/* Details Section */}
-                <div className='col-md-8'>
-                  <h3 className='mb-3'>{supplierData.businessName}</h3>
-                  <p>
-                    <strong>Type:</strong> {supplierData.businessType}
-                  </p>
-                  <p>{supplierData.aboutUs}</p>
-                  <p>
-                    <a
-                      href={supplierData.webSite}
-                      target='_blank'
-                      rel='noopener noreferrer'
-                      className='btn btn-primary'
-                    >
-                      Visit Website
-                    </a>
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div
-              ref={addressRef}
-              className='p-4 border rounded mb-4  '
-              style={style}
-            >
-              <h3>Address</h3>
-              <p>
-                {supplierData.street}, {supplierData.businessHouseNo},{' '}
-                {supplierData.area}
-              </p>
-              <p>
-                {supplierData.businessCity}, {supplierData.businessCountry},{' '}
-                {supplierData.businessZipCode}
-              </p>
-              {/* <p>
-              <strong>Email:</strong> {supplierData.email}
-            </p>
-            <p>
-              <strong>Phone:</strong> {supplierData.phoneNumber}
-            </p> */}
-            </div>
-
-            <div
-              ref={connectRef}
-              className='p-4 border rounded mb-4  '
-              style={style}
-            >
-              <h3>Connect</h3>
-              <p>
-                <strong>Website: </strong> {supplierData.webSite || 'NA'}{' '}
-                {supplierData.webSite && (
-                  <Link to={supplierData.webSite} target='_blank'>
-                    <SquareArrowOutUpRight height={'15px'} />
-                  </Link>
-                )}
-              </p>
-              <p>
-                <strong>Email:</strong> {supplierData.email || 'NA'}
-              </p>
-              <p>
-                <strong>Phone:</strong> {supplierData.phoneNumber || 'NA'}{' '}
-                {supplierData.phoneNumber && (
-                  <Link to={`tel:${supplierData.phoneNumber}`} target='_blank'>
-                    <SquareArrowOutUpRight height={'15px'} />
-                  </Link>
-                )}
-              </p>
-              <p>
-                <strong>Fax:</strong> {supplierData.faxNumber || 'NA'}
-              </p>
-              <p>
-                <strong>WhatsApp:</strong> {supplierData.whatsapp || 'NA'}{' '}
-                {supplierData.whatsapp && (
-                  <Link
-                    to={`https://wa.me/${supplierData.whatsapp}`}
-                    target='_blank'
-                  >
-                    <SquareArrowOutUpRight height={'15px'} />
-                  </Link>
-                )}
-              </p>
-            </div>
-
-            <div
-              ref={productsRef}
-              className='p-4 border rounded mb-4  '
-              style={{
-                ...style,
-                // backgroundColor: "#fff",
-                // boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-              }}
-            >
-              <h3 className='mb-4'>Categories</h3>
-              <div className='d-flex flex-wrap gap-2'>
-                {supplierData.categories.map((category, index) => (
-                  <span
-                    key={index}
-                    className='px-3 py-2 rounded-pill'
-                    style={{
-                      // backgroundColor: "#e9ecef",
-                      color: 'green',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                      border: '1px solid',
-                      transition: 'all 0.3s ease',
-                      cursor: 'default',
+              {/* Categories Section */}
+              <Paper
+                sx={{
+                  mb: 3,
+                  backgroundColor: 'background.paper',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                }}
+              >
+                <Box
+                  p={2}
+                  display='flex'
+                  alignItems='center'
+                  justifyContent='space-between'
+                  onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                  sx={{ cursor: 'pointer' }}
+                >
+                  <Typography variant='h6' fontWeight='medium'>
+                    Categories
+                  </Typography>
+                  <IconButton
+                    sx={{
+                      transform: isCategoryOpen ? 'rotate(180deg)' : 'none',
+                      transition: '0.3s',
                     }}
                   >
-                    {category}
-                  </span>
-                ))}
-              </div>
-            </div>
+                    <ExpandMoreIcon />
+                  </IconButton>
+                </Box>
+                <Collapse in={isCategoryOpen}>
+                  <Box p={2} pt={0}>
+                    <Stack direction='row' spacing={1} flexWrap='wrap'>
+                      {supplierData.categories.map((category, index) => (
+                        <Chip
+                          key={index}
+                          label={category}
+                          variant='outlined'
+                          sx={{ m: 0.5 }}
+                        />
+                      ))}
+                    </Stack>
+                  </Box>
+                </Collapse>
+              </Paper>
 
-            <div
-              ref={servicesRef}
-              className='p-4 border rounded mb-4  '
-              style={{
-                ...style,
-                // backgroundColor: "#fff",
-                // boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-              }}
-            >
-              <h3 className='mb-4'>Services</h3>
-              <div className='d-flex flex-wrap gap-2'>
-                {supplierData.subCategories.map((subCategory, index) => (
-                  <span
-                    key={index}
-                    className='px-3 py-2 rounded-pill'
-                    style={{
-                      // backgroundColor: "#e3f2fd",
-                      color: 'green',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                      border: '1px solid',
-                      transition: 'all 0.3s ease',
-                      cursor: 'default',
+              {/* Services Section */}
+              <Paper
+                sx={{
+                  backgroundColor: 'background.paper',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                }}
+              >
+                <Box
+                  p={2}
+                  display='flex'
+                  alignItems='center'
+                  justifyContent='space-between'
+                  onClick={() => setIsSubCategoryOpen(!isSubCategoryOpen)}
+                  sx={{ cursor: 'pointer' }}
+                >
+                  <Typography variant='h6' fontWeight='medium'>
+                    Services
+                  </Typography>
+                  <IconButton
+                    sx={{
+                      transform: isSubCategoryOpen ? 'rotate(180deg)' : 'none',
+                      transition: '0.3s',
                     }}
                   >
-                    {subCategory}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                    <ExpandMoreIcon />
+                  </IconButton>
+                </Box>
+                <Collapse in={isSubCategoryOpen}>
+                  <Box p={2} pt={0}>
+                    <Stack direction='row' spacing={1} flexWrap='wrap'>
+                      {supplierData.subCategories.map((service, index) => (
+                        <Chip
+                          key={index}
+                          label={service}
+                          variant='outlined'
+                          color='primary'
+                          sx={{ m: 0.5 }}
+                        />
+                      ))}
+                    </Stack>
+                  </Box>
+                </Collapse>
+              </Paper>
+            </Grid>
+
+            {/* Sidebar */}
+            <Grid item xs={12} md={3}>
+              {/* Featured Ads */}
+              <Card
+                sx={{
+                  mb: 3,
+                  backgroundColor: 'background.paper',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                }}
+              >
+                <CardContent>
+                  <Typography variant='h6' fontWeight='medium' gutterBottom>
+                    Featured Ads
+                  </Typography>
+                  <Stack spacing={2}>
+                    {[1, 2, 3].map((item) => (
+                      <Paper
+                        key={item}
+                        sx={{
+                          overflow: 'hidden',
+                          transition: '0.3s',
+                          '&:hover': {
+                            transform: 'translateY(-4px)',
+                            boxShadow: 2,
+                          },
+                        }}
+                      >
+                        <CardMedia
+                          component='img'
+                          height='140'
+                          image='/images/placeholder.webp'
+                          alt={`Advertisement ${item}`}
+                        />
+                        <Box p={1.5}>
+                          <Typography variant='subtitle2' fontWeight='medium'>
+                            Advertisement Title {item}
+                          </Typography>
+                          <Typography variant='body2' color='text.secondary'>
+                            Short description of the advertisement
+                          </Typography>
+                        </Box>
+                      </Paper>
+                    ))}
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+    </ThemeProvider>
   );
 };
 
 export default SupplierDetails;
-
-const style = {
-  scrollMarginTop: '80px',
-  transition: 'all 0.3s ease',
-  // backgroundColor:""
-};
